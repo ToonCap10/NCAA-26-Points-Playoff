@@ -692,21 +692,27 @@
             });
             
             document.querySelectorAll('.editable').forEach(cell => {
-                cell.addEventListener('blur', function() {
-                    const index = parseInt(this.dataset.index, 10);
-                    const field = this.dataset.field;
-                    const value = this.textContent.trim();
-                    if (field === 'owner') {
-                        players[index][field] = value;
-                    } else if (field === 'expGames') {
-                        const num = parseFloat(value);
-                        players[index][field] = isNaN(num) ? defaultExpectedGamesBySeed[players[index].seed] || 1.0 : num;
-                    } else {
-                        players[index][field] = parseFloat(value) || 0;
-                    }
-                    recalculate();
-                });
-            });
+    cell.addEventListener('blur', function() {
+        const index = parseInt(this.dataset.index, 10);
+        const field = this.dataset.field;
+        const value = this.textContent.trim();
+
+        if (field === 'owner') {
+            players[index][field] = value;
+        } else if (field === 'expGames') {
+            const num = parseFloat(value);
+            const safe = isNaN(num)
+                ? defaultExpectedGamesBySeed[players[index].seed] || 1.0
+                : num;
+            players[index][field] = safe;
+            this.textContent = safe.toFixed(1);
+        } else {
+            players[index][field] = parseFloat(value) || 0;
+        }
+
+        recalculate();
+    });
+});
         }
 
         function recalculate() {
@@ -726,7 +732,7 @@
             const leaderboard = document.getElementById('leaderboard');
             
             if (sorted.length === 0) {
-                leaderboard.innerHTML = '<div class="owner-card"><div class="owner-rank">Add owners to see standings</div></div>';
+                leaderboard.innerHTML = '<div class="ownerx-card"><div class="owner-rank">Add owners to see standings</div></div>';
                 return;
             }
             
@@ -740,32 +746,35 @@
         }
 
         function sortTable(columnIndex) {
-            const table = document.getElementById('fantasyTable');
-            const tbody = table.querySelector('tbody');
-            const rows = Array.from(tbody.querySelectorAll('tr'));
-            
-            rows.sort((a, b) => {
-                let aVal = a.cells[columnIndex].textContent.trim();
-                let bVal = b.cells[columnIndex].textContent.trim();
-                
-                const aNum = parseFloat(aVal);
-                const bNum = parseFloat(bVal);
-                
-                if (columnIndex === 1) {
-                    if (!isNaN(aNum) && !isNaN(bNum)) {
-                        return aNum - bNum;
-                    }
-                }
-
-                if (!isNaN(aNum) && !isNaN(bNum)) {
-                    return bNum - aNum;
-                }
-                
-                return aVal.localeCompare(bVal);
-            });
-            
-            rows.forEach(row => tbody.appendChild(row));
+    const table = document.getElementById('fantasyTable');
+    const tbody = table.querySelector('tbody');
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+    
+    rows.sort((a, b) => {
+        let aVal = a.cells[columnIndex].textContent.trim();
+        let bVal = b.cells[columnIndex].textContent.trim();
+        
+        const aNum = parseFloat(aVal);
+        const bNum = parseFloat(bVal);
+        
+        if (columnIndex === 1) {
+            // Seed: ascending
+            if (!isNaN(aNum) && !isNaN(bNum)) {
+                return aNum - bNum;
+            }
         }
+
+        if (!isNaN(aNum) && !isNaN(bNum)) {
+            // All other numeric columns: descending
+            return bNum - aNum;
+        }
+        
+        return aVal.localeCompare(bVal);
+    });
+    
+    rows.forEach(row => tbody.appendChild(row));
+}
+
 
         renderTable();
         updateLeaderboard();
