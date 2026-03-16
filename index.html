@@ -1,0 +1,2750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>NCAA 2026 Fantasy Tournament Tracker</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 20px;
+      background: #0b1020;
+      color: #f5f5f5;
+    }
+    h1, h2 {
+      margin-bottom: 0.3rem;
+    }
+    h1 {
+      font-size: 1.6rem;
+    }
+    h2 {
+      font-size: 1.2rem;
+      margin-top: 1.5rem;
+    }
+    p {
+      margin-top: 0.3rem;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+      color: #d0d3e0;
+    }
+    .layout {
+      display: grid;
+      grid-template-columns: 3fr 1fr;
+      gap: 20px;
+      align-items: flex-start;
+    }
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      font-size: 0.8rem;
+      background: #111524;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    thead {
+      background: #151a30;
+    }
+    th, td {
+      border-bottom: 1px solid #222842;
+      padding: 6px 8px;
+      text-align: left;
+      vertical-align: middle;
+    }
+    th {
+      cursor: pointer;
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+    th.sortable::after {
+      content: " ⇅";
+      font-size: 0.7rem;
+      color: #888;
+    }
+    th.sorted-asc::after {
+      content: " ↑";
+      color: #ffda79;
+    }
+    th.sorted-desc::after {
+      content: " ↓";
+      color: #ffda79;
+    }
+    tbody tr:nth-child(even) {
+      background: #14192a;
+    }
+    tbody tr:hover {
+      background: #1b2138;
+    }
+    .team-cell {
+      font-weight: 600;
+      border-radius: 4px;
+    }
+    .owner-cell[contenteditable="true"],
+    .points-cell[contenteditable="true"] {
+      background: #1b2138;
+      border-radius: 3px;
+      outline: none;
+    }
+    .owner-cell[contenteditable="true"]:focus,
+    .points-cell[contenteditable="true"]:focus {
+      box-shadow: 0 0 0 1px #ffda79;
+    }
+    .leaderboard {
+      background: #111524;
+      border-radius: 6px;
+      padding: 10px 12px;
+      font-size: 0.85rem;
+    }
+    .leaderboard h2 {
+      margin-top: 0;
+    }
+    .leaderboard-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 0;
+      border-bottom: 1px solid #222842;
+    }
+    .leaderboard-item:last-child {
+      border-bottom: none;
+    }
+    .summary-box {
+      margin-top: 12px;
+      padding: 10px 12px;
+      background: #151a30;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      line-height: 1.3;
+      color: #e2e6ff;
+      white-space: pre-line;
+    }
+    .badge {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      background: #222842;
+      color: #ffda79;
+      margin-left: 6px;
+    }
+    .small-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #9aa0c2;
+    }
+  </style>
+</head>
+<body>
+  <h1>NCAA 2026 Fantasy Tournament Tracker</h1>
+  <p>
+    Owners draft players for the full tournament. Update each player's <strong>Total Points</strong> as games finish; the table and owner leaderboard will auto-update.
+  </p>
+
+  <div class="layout">
+    <div>
+      <div class="small-label">Player Pool</div>
+      <table id="playersTable" class="sortable">
+        <thead>
+          <tr>
+            <th class="sortable" data-type="string">Team</th>
+            <th class="sortable" data-type="string">Player</th>
+            <th class="sortable" data-type="string">Owner</th>
+            <th class="sortable" data-type="number">Total Points</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- DATA ROWS START -->
+          <!-- Akron -->
+          <tr data-fill="#041E42" data-font="#A89968">
+            <td class="team-cell">Akron</td>
+            <td>Tavari Johnson (20.1 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#041E42" data-font="#A89968">
+            <td class="team-cell">Akron</td>
+            <td>Amani Lyles (14.6 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#041E42" data-font="#A89968">
+            <td class="team-cell">Akron</td>
+            <td>Shammah Scott (12.7 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#041E42" data-font="#A89968">
+            <td class="team-cell">Akron</td>
+            <td>Evan Mahaffey (10.2 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#041E42" data-font="#A89968">
+            <td class="team-cell">Akron</td>
+            <td>Bowen Hardman (7.8 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#041E42" data-font="#A89968">
+            <td class="team-cell">Akron</td>
+            <td>Sharron Young (7.3 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- Alabama -->
+          <tr data-fill="#9E1B32" data-font="#FFFFFF">
+            <td class="team-cell">Alabama</td>
+            <td>Labaron Philon (21.7 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#9E1B32" data-font="#FFFFFF">
+            <td class="team-cell">Alabama</td>
+            <td>Aden Holloway (16.8 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#9E1B32" data-font="#FFFFFF">
+            <td class="team-cell">Alabama</td>
+            <td>Latrell Wrightsell Jr. (12.8 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#9E1B32" data-font="#FFFFFF">
+            <td class="team-cell">Alabama</td>
+            <td>Amari Allen (11.7 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#9E1B32" data-font="#FFFFFF">
+            <td class="team-cell">Alabama</td>
+            <td>Aiden Sherrell (11.1 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#9E1B32" data-font="#FFFFFF">
+            <td class="team-cell">Alabama</td>
+            <td>Charles Bediako (10.0 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- Arizona -->
+          <tr data-fill="#CC0033" data-font="#003366">
+            <td class="team-cell">Arizona</td>
+            <td>Brayden Burries (15.9 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#CC0033" data-font="#003366">
+            <td class="team-cell">Arizona</td>
+            <td>Koa Peat (13.6 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#CC0033" data-font="#003366">
+            <td class="team-cell">Arizona</td>
+            <td>Jaden Bradley (13.3 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#CC0033" data-font="#003366">
+            <td class="team-cell">Arizona</td>
+            <td>Motiejus Krivas (10.5 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#CC0033" data-font="#003366">
+            <td class="team-cell">Arizona</td>
+            <td>Ivan Kharchenkov (10.1 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#CC0033" data-font="#003366">
+            <td class="team-cell">Arizona</td>
+            <td>Tobe Awaka (9.4 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- Arkansas -->
+          <tr data-fill="#9D2235" data-font="#FFFFFF">
+            <td class="team-cell">Arkansas</td>
+            <td>Darius Acuff Jr. (22.7 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#9D2235" data-font="#FFFFFF">
+            <td class="team-cell">Arkansas</td>
+            <td>Meleek Thomas (15.5 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#9D2235" data-font="#FFFFFF">
+            <td class="team-cell">Arkansas</td>
+            <td>Trevon Brazile (13.1 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#9D2235" data-font="#FFFFFF">
+            <td class="team-cell">Arkansas</td>
+            <td>Billy Richmond III (10.8 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#9D2235" data-font="#FFFFFF">
+            <td class="team-cell">Arkansas</td>
+            <td>Karter Knox (10.1 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#9D2235" data-font="#FFFFFF">
+            <td class="team-cell">Arkansas</td>
+            <td>Boogie Fland (9.5 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- BYU -->
+          <tr data-fill="#002E5D" data-font="#FFFFFF">
+            <td class="team-cell">BYU</td>
+            <td>AJ Dybantsa (25.3 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#002E5D" data-font="#FFFFFF">
+            <td class="team-cell">BYU</td>
+            <td>Robert Wright III (18.2 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#002E5D" data-font="#FFFFFF">
+            <td class="team-cell">BYU</td>
+            <td>Richie Saunders (18.0 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#002E5D" data-font="#FFFFFF">
+            <td class="team-cell">BYU</td>
+            <td>Kennard Davis Jr. (8.5 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#002E5D" data-font="#FFFFFF">
+            <td class="team-cell">BYU</td>
+            <td>Dawson Baker (7.5 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#002E5D" data-font="#FFFFFF">
+            <td class="team-cell">BYU</td>
+            <td>Keba Keita (6.3 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- Cal Baptist -->
+          <tr data-fill="#004990" data-font="#FDB927">
+            <td class="team-cell">Cal Baptist</td>
+            <td>Dominique Daniels Jr. (23.2 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#004990" data-font="#FDB927">
+            <td class="team-cell">Cal Baptist</td>
+            <td>Jayden Jackson (12.9 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#004990" data-font="#FDB927">
+            <td class="team-cell">Cal Baptist</td>
+            <td>Martel Williams (12.7 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#004990" data-font="#FDB927">
+            <td class="team-cell">Cal Baptist</td>
+            <td>Jonathan Griman (7.5 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#004990" data-font="#FDB927">
+            <td class="team-cell">Cal Baptist</td>
+            <td>Jordan Muller (6.6 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#004990" data-font="#FDB927">
+            <td class="team-cell">Cal Baptist</td>
+            <td>Thomas Ndong (5.0 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- Clemson -->
+          <tr data-fill="#F66733" data-font="#522D80">
+            <td class="team-cell">Clemson</td>
+            <td>RJ Godfrey (11.9 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#F66733" data-font="#522D80">
+            <td class="team-cell">Clemson</td>
+            <td>Carter Welling (10.2 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#F66733" data-font="#522D80">
+            <td class="team-cell">Clemson</td>
+            <td>Jestin Porter (9.6 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#F66733" data-font="#522D80">
+            <td class="team-cell">Clemson</td>
+            <td>Nick Davidson (9.1 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#F66733" data-font="#522D80">
+            <td class="team-cell">Clemson</td>
+            <td>Ace Buckner (8.4 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#F66733" data-font="#522D80">
+            <td class="team-cell">Clemson</td>
+            <td>Dillon Hunter (7.5 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- Duke -->
+          <tr data-fill="#003087" data-font="#FFFFFF">
+            <td class="team-cell">Duke</td>
+            <td>Cameron Boozer (22.5 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#003087" data-font="#FFFFFF">
+            <td class="team-cell">Duke</td>
+            <td>Isaiah Evans (14.9 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#003087" data-font="#FFFFFF">
+            <td class="team-cell">Duke</td>
+            <td>Patrick Ngongba II (10.7 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#003087" data-font="#FFFFFF">
+            <td class="team-cell">Duke</td>
+            <td>Caleb Foster (8.5 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#003087" data-font="#FFFFFF">
+            <td class="team-cell">Duke</td>
+            <td>Cayden Boozer (7.1 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#003087" data-font="#FFFFFF">
+            <td class="team-cell">Duke</td>
+            <td>Dame Sarr (6.3 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- Florida -->
+          <tr data-fill="#0021A5" data-font="#FA4616">
+            <td class="team-cell">Florida</td>
+            <td>Thomas Haugh (17.1 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#0021A5" data-font="#FA4616">
+            <td class="team-cell">Florida</td>
+            <td>Alex Condon (15.0 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#0021A5" data-font="#FA4616">
+            <td class="team-cell">Florida</td>
+            <td>Boogie Fland (11.6 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#0021A5" data-font="#FA4616">
+            <td class="team-cell">Florida</td>
+            <td>Xaivian Lee (11.5 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#0021A5" data-font="#FA4616">
+            <td class="team-cell">Florida</td>
+            <td>Rueben Chinyelu (11.2 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#0021A5" data-font="#FA4616">
+            <td class="team-cell">Florida</td>
+            <td>Urban Klavzar (9.7 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- Furman -->
+          <tr data-fill="#582C83" data-font="#FFFFFF">
+            <td class="team-cell">Furman</td>
+            <td>Nick Anderson (18.7 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#582C83" data-font="#FFFFFF">
+            <td class="team-cell">Furman</td>
+            <td>Cooper Bowser (13.3 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#582C83" data-font="#FFFFFF">
+            <td class="team-cell">Furman</td>
+            <td>Matt Rafferty (11.2 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#582C83" data-font="#FFFFFF">
+            <td class="team-cell">Furman</td>
+            <td>Garrett Hien (9.4 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#582C83" data-font="#FFFFFF">
+            <td class="team-cell">Furman</td>
+            <td>Jackson Price (8.8 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#582C83" data-font="#FFFFFF">
+            <td class="team-cell">Furman</td>
+            <td>Cameron Calhoun (6.8 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- Georgia -->
+          <tr data-fill="#BA0C2F" data-font="#000000">
+            <td class="team-cell">Georgia</td>
+            <td>Jeremiah Wilkinson (17.0 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#BA0C2F" data-font="#000000">
+            <td class="team-cell">Georgia</td>
+            <td>Blue Cain (13.3 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#BA0C2F" data-font="#000000">
+            <td class="team-cell">Georgia</td>
+            <td>Kanon Catchings (12.0 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#BA0C2F" data-font="#000000">
+            <td class="team-cell">Georgia</td>
+            <td>Marcus Millender (11.9 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#BA0C2F" data-font="#000000">
+            <td class="team-cell">Georgia</td>
+            <td>Somtochukwu Cyril (9.6 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#BA0C2F" data-font="#000000">
+            <td class="team-cell">Georgia</td>
+            <td>Jordan Ross (6.6 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- Gonzaga -->
+          <tr data-fill="#041E42" data-font="#C8102E">
+            <td class="team-cell">Gonzaga</td>
+            <td>Graham Ike (19.7 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#041E42" data-font="#C8102E">
+            <td class="team-cell">Gonzaga</td>
+            <td>Braden Huff (17.8 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#041E42" data-font="#C8102E">
+            <td class="team-cell">Gonzaga</td>
+            <td>Tyon Grant-Foster (11.2 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#041E42" data-font="#C8102E">
+            <td class="team-cell">Gonzaga</td>
+            <td>Mario Saint-Supery (8.6 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#041E42" data-font="#C8102E">
+            <td class="team-cell">Gonzaga</td>
+            <td>Davis Fogle (8.4 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#041E42" data-font="#C8102E">
+            <td class="team-cell">Gonzaga</td>
+            <td>Adam Miller (7.6 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- Hawaii -->
+          <tr data-fill="#024731" data-font="#FFFFFF">
+            <td class="team-cell">Hawaii</td>
+            <td>Gytis Nemeiksa (14.1 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#024731" data-font="#FFFFFF">
+            <td class="team-cell">Hawaii</td>
+            <td>Marcus Greene (13.5 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#024731" data-font="#FFFFFF">
+            <td class="team-cell">Hawaii</td>
+            <td>Tanner Christensen (10.8 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#024731" data-font="#FFFFFF">
+            <td class="team-cell">Hawaii</td>
+            <td>AJ Aros (9.3 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#024731" data-font="#FFFFFF">
+            <td class="team-cell">Hawaii</td>
+            <td>Akira Jacobs (9.1 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#024731" data-font="#FFFFFF">
+            <td class="team-cell">Hawaii</td>
+            <td>Ryan Rapp (8.5 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- High Point -->
+          <tr data-fill="#582C83" data-font="#FFFFFF">
+            <td class="team-cell">High Point</td>
+            <td>Terry Anderson (16.0 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#582C83" data-font="#FFFFFF">
+            <td class="team-cell">High Point</td>
+            <td>Rob Martin (15.3 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#582C83" data-font="#FFFFFF">
+            <td class="team-cell">High Point</td>
+            <td>Cam'Ron Fletcher (12.7 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#582C83" data-font="#FFFFFF">
+            <td class="team-cell">High Point</td>
+            <td>Owen Aquino (9.4 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#582C83" data-font="#FFFFFF">
+            <td class="team-cell">High Point</td>
+            <td>Conrad Martinez (8.7 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#582C83" data-font="#FFFFFF">
+            <td class="team-cell">High Point</td>
+            <td>Braden Hausen (6.8 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- Hofstra -->
+          <tr data-fill="#00405B" data-font="#F7941D">
+            <td class="team-cell">Hofstra</td>
+            <td>Cruz Davis (20.2 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#00405B" data-font="#F7941D">
+            <td class="team-cell">Hofstra</td>
+            <td>Preston Edmead (15.8 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#00405B" data-font="#F7941D">
+            <td class="team-cell">Hofstra</td>
+            <td>Biggie Patterson (9.5 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#00405B" data-font="#F7941D">
+            <td class="team-cell">Hofstra</td>
+            <td>German Plotnikov (8.9 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#00405B" data-font="#F7941D">
+            <td class="team-cell">Hofstra</td>
+            <td>Victory Onuetu (5.2 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#00405B" data-font="#F7941D">
+            <td class="team-cell">Hofstra</td>
+            <td>Silas Sunday (4.7 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- Houston -->
+          <tr data-fill="#C8102E" data-font="#FFFFFF">
+            <td class="team-cell">Houston</td>
+            <td>Kingston Flemings (16.4 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#C8102E" data-font="#FFFFFF">
+            <td class="team-cell">Houston</td>
+            <td>Emanuel Sharp (15.3 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#C8102E" data-font="#FFFFFF">
+            <td class="team-cell">Houston</td>
+            <td>Milos Uzan (11.1 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#C8102E" data-font="#FFFFFF">
+            <td class="team-cell">Houston</td>
+            <td>Chris Cenac Jr. (9.5 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#C8102E" data-font="#FFFFFF">
+            <td class="team-cell">Houston</td>
+            <td>Joseph Tugler (8.4 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#C8102E" data-font="#FFFFFF">
+            <td class="team-cell">Houston</td>
+            <td>Mercy Miller (4.8 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- Idaho -->
+          <tr data-fill="#000000" data-font="#BFA567">
+            <td class="team-cell">Idaho</td>
+            <td>Julius Mims (21.6 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#000000" data-font="#BFA567">
+            <td class="team-cell">Idaho</td>
+            <td>Kolton Mitchell (17.8 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#000000" data-font="#BFA567">
+            <td class="team-cell">Idaho</td>
+            <td>Tyler Mrus (11.2 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#000000" data-font="#BFA567">
+            <td class="team-cell">Idaho</td>
+            <td>Isaiah Brickner (8.9 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#000000" data-font="#BFA567">
+            <td class="team-cell">Idaho</td>
+            <td>Kyson Rose (8.4 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#000000" data-font="#BFA567">
+            <td class="team-cell">Idaho</td>
+            <td>Jack Payne (6.7 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- Illinois -->
+          <tr data-fill="#E84A27" data-font="#13294B">
+            <td class="team-cell">Illinois</td>
+            <td>Keaton Wagler (17.9 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#E84A27" data-font="#13294B">
+            <td class="team-cell">Illinois</td>
+            <td>David Mirkovic (13.4 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#E84A27" data-font="#13294B">
+            <td class="team-cell">Illinois</td>
+            <td>Kylan Boswell (13.2 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#E84A27" data-font="#13294B">
+            <td class="team-cell">Illinois</td>
+            <td>Andrej Stojakovic (12.9 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#E84A27" data-font="#13294B">
+            <td class="team-cell">Illinois</td>
+            <td>Zvonimir Ivisic (11.3 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#E84A27" data-font="#13294B">
+            <td class="team-cell">Illinois</td>
+            <td>Tomislav Ivisic (7.0 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- Iowa -->
+          <tr data-fill="#000000" data-font="#FFCD00">
+            <td class="team-cell">Iowa</td>
+            <td>Bennett Stirtz (20.2 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#000000" data-font="#FFCD00">
+            <td class="team-cell">Iowa</td>
+            <td>Tavion Banks (10.5 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#000000" data-font="#FFCD00">
+            <td class="team-cell">Iowa</td>
+            <td>Cam Manyawu (7.1 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#000000" data-font="#FFCD00">
+            <td class="team-cell">Iowa</td>
+            <td>Kael Combs (5.9 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#000000" data-font="#FFCD00">
+            <td class="team-cell">Iowa</td>
+            <td>Tate Sage (5.7 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#000000" data-font="#FFCD00">
+            <td class="team-cell">Iowa</td>
+            <td>Isaia Howard (5.4 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- Iowa State -->
+          <tr data-fill="#C8102E" data-font="#FFC72C">
+            <td class="team-cell">Iowa State</td>
+            <td>Milan Momcilovic (16.5 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#C8102E" data-font="#FFC72C">
+            <td class="team-cell">Iowa State</td>
+            <td>Joshua Jefferson (15.1 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#C8102E" data-font="#FFC72C">
+            <td class="team-cell">Iowa State</td>
+            <td>Tamin Lipsey (14.4 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#C8102E" data-font="#FFC72C">
+            <td class="team-cell">Iowa State</td>
+            <td>Blake Buchanan (12.3 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#C8102E" data-font="#FFC72C">
+            <td class="team-cell">Iowa State</td>
+            <td>Killyan Toure (8.1 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#C8102E" data-font="#FFC72C">
+            <td class="team-cell">Iowa State</td>
+            <td>Jamarion Batemon (6.9 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- Kansas -->
+          <tr data-fill="#0051BA" data-font="#E8000D">
+            <td class="team-cell">Kansas</td>
+            <td>Darryn Peterson (19.9 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#0051BA" data-font="#E8000D">
+            <td class="team-cell">Kansas</td>
+            <td>Tre White (14.3 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#0051BA" data-font="#E8000D">
+            <td class="team-cell">Kansas</td>
+            <td>Flory Bidunga (13.8 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#0051BA" data-font="#E8000D">
+            <td class="team-cell">Kansas</td>
+            <td>Melvin Council Jr. (13.4 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#0051BA" data-font="#E8000D">
+            <td class="team-cell">Kansas</td>
+            <td>Bryson Tiller (8.2 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#0051BA" data-font="#E8000D">
+            <td class="team-cell">Kansas</td>
+            <td>Elmarko Jackson (4.9 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- Kennesaw State -->
+          <tr data-fill="#000000" data-font="#FDB927">
+            <td class="team-cell">Kennesaw State</td>
+            <td>Simeon Cottle (20.2 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#000000" data-font="#FDB927">
+            <td class="team-cell">Kennesaw State</td>
+            <td>RJ Johnson (14.2 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#000000" data-font="#FDB927">
+            <td class="team-cell">Kennesaw State</td>
+            <td>Braedan Lue (11.4 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#000000" data-font="#FDB927">
+            <td class="team-cell">Kennesaw State</td>
+            <td>Adrian Wooley (10.6 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#000000" data-font="#FDB927">
+            <td class="team-cell">Kennesaw State</td>
+            <td>Trey Simpson (9.3 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#000000" data-font="#FDB927">
+            <td class="team-cell">Kennesaw State</td>
+            <td>Ramone Seals (7.6 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- Kentucky -->
+          <tr data-fill="#0033A0" data-font="#FFFFFF">
+            <td class="team-cell">Kentucky</td>
+            <td>Otega Oweh (18.2 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#0033A0" data-font="#FFFFFF">
+            <td class="team-cell">Kentucky</td>
+            <td>Denzel Aberdeen (13.2 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#0033A0" data-font="#FFFFFF">
+            <td class="team-cell">Kentucky</td>
+            <td>Collin Chandler (9.9 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#0033A0" data-font="#FFFFFF">
+            <td class="team-cell">Kentucky</td>
+            <td>Mouhamed Dioubate (8.7 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#0033A0" data-font="#FFFFFF">
+            <td class="team-cell">Kentucky</td>
+            <td>Malachi Moreno (8.0 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#0033A0" data-font="#FFFFFF">
+            <td class="team-cell">Kentucky</td>
+            <td>Jaland Lowe (8.0 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- LIU -->
+          <tr data-fill="#003087" data-font="#FFC82D">
+            <td class="team-cell">LIU</td>
+            <td>Jamal Fuller (16.4 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#003087" data-font="#FFC82D">
+            <td class="team-cell">LIU</td>
+            <td>Malachi Davis (14.4 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#003087" data-font="#FFC82D">
+            <td class="team-cell">LIU</td>
+            <td>Greg Gordon (14.1 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#003087" data-font="#FFC82D">
+            <td class="team-cell">LIU</td>
+            <td>Jomo Goings (10.0 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#003087" data-font="#FFC82D">
+            <td class="team-cell">LIU</td>
+            <td>Mason Porter-Brown (7.5 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#003087" data-font="#FFC82D">
+            <td class="team-cell">LIU</td>
+            <td>Shadrak Lasu (5.2 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- Louisville -->
+          <tr data-fill="#AD0000" data-font="#000000">
+            <td class="team-cell">Louisville</td>
+            <td>Ryan Conwell (18.7 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#AD0000" data-font="#000000">
+            <td class="team-cell">Louisville</td>
+            <td>Mikel Brown Jr. (18.2 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#AD0000" data-font="#000000">
+            <td class="team-cell">Louisville</td>
+            <td>J'Vonne Hadley (11.8 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#AD0000" data-font="#000000">
+            <td class="team-cell">Louisville</td>
+            <<td>Isaac McKneely (10.6 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#AD0000" data-font="#000000">
+            <td class="team-cell">Louisville</td>
+            <td>Sananda Fru (9.2 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#AD0000" data-font="#000000">
+            <td class="team-cell">Louisville</td>
+            <td>Adrian Wooley (8.5 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- McNeese -->
+          <tr data-fill="#002D72" data-font="#FFC72C">
+            <td class="team-cell">McNeese</td>
+            <td>Quadir Copeland (17.3 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#002D72" data-font="#FFC72C">
+            <td class="team-cell">McNeese</td>
+            <td>Christian Shumate (14.9 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#002D72" data-font="#FFC72C">
+            <td class="team-cell">McNeese</td>
+            <td>CJ Felder (13.6 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#002D72" data-font="#FFC72C">
+            <td class="team-cell">McNeese</td>
+            <td>Javohn Garcia (13.1 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#002D72" data-font="#FFC72C">
+            <td class="team-cell">McNeese</td>
+            <td>Joe Charles (9.8 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#002D72" data-font="#FFC72C">
+            <td class="team-cell">McNeese</td>
+            <td>Isaiah Nelson (8.1 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- Miami -->
+          <tr data-fill="#F47321" data-font="#005030">
+            <td class="team-cell">Miami</td>
+            <td>Malik Reneau (18.8 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#F47321" data-font="#005030">
+            <td class="team-cell">Miami</td>
+            <td>Tre Donaldson (16.5 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#F47321" data-font="#005030">
+            <td class="team-cell">Miami</td>
+            <td>Shelton Henderson (13.7 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#F47321" data-font="#005030">
+            <td class="team-cell">Miami</td>
+            <td>Tru Washington (12.1 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#F47321" data-font="#005030">
+            <td class="team-cell">Miami</td>
+            <td>Ernest Udeh Jr. (6.9 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#F47321" data-font="#005030">
+            <td class="team-cell">Miami</td>
+            <td>Dante Allen (6.4 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- Miami (OH)/SMU -->
+          <tr data-fill="#C8102E" data-font="#003087">
+            <td class="team-cell">Miami (OH)/SMU</td>
+            <td>Boopie Miller (19.2 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#C8102E" data-font="#003087">
+            <td class="team-cell">Miami (OH)/SMU</td>
+            <td>Jaron Pierre Jr. (17.6 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#C8102E" data-font="#003087">
+            <td class="team-cell">Miami (OH)/SMU</td>
+            <td>Peter Suder (14.6 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#C8102E" data-font="#003087">
+            <td class="team-cell">Miami (OH)/SMU</td>
+            <td>Brant Byers (14.2 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#C8102E" data-font="#003087">
+            <td class="team-cell">Miami (OH)/SMU</td>
+            <td>Evan Ipsaro (13.9 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#C8102E" data-font="#003087">
+            <td class="team-cell">Miami (OH)/SMU</td>
+            <td>Eian Elmer (12.6 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- Michigan -->
+          <tr data-fill="#00274C" data-font="#FFCB05">
+            <td class="team-cell">Michigan</td>
+            <td>Yaxel Lendeborg (14.4 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#00274C" data-font="#FFCB05">
+            <td class="team-cell">Michigan</td>
+            <td>Morez Johnson Jr. (13.3 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#00274C" data-font="#FFCB05">
+            <td class="team-cell">Michigan</td>
+            <td>Aday Mara (11.6 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#00274C" data-font="#FFCB05">
+            <td class="team-cell">Michigan</td>
+            <td>Elliot Cadeau (10.2 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#00274C" data-font="#FFCB05">
+            <td class="team-cell">Michigan</td>
+            <td>Trey McKenney (9.7 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#00274C" data-font="#FFCB05">
+            <td class="team-cell">Michigan</td>
+            <td>L.J. Cason (8.4 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- Michigan State -->
+          <tr data-fill="#18453B" data-font="#FFFFFF">
+            <td class="team-cell">Michigan State</td>
+            <td>Jeremy Fears Jr. (15.7 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#18453B" data-font="#FFFFFF">
+            <td class="team-cell">Michigan State</td>
+            <td>Jaxon Kohler (12.7 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#18453B" data-font="#FFFFFF">
+            <td class="team-cell">Michigan State</td>
+            <td>Coen Carr (11.6 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#18453B" data-font="#FFFFFF">
+            <td class="team-cell">Michigan State</td>
+            <td>Carson Cooper (10.8 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#18453B" data-font="#FFFFFF">
+            <td class="team-cell">Michigan State</td>
+            <td>Kur Teng (7.7 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#18453B" data-font="#FFFFFF">
+            <td class="team-cell">Michigan State</td>
+            <td>Jordan Scott (5.9 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- Missouri -->
+          <tr data-fill="#000000" data-font="#F1B82D">
+            <td class="team-cell">Missouri</td>
+            <td>Mark Mitchell (18.3 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#000000" data-font="#F1B82D">
+            <td class="team-cell">Missouri</td>
+            <td>Jayden Stone (13.2 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#000000" data-font="#F1B82D">
+            <td class="team-cell">Missouri</td>
+            <td>Trent Pierce (10.6 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#000000" data-font="#F1B82D">
+            <td class="team-cell">Missouri</td>
+            <td>T.O. Barrett (8.9 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#000000" data-font="#F1B82D">
+            <td class="team-cell">Missouri</td>
+            <td>Anthony Robinson II (8.8 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#000000" data-font="#F1B82D">
+            <td class="team-cell">Missouri</td>
+            <td>Jacob Crews (8.6 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- Nebraska -->
+          <tr data-fill="#E41C38" data-font="#FFFFFF">
+            <td class="team-cell">Nebraska</td>
+            <td>Pryce Sandfort (17.8 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#E41C38" data-font="#FFFFFF">
+            <td class="team-cell">Nebraska</td>
+            <td>Rienk Mast (13.5 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#E41C38" data-font="#FFFFFF">
+            <td class="team-cell">Nebraska</td>
+            <td>Braden Frager (11.6 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#E41C38" data-font="#FFFFFF">
+            <td class="team-cell">Nebraska</td>
+            <td>Jamarques Lawrence (9.7 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#E41C38" data-font="#FFFFFF">
+            <td class="team-cell">Nebraska</td>
+            <td>Sam Hoiberg (9.6 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#E41C38" data-font="#FFFFFF">
+            <td class="team-cell">Nebraska</td>
+            <td>Ugnius Jarusevicius (7.0 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- North Carolina -->
+          <tr data-fill="#7BAFD4" data-font="#FFFFFF">
+            <td class="team-cell">North Carolina</td>
+            <td>Caleb Wilson (19.8 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#7BAFD4" data-font="#FFFFFF">
+            <td class="team-cell">North Carolina</td>
+            <td>Henri Veesaar (16.7 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#7BAFD4" data-font="#FFFFFF">
+            <td class="team-cell">North Carolina</td>
+            <td>Jarin Stevenson (14.9 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#7BAFD4" data-font="#FFFFFF">
+            <td class="team-cell">North Carolina</td>
+            <td>Drake Powell (10.3 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#7BAFD4" data-font="#FFFFFF">
+            <td class="team-cell">North Carolina</td>
+            <td>Tessa Johnson (8.9 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#7BAFD4" data-font="#FFFFFF">
+            <td class="team-cell">North Carolina</td>
+            <td>Jonathan Rosario (6.7 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- North Dakota State -->
+          <tr data-fill="#006747" data-font="#FFC72C">
+            <td class="team-cell">North Dakota State</td>
+            <td>Jacari White (18.8 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#006747" data-font="#FFC72C">
+            <td class="team-cell">North Dakota State</td>
+            <td>Brennan Watkins (12.3 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#006747" data-font="#FFC72C">
+            <td class="team-cell">North Dakota State</td>
+            <td>Masen Miller (11.6 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#006747" data-font="#FFC72C">
+            <td class="team-cell">North Dakota State</td>
+            <td>Ryan Conger (8.2 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#006747" data-font="#FFC72C">
+            <td class="team-cell">North Dakota State</td>
+            <td>Tay Smith (7.5 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#006747" data-font="#FFC72C">
+            <td class="team-cell">North Dakota State</td>
+            <td>Carson Smith (4.2 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- Northern Iowa -->
+          <tr data-fill="#4B116F" data-font="#FFC72C">
+            <td class="team-cell">Northern Iowa</td>
+            <td>Tytan Anderson (21.1 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#4B116F" data-font="#FFC72C">
+            <td class="team-cell">Northern Iowa</td>
+            <td>Leon Bond III (18.8 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#4B116F" data-font="#FFC72C">
+            <td class="team-cell">Northern Iowa</td>
+            <td>Trey Campbell (8.8 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#4B116F" data-font="#FFC72C">
+            <td class="team-cell">Northern Iowa</td>
+            <td>Adam Borgerding (5.4 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#4B116F" data-font="#FFC72C">
+            <td class="team-cell">Northern Iowa</td>
+            <td>AJ Green (5.0 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#4B116F" data-font="#FFC72C">
+            <td class="team-cell">Northern Iowa</td>
+            <td>Tray Croft (4.6 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- Ohio State -->
+          <tr data-fill="#BB0000" data-font="#666666">
+            <td class="team-cell">Ohio State</td>
+            <td>Bruce Thornton (20.3 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#BB0000" data-font="#666666">
+            <td class="team-cell">Ohio State</td>
+            <td>John Mobley Jr. (15.6 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#BB0000" data-font="#666666">
+            <td class="team-cell">Ohio State</td>
+            <td>Devin Royal (13.7 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#BB0000" data-font="#666666">
+            <td class="team-cell">Ohio State</td>
+            <td>Christoph Tilly (11.0 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#BB0000" data-font="#666666">
+            <td class="team-cell">Ohio State</td>
+            <td>Amare Bynum (9.7 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#BB0000" data-font="#666666">
+            <td class="team-cell">Ohio State</td>
+            <td>Brandon Noel (7.1 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- Penn -->
+          <tr data-fill="#011F5B" data-font="#C41230">
+            <td class="team-cell">Penn</td>
+            <td>Sam Brown (18.7 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#011F5B" data-font="#C41230">
+            <td class="team-cell">Penn</td>
+            <td>Tyler Perkins (15.2 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#011F5B" data-font="#C41230">
+            <td class="team-cell">Penn</td>
+            <td>Ethan Roberts (13.4 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#011F5B" data-font="#C41230">
+            <td class="team-cell">Penn</td>
+            <td>Nick Spinoso (11.8 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#011F5B" data-font="#C41230">
+            <td class="team-cell">Penn</td>
+            <td>Michael Moshkovitz (9.1 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#011F5B" data-font="#C41230">
+            <td class="team-cell">Penn</td>
+            <td>George Smith (7.5 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- Prairie View/Lehigh -->
+          <tr data-fill="#582C83" data-font="#FFC72C">
+            <td class="team-cell">Prairie View/Lehigh</td>
+            <td>Nasir Whitlock (21.1 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#582C83" data-font="#FFC72C">
+            <td class="team-cell">Prairie View/Lehigh</td>
+            <td>Dontae Horne (20.4 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#582C83" data-font="#FFC72C">
+            <td class="team-cell">Prairie View/Lehigh</td>
+            <td>Tai'Reon Joseph (17.9 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#582C83" data-font="#FFC72C">
+            <td class="team-cell">Prairie View/Lehigh</td>
+            <td>Hank Alvey (15.0 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#582C83" data-font="#FFC72C">
+            <td class="team-cell">Prairie View/Lehigh</td>
+            <td>Cory Wells (13.1 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#582C83" data-font="#FFC72C">
+            <td class="team-cell">Prairie View/Lehigh</td>
+            <td>Lance Williams (9.9 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- Purdue -->
+          <tr data-fill="#000000" data-font="#CFB991">
+            <td class="team-cell">Purdue</td>
+            <td>Braden Smith (14.0 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#000000" data-font="#CFB991">
+            <td class="team-cell">Purdue</td>
+            <td>Fletcher Loyer (13.8 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#000000" data-font="#CFB991">
+            <td class="team-cell">Purdue</td>
+            <td>Trey Kaufman-Renn (13.4 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#000000" data-font="#CFB991">
+            <td class="team-cell">Purdue</td>
+            <td>Oscar Cluff (10.3 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#000000" data-font="#CFB991">
+            <td class="team-cell">Purdue</td>
+            <td>C.J. Cox (8.4 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#000000" data-font="#CFB991">
+            <td class="team-cell">Purdue</td>
+            <td>Daniel Jacobsen (6.2 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- Queens -->
+          <tr data-fill="#003087" data-font="#CC0000">
+            <td class="team-cell">Queens</td>
+            <td>Nasir Mann (13.4 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#003087" data-font="#CC0000">
+            <td class="team-cell">Queens</td>
+            <td>Yoav Berman (12.6 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#003087" data-font="#CC0000">
+            <td class="team-cell">Queens</td>
+            <td>Jordan Watford (11.9 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#003087" data-font="#CC0000">
+            <td class="team-cell">Queens</td>
+            <td>Chris Ashby (11.7 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#003087" data-font="#CC0000">
+            <td class="team-cell">Queens</td>
+            <td>Avantae Parker (11.3 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#003087" data-font="#CC0000">
+            <td class="team-cell">Queens</td>
+            <td>Carson Schwieger (10.2 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- Santa Clara -->
+          <tr data-fill="#B30838" data-font="#FFFFFF">
+            <td class="team-cell">Santa Clara</td>
+            <td>Adama Bal (20.5 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#B30838" data-font="#FFFFFF">
+            <td class="team-cell">Santa Clara</td>
+            <td>Johnny O'Neil (13.5 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#B30838" data-font="#FFFFFF">
+            <td class="team-cell">Santa Clara</td>
+            <td>Elijah Mahi (12.8 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#B30838" data-font="#FFFFFF">
+            <td class="team-cell">Santa Clara</td>
+            <td>Carlos Stewart (11.4 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#B30838" data-font="#FFFFFF">
+            <td class="team-cell">Santa Clara</td>
+            <td>Camaron Tongue (10.7 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#B30838" data-font="#FFFFFF">
+            <td class="team-cell">Santa Clara</td>
+            <td>Tyeree Bryan (9.1 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- Siena -->
+          <tr data-fill="#046A38" data-font="#FFC72C">
+            <td class="team-cell">Siena</td>
+            <td>Aidan Carpenter (16.4 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#046A38" data-font="#FFC72C">
+            <td class="team-cell">Siena</td>
+            <td>Major Freeman (14.7 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#046A38" data-font="#FFC72C">
+            <td class="team-cell">Siena</td>
+            <td>Nick Lebrun (8.9 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#046A38" data-font="#FFC72C">
+            <td class="team-cell">Siena</td>
+            <td>Justice Smith (8.4 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#046A38" data-font="#FFC72C">
+            <td class="team-cell">Siena</td>
+            <td>Jaiden Carter (6.7 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#046A38" data-font="#FFC72C">
+            <td class="team-cell">Siena</td>
+            <td>Peter Carey (5.1 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- South Florida -->
+          <tr data-fill="#006747" data-font="#CFC493">
+            <td class="team-cell">South Florida</td>
+            <td>Wes Enis (16.5 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#006747" data-font="#CFC493">
+            <td class="team-cell">South Florida</td>
+            <td>Izaiyah Nelson (15.8 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#006747" data-font="#CFC493">
+            <td class="team-cell">South Florida</td>
+            <td>Joseph Pinion (14.2 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#006747" data-font="#CFC493">
+            <td class="team-cell">South Florida</td>
+            <td>Kobe Knox (11.1 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#006747" data-font="#CFC493">
+            <td class="team-cell">South Florida</td>
+            <td>Jayden Reid (8.3 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#006747" data-font="#CFC493">
+            <td class="team-cell">South Florida</td>
+            <td>Quinton Forrest (5.2 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- St. John's -->
+          <tr data-fill="#C8102E" data-font="#FFFFFF">
+            <td class="team-cell">St. John's</td>
+            <td>Zuby Ejiofor (16.3 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#C8102E" data-font="#FFFFFF">
+            <td class="team-cell">St. John's</td>
+            <td>Bryce Hopkins (13.5 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#C8102E" data-font="#FFFFFF">
+            <td class="team-cell">St. John's</td>
+            <td>Oziyah Sellers (10.7 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#C8102E" data-font="#FFFFFF">
+            <td class="team-cell">St. John's</td>
+            <td>Ian Jackson (9.6 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#C8102E" data-font="#FFFFFF">
+            <td class="team-cell">St. John's</td>
+            <td>Joson Sanon (8.3 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#C8102E" data-font="#FFFFFF">
+            <td class="team-cell">St. John's</td>
+            <td>Dillon Mitchell (8.2 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- St. Louis -->
+          <tr data-fill="#005DAA" data-font="#FFFFFF">
+            <td class="team-cell">St. Louis</td>
+            <td>Robbie Avila (21.7 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#005DAA" data-font="#FFFFFF">
+            <td class="team-cell">St. Louis</td>
+            <td>Isaiah Swope (19.8 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#005DAA" data-font="#FFFFFF">
+            <td class="team-cell">St. Louis</td>
+            <td>AJ Casey (12.1 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#005DAA" data-font="#FFFFFF">
+            <td class="team-cell">St. Louis</td>
+            <td>Josiah Dotzler (11.6 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#005DAA" data-font="#FFFFFF">
+            <td class="team-cell">St. Louis</td>
+            <td>Kalu Anya (9.8 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#005DAA" data-font="#FFFFFF">
+            <td class="team-cell">St. Louis</td>
+            <td>Kobe Johnson (8.3 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- St. Mary's -->
+          <tr data-fill="#003DA5" data-font="#C41230">
+            <td class="team-cell">St. Mary's</td>
+            <td>Paulius Murauskas (18.8 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#003DA5" data-font="#C41230">
+            <td class="team-cell">St. Mary's</td>
+            <td>Mikey Lewis (14.2 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#003DA5" data-font="#C41230">
+            <td class="team-cell">St. Mary's</td>
+            <td>Joshua Dent (13.0 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#003DA5" data-font="#C41230">
+            <td class="team-cell">St. Mary's</td>
+            <td>Andrew McKeever (8.4 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#003DA5" data-font="#C41230">
+            <td class="team-cell">St. Mary's</td>
+            <td>Dillan Shaw (7.5 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#003DA5" data-font="#C41230">
+            <td class="team-cell">St. Mary's</td>
+            <td>Harry Wessels (4.9 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- TCU -->
+          <tr data-fill="#4D1979" data-font="#FFFFFF">
+            <td class="team-cell">TCU</td>
+            <td>David Punch (14.3 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#4D1979" data-font="#FFFFFF">
+            <td class="team-cell">TCU</td>
+            <td>Xavier Edmonds (12.6 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#4D1979" data-font="#FFFFFF">
+            <td class="team-cell">TCU</td>
+            <td>Jayden Pierre (10.5 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#4D1979" data-font="#FFFFFF">
+            <td class="team-cell">TCU</td>
+            <td>Micah Robinson (10.5 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#4D1979" data-font="#FFFFFF">
+            <td class="team-cell">TCU</td>
+            <td>Tanner Toolson (8.0 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#4D1979" data-font="#FFFFFF">
+            <td class="team-cell">TCU</td>
+            <td>Brock Harding (8.0 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- Tennessee -->
+          <tr data-fill="#FF8200" data-font="#FFFFFF">
+            <td class="team-cell">Tennessee</td>
+            <td>Ja'Kobi Gillespie (18.0 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#FF8200" data-font="#FFFFFF">
+            <td class="team-cell">Tennessee</td>
+            <td>Nate Ament (17.5 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#FF8200" data-font="#FFFFFF">
+            <td class="team-cell">Tennessee</td>
+            <td>J.P. Estrella (10.1 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#FF8200" data-font="#FFFFFF">
+            <td class="team-cell">Tennessee</td>
+            <td>Felix Okpara (7.7 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#FF8200" data-font="#FFFFFF">
+            <td class="team-cell">Tennessee</td>
+            <td>Jaylen Carey (7.4 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#FF8200" data-font="#FFFFFF">
+            <td class="team-cell">Tennessee</td>
+            <td>Bishop Boswell (6.2 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- Tennessee State -->
+          <tr data-fill="#091D58" data-font="#3E7DC3">
+            <td class="team-cell">Tennessee State</td>
+            <td>Aaron Nkrumah (17.7 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#091D58" data-font="#3E7DC3">
+            <td class="team-cell">Tennessee State</td>
+            <td>Travis Harper II (17.3 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#091D58" data-font="#3E7DC3">
+            <td class="team-cell">Tennessee State</td>
+            <td>Dante Harris (11.5 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#091D58" data-font="#3E7DC3">
+            <td class="team-cell">Tennessee State</td>
+            <td>Antoine Lorick III (9.2 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#091D58" data-font="#3E7DC3">
+            <td class="team-cell">Tennessee State</td>
+            <td>Jalen Pitre (6.5 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#091D58" data-font="#3E7DC3">
+            <td class="team-cell">Tennessee State</td>
+            <td>Khalil London (6.4 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- Texas A&M -->
+          <tr data-fill="#500000" data-font="#FFFFFF">
+            <td class="team-cell">Texas A&M</td>
+            <td>Zhuric Phelps (18.8 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#500000" data-font="#FFFFFF">
+            <td class="team-cell">Texas A&M</td>
+            <td>Wade Taylor IV (17.4 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#500000" data-font="#FFFFFF">
+            <td class="team-cell">Texas A&M</td>
+            <td>Hayden Hefner (13.5 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#500000" data-font="#FFFFFF">
+            <td class="team-cell">Texas A&M</td>
+            <td>Pharrel Payne (12.9 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#500000" data-font="#FFFFFF">
+            <td class="team-cell">Texas A&M</td>
+            <td>Jace Carter (8.3 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#500000" data-font="#FFFFFF">
+            <td class="team-cell">Texas A&M</td>
+            <td>Manny Obaseki (7.1 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- Texas/NC State -->
+          <tr data-fill="#BF5700" data-font="#CC0000">
+            <td class="team-cell">Texas/NC State</td>
+            <td>Dailyn Swain (17.8 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#BF5700" data-font="#CC0000">
+            <td class="team-cell">Texas/NC State</td>
+            <td>Matas Vokietaitis (15.5 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#BF5700" data-font="#CC0000">
+            <td class="team-cell">Texas/NC State</td>
+            <td>Ven-Allen Lubin (13.9 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#BF5700" data-font="#CC0000">
+            <td class="team-cell">Texas/NC State</td>
+            <td>Quadir Copeland (13.9 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#BF5700" data-font="#CC0000">
+            <td class="team-cell">Texas/NC State</td>
+            <td>Tramon Mark (13.5 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#BF5700" data-font="#CC0000">
+            <td class="team-cell">Texas/NC State</td>
+            <td>Jordan Pope (13.3 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- Texas Tech -->
+          <tr data-fill="#CC0000" data-font="#000000">
+            <td class="team-cell">Texas Tech</td>
+            <td>JT Toppin (21.8 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#CC0000" data-font="#000000">
+            <td class="team-cell">Texas Tech</td>
+            <td>Christian Anderson (18.9 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#CC0000" data-font="#000000">
+            <td class="team-cell">Texas Tech</td>
+            <td>Donovan Atwell (13.5 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#CC0000" data-font="#000000">
+            <td class="team-cell">Texas Tech</td>
+            <td>LeJuan Watts (11.5 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#CC0000" data-font="#000000">
+            <td class="team-cell">Texas Tech</td>
+            <td>Jaylen Petty (9.5 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#CC0000" data-font="#000000">
+            <td class="team-cell">Texas Tech</td>
+            <td>Luke Bamgboye (4.7 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- Troy -->
+          <tr data-fill="#862633" data-font="#B5B5B5">
+            <td class="team-cell">Troy</td>
+            <td>Victor Valdes (15.2 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#862633" data-font="#B5B5B5">
+            <td class="team-cell">Troy</td>
+            <td>Thomas Dowd (14.6 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#862633" data-font="#B5B5B5">
+            <td class="team-cell">Troy</td>
+            <td>Theo Seng (12.9 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#862633" data-font="#B5B5B5">
+            <td class="team-cell">Troy</td>
+            <td>Cooper Campbell (12.7 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#862633" data-font="#B5B5B5">
+            <td class="team-cell">Troy</td>
+            <td>Cobi Campbell (9.0 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#862633" data-font="#B5B5B5">
+            <td class="team-cell">Troy</td>
+            <td>Jerrell Bellamy (8.2 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- UCF -->
+          <tr data-fill="#000000" data-font="#FFC904">
+            <td class="team-cell">UCF</td>
+            <td>Jordan Ivy-Curry (18.8 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#000000" data-font="#FFC904">
+            <td class="team-cell">UCF</td>
+            <td>Moustapha Thiam (14.8 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#000000" data-font="#FFC904">
+            <td class="team-cell">UCF</td>
+            <td>Keyshawn Hall (13.5 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#000000" data-font="#FFC904">
+            <td class="team-cell">UCF</td>
+            <td>Darius Johnson (13.2 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#000000" data-font="#FFC904">
+            <td class="team-cell">UCF</td>
+            <td>Mikey Williams (10.5 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#000000" data-font="#FFC904">
+            <td class="team-cell">UCF</td>
+            <td>Marchelus Avery (9.7 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- UCLA -->
+          <tr data-fill="#2D68C4" data-font="#FFD100">
+            <td class="team-cell">UCLA</td>
+            <td>Tyler Bilodeau (17.6 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#2D68C4" data-font="#FFD100">
+            <td class="team-cell">UCLA</td>
+            <td>Donovan Dent (13.5 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#2D68C4" data-font="#FFD100">
+            <td class="team-cell">UCLA</td>
+            <td>Trent Perry (12.7 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#2D68C4" data-font="#FFD100">
+            <td class="team-cell">UCLA</td>
+            <td>Skyy Clark (11.7 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#2D68C4" data-font="#FFD100">
+            <td class="team-cell">UCLA</td>
+            <td>Eric Dailey Jr. (11.3 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#2D68C4" data-font="#FFD100">
+            <td class="team-cell">UCLA</td>
+            <td>Xavier Booker (6.9 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- UConn -->
+          <tr data-fill="#000E2F" data-font="#FFFFFF">
+            <td class="team-cell">UConn</td>
+            <td>Solo Ball (13.8 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#000E2F" data-font="#FFFFFF">
+            <td class="team-cell">UConn</td>
+            <td>Tarris Reed Jr. (13.6 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#000E2F" data-font="#FFFFFF">
+            <td class="team-cell">UConn</td>
+            <td>Alex Karaban (12.8 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#000E2F" data-font="#FFFFFF">
+            <td class="team-cell">UConn</td>
+            <td>Braylon Mullins (12.2 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#000E2F" data-font="#FFFFFF">
+            <td class="team-cell">UConn</td>
+            <td>Silas Demary Jr. (11.0 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#000E2F" data-font="#FFFFFF">
+            <td class="team-cell">UConn</td>
+            <td>Eric Reibe (6.8 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- UMBC/Howard -->
+          <tr data-fill="#000000" data-font="#FFC82D">
+            <td class="team-cell">UMBC/Howard</td>
+            <td>Cam Gillus (17.1 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#000000" data-font="#FFC82D">
+            <td class="team-cell">UMBC/Howard</td>
+            <td>Bryce Harris (17.1 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#000000" data-font="#FFC82D">
+            <td class="team-cell">UMBC/Howard</td>
+            <td>Jah'likai King (13.9 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#000000" data-font="#FFC82D">
+            <td class="team-cell">UMBC/Howard</td>
+            <td>DJ Armstrong Jr. (13.2 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#000000" data-font="#FFC82D">
+            <td class="team-cell">UMBC/Howard</td>
+            <td>Ace Valentine (12.0 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#000000" data-font="#FFC82D">
+            <td class="team-cell">UMBC/Howard</td>
+            <td>Caden Diggs (9.8 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- Utah State -->
+          <tr data-fill="#003A5D" data-font="#9D9795">
+            <td class="team-cell">Utah State</td>
+            <td>Ian Martinez (19.7 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#003A5D" data-font="#9D9795">
+            <td class="team-cell">Utah State</td>
+            <td>Mason Falslev (15.4 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#003A5D" data-font="#9D9795">
+            <td class="team-cell">Utah State</td>
+            <td>Drake Allen (14.3 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#003A5D" data-font="#9D9795">
+            <td class="team-cell">Utah State</td>
+            <td>Dexter Akanno (11.8 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#003A5D" data-font="#9D9795">
+            <td class="team-cell">Utah State</td>
+            <td>Karson Templin (9.2 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#003A5D" data-font="#9D9795">
+            <td class="team-cell">Utah State</td>
+            <td>Jamal Mashburn Jr. (8.7 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- Vanderbilt -->
+          <tr data-fill="#000000" data-font="#CFAE70">
+            <td class="team-cell">Vanderbilt</td>
+            <td>Tyler Tanner (19.2 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#000000" data-font="#CFAE70">
+            <td class="team-cell">Vanderbilt</td>
+            <td>Duke Miles (16.4 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#000000" data-font="#CFAE70">
+            <td class="team-cell">Vanderbilt</td>
+            <td>Tyler Nickel (13.3 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#000000" data-font="#CFAE70">
+            <td class="team-cell">Vanderbilt</td>
+            <td>AK Okereke (9.8 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#000000" data-font="#CFAE70">
+            <td class="team-cell">Vanderbilt</td>
+            <td>Devin McGlockton (9.7 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#000000" data-font="#CFAE70">
+            <td class="team-cell">Vanderbilt</td>
+            <td>Jalen Washington (9.2 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- VCU -->
+          <tr data-fill="#000000" data-font="#FFCE00">
+            <td class="team-cell">VCU</td>
+            <td>Max Shulga (17.7 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#000000" data-font="#FFCE00">
+            <td class="team-cell">VCU</td>
+            <td>Phillip Russell (14.9 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#000000" data-font="#FFCE00">
+            <td class="team-cell">VCU</td>
+            <td>Zeb Jackson (13.5 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#000000" data-font="#FFCE00">
+            <td class="team-cell">VCU</td>
+            <td>Joe Bamisile (12.8 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#000000" data-font="#FFCE00">
+            <td class="team-cell">VCU</td>
+            <td>Jack Clark (11.5 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#000000" data-font="#FFCE00">
+            <td class="team-cell">VCU</td>
+            <td>Jalen DeLoach (8.4 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- Villanova -->
+          <tr data-fill="#003366" data-font="#00B4E5">
+            <td class="team-cell">Villanova</td>
+            <td>Tyler Perkins (13.7 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#003366" data-font="#00B4E5">
+            <td class="team-cell">Villanova</td>
+            <td>Acaden Lewis (12.3 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#003366" data-font="#00B4E5">
+            <td class="team-cell">Villanova</td>
+            <td>Duke Brennan (12.3 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#003366" data-font="#00B4E5">
+            <td class="team-cell">Villanova</td>
+            <td>Bryce Lindsay (11.9 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#003366" data-font="#00B4E5">
+            <td class="team-cell">Villanova</td>
+            <td>Devin Askew (10.0 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#003366" data-font="#00B4E5">
+            <td class="team-cell">Villanova</td>
+            <td>Matt Hodge (9.2 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- Virginia -->
+          <tr data-fill="#232D4B" data-font="#F84C1E">
+            <td class="team-cell">Virginia</td>
+            <td>Sam Lewis (10.8 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#232D4B" data-font="#F84C1E">
+            <td class="team-cell">Virginia</td>
+            <td>Chance Mallory (9.5 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#232D4B" data-font="#F84C1E">
+            <td class="team-cell">Virginia</td>
+            <td>Taine Murray (9.3 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#232D4B" data-font="#F84C1E">
+            <td class="team-cell">Virginia</td>
+            <td>Blake Horvath (9.0 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#232D4B" data-font="#F84C1E">
+            <td class="team-cell">Virginia</td>
+            <td>Andrew Rohde (8.9 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#232D4B" data-font="#F84C1E">
+            <td class="team-cell">Virginia</td>
+            <td>Jalen Warburton (8.6 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- Wisconsin -->
+          <tr data-fill="#C5050C" data-font="#FFFFFF">
+            <td class="team-cell">Wisconsin</td>
+            <td>Nick Boyd (20.6 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#C5050C" data-font="#FFFFFF">
+            <td class="team-cell">Wisconsin</td>
+            <td>John Blackwell (19.0 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#C5050C" data-font="#FFFFFF">
+            <td class="team-cell">Wisconsin</td>
+            <td>Nolan Winter (13.3 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#C5050C" data-font="#FFFFFF">
+            <td class="team-cell">Wisconsin</td>
+            <td>Austin Rapp (9.6 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#C5050C" data-font="#FFFFFF">
+            <td class="team-cell">Wisconsin</td>
+            <td>Braeden Carrington (8.4 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#C5050C" data-font="#FFFFFF">
+            <td class="team-cell">Wisconsin</td>
+            <td>Andrew Rohde (5.7 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+
+          <!-- Wright State -->
+          <tr data-fill="#006633" data-font="#FFCD00">
+            <td class="team-cell">Wright State</td>
+            <td>Michael Cooper (13.4 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#006633" data-font="#FFCD00">
+            <td class="team-cell">Wright State</td>
+            <td>TJ Burch (12.3 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#006633" data-font="#FFCD00">
+            <td class="team-cell">Wright State</td>
+            <td>Solomon Callaghan (11.5 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#006633" data-font="#FFCD00">
+            <td class="team-cell">Wright State</td>
+            <td>Dominic Pangonis (9.0 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#006633" data-font="#FFCD00">
+            <td class="team-cell">Wright State</td>
+            <td>Kellen Pickett (8.7 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <tr data-fill="#006633" data-font="#FFCD00">
+            <td class="team-cell">Wright State</td>
+            <td>Andrea Holden (6.3 PPG)</td>
+            <td class="owner-cell" contenteditable="true"></td>
+            <td class="points-cell" contenteditable="true">0</td>
+          </tr>
+          <!-- DATA ROWS END -->
+        </tbody>
+      </table>
+    </div>
+
+    <div>
+      <div class="leaderboard">
+        <h2>Owner Leaderboard<span class="badge">Live</span></h2>
+        <p>Sum of all drafted players' Total Points. Edit owners and totals in the main table.</p>
+        <div id="leaderboardList"></div>
+        <div class="summary-box" id="roundSummary">
+          Once scores are entered and owners are assigned, a nightly recap will appear here—with bragging rights fully enabled.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Apply team colors
+    function applyTeamColors() {
+      const rows = document.querySelectorAll("#playersTable tbody tr");
+      rows.forEach(row => {
+        const fill = row.getAttribute("data-fill");
+        const font = row.getAttribute("data-font");
+        const teamCell = row.querySelector(".team-cell");
+        if (fill && font && teamCell) {
+          teamCell.style.backgroundColor = fill;
+          teamCell.style.color = font;
+          teamCell.style.padding = "4px 6px";
+        }
+      });
+    }
+
+    // Sortable table
+    function makeTableSortable() {
+      const table = document.getElementById("playersTable");
+      const headers = table.querySelectorAll("th.sortable");
+      headers.forEach((th, index) => {
+        th.addEventListener("click", () => {
+          const type = th.getAttribute("data-type") || "string";
+          const tbody = table.querySelector("tbody");
+          const rowsArray = Array.from(tbody.querySelectorAll("tr"));
+          const currentlyAsc = th.classList.contains("sorted-asc");
+
+          headers.forEach(h => h.classList.remove("sorted-asc", "sorted-desc"));
+
+          rowsArray.sort((a, b) => {
+            const aText = a.children[index].innerText.trim();
+            const bText = b.children[index].innerText.trim();
+            let cmp = 0;
+            if (type === "number") {
+              const aNum = parseFloat(aText) || 0;
+              const bNum = parseFloat(bText) || 0;
+              cmp = aNum - bNum;
+            } else {
+              cmp = aText.localeCompare(bText);
+            }
+            return currentlyAsc ? -cmp : cmp;
+          });
+
+          rowsArray.forEach(row => tbody.appendChild(row));
+          th.classList.add(currentlyAsc ? "sorted-desc" : "sorted-asc");
+        });
+      });
+    }
+
+    // Owner leaderboard
+    function rebuildLeaderboard() {
+      const table = document.getElementById("playersTable");
+      const rows = table.querySelectorAll("tbody tr");
+      const ownerTotals = {};
+      rows.forEach(row => {
+        const ownerCell = row.querySelector(".owner-cell");
+        const pointsCell = row.querySelector(".points-cell");
+        if (!ownerCell || !pointsCell) return;
+        const owner = ownerCell.innerText.trim();
+        if (!owner) return;
+        const pts = parseFloat(pointsCell.innerText.trim()) || 0;
+        ownerTotals[owner] = (ownerTotals[owner] || 0) + pts;
+      });
+
+      const leaderboardList = document.getElementById("leaderboardList");
+      leaderboardList.innerHTML = "";
+
+      const sortedOwners = Object.entries(ownerTotals).sort((a, b) => b[1] - a[1]);
+      if (sortedOwners.length === 0) {
+        const empty = document.createElement("div");
+        empty.style.fontSize = "0.8rem";
+        empty.style.color = "#9aa0c2";
+        empty.innerText = "Add owners and player totals in the table to see standings.";
+        leaderboardList.appendChild(empty);
+        return;
+      }
+
+      sortedOwners.forEach(([owner, total], index) => {
+        const div = document.createElement("div");
+        div.className = "leaderboard-item";
+        div.innerHTML = `<span>${index + 1}. ${owner}</span><span>${total.toFixed(1)} pts</span>`;
+        leaderboardList.appendChild(div);
+      });
+    }
+
+    // Light round summary
+    function updateRoundSummary() {
+      const table = document.getElementById("playersTable");
+      const rows = table.querySelectorAll("tbody tr");
+      let topPlayer = null;
+      let topPoints = -Infinity;
+      let sleepers = [];
+
+      rows.forEach(row => {
+        const owner = row.querySelector(".owner-cell")?.innerText.trim();
+        const playerName = row.children[1]?.innerText.trim();
+        const teamName = row.children[0]?.innerText.trim();
+        const pts = parseFloat(row.querySelector(".points-cell")?.innerText.trim()) || 0;
+        if (!owner || !playerName) return;
+
+        if (pts > topPoints) {
+          topPoints = pts;
+          topPlayer = { owner, playerName, teamName, pts };
+        }
+        if (pts >= 15 && pts <= 22) {
+          sleepers.push({ owner, playerName, teamName, pts });
+        }
+      });
+
+      const box = document.getElementById("roundSummary");
+      if (!topPlayer) {
+        box.innerText = "Once scores are entered and owners are assigned, a nightly recap will appear here—with bragging rights fully enabled.";
+        return;
+      }
+
+      const sleeperLine = sleepers.length
+        ? `\n\nSleeper alert: ${sleepers[0].playerName} quietly chipped in ${sleepers[0].pts.toFixed(1)} for ${sleepers[0].owner}, which might age very well if the run continues.`
+        : "";
+
+      box.innerText =
+        `${topPlayer.playerName} (${topPlayer.teamName}) stole the fantasy spotlight with ${topPlayer.pts.toFixed(1)} points, giving ${topPlayer.owner} a serious boost up the leaderboard.\n` +
+        `The rest of the league is officially on upset watch—one more night like that and we may need a wellness check on whoever passed on him during the draft.${sleeperLine}`;
+    }
+
+    function attachEditListeners() {
+      const table = document.getElementById("playersTable");
+      table.addEventListener("input", e => {
+        if (e.target.classList.contains("owner-cell") || e.target.classList.contains("points-cell")) {
+          rebuildLeaderboard();
+          updateRoundSummary();
+        }
+      });
+    }
+
+    applyTeamColors();
+    makeTableSortable();
+    attachEditListeners();
+    rebuildLeaderboard();
+    updateRoundSummary();
+  </script>
+</body>
+</html>
