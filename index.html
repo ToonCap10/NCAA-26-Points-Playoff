@@ -4,137 +4,198 @@
     <meta charset="UTF-8">
     <title>NCAA Fantasy Tracker 2026</title>
     <style>
+        :root {
+            --color-background: #fcfcf9;
+            --color-surface: #fffffd;
+            --color-text: #13343b;
+            --color-border: rgba(94, 82, 64, 0.2);
+            --color-primary: #21808d;
+        }
+        
+        * { box-sizing: border-box; }
+        
         body {
-            font-family: Arial, sans-serif;
-            max-width: 1400px;
-            margin: 20px auto;
-            padding: 0 10px;
-            background-color: #f4f4f8;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: var(--color-background);
+            color: var(--color-text);
         }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
         h1 {
-            text-align: center;
-            margin-bottom: 10px;
+            font-size: 32px;
+            font-weight: 600;
+            margin: 0 0 8px 0;
         }
+        
+        .subtitle {
+            color: #626c71;
+            margin-bottom: 24px;
+        }
+        
+        .leaderboard {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+        
+        .leaderboard h2 {
+            font-size: 20px;
+            font-weight: 600;
+            margin: 0 0 16px 0;
+        }
+        
+        .leaderboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+        }
+        
+        .owner-card {
+            padding: 12px;
+            background: rgba(33, 128, 141, 0.08);
+            border: 1px solid rgba(33, 128, 141, 0.2);
+            border-radius: 8px;
+        }
+        
+        .owner-name {
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .owner-points {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--color-primary);
+            margin: 4px 0;
+        }
+        
+        .owner-rank {
+            font-size: 12px;
+            color: #626c71;
+        }
+        
         .controls {
-            margin-bottom: 15px;
+            margin-bottom: 16px;
             display: flex;
+            gap: 12px;
             flex-wrap: wrap;
-            gap: 15px;
-            align-items: center;
         }
-        .controls label {
-            margin-right: 8px;
-            font-weight: bold;
-        }
-        .controls input, .controls select {
-            margin-right: 15px;
-            padding: 3px 5px;
-            font-size: 0.85rem;
-        }
-        .controls button {
-            margin-right: 10px;
-            padding: 5px 10px;
-            font-size: 0.85rem;
-            background-color: #1976d2;
-            color: #fff;
+        
+        button {
+            padding: 8px 16px;
+            background: var(--color-primary);
+            color: white;
             border: none;
-            border-radius: 3px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
             cursor: pointer;
+            transition: opacity 0.2s;
         }
-        .controls button:hover {
-            background-color: #145ea5;
+        
+        button:hover {
+            opacity: 0.85;
         }
+        
+        .table-container {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
         table {
-            border-collapse: collapse;
             width: 100%;
-            font-size: 0.85rem;
-            background-color: #ffffff;
+            border-collapse: collapse;
+            font-size: 13px;
         }
+        
         thead {
+            background: rgba(94, 82, 64, 0.06);
             position: sticky;
             top: 0;
-            background: #e0e0e0;
-            z-index: 2;
+            z-index: 10;
         }
-        th, td {
-            border: 1px solid #ccc;
-            padding: 4px 6px;
+        
+        th {
+            padding: 12px 8px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 1px solid var(--color-border);
+            cursor: pointer;
+            user-select: none;
+            white-space: nowrap;
+        }
+        
+        th:hover {
+            background: rgba(94, 82, 64, 0.1);
+        }
+        
+        td {
+            padding: 10px 8px;
+            border-bottom: 1px solid rgba(94, 82, 64, 0.1);
+        }
+        
+        tr:hover {
+            background: rgba(33, 128, 141, 0.04);
+        }
+        
+        .team-cell {
+            font-weight: 500;
+            padding: 8px;
+            border-radius: 4px;
+        }
+        
+        .editable {
+            background: rgba(33, 128, 141, 0.08);
+            border: 1px solid transparent;
+            padding: 6px;
+            border-radius: 4px;
+            min-width: 60px;
             text-align: center;
         }
-        th.sortable {
-            cursor: pointer;
+        
+        .editable:focus {
+            outline: 2px solid var(--color-primary);
+            background: white;
         }
-        th.sortable:hover {
-            background: #d0d0d0;
+        
+        .total-col {
+            font-weight: 600;
+            color: var(--color-primary);
+            font-size: 14px;
         }
-        .right {
-            text-align: right;
-        }
-        .leaderboard {
-            margin-top: 25px;
-            border: 1px solid #ccc;
-            padding: 10px;
-            background-color: #ffffff;
-        }
-        .leaderboard h2 {
-            margin-top: 0;
-        }
-        .round-inputs {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 10px;
-        }
-        .round-inputs label {
-            font-size: 0.85rem;
-        }
-        .search-owner {
-            margin-left: auto;
-        }
-        .note {
-            font-size: 0.8rem;
-            color: #666;
-            margin-top: 5px;
-        }
-        /* Region-based row coloring */
-        tr.east-row td {
-            background-color: #e8f4ff;
-        }
-        tr.west-row td {
-            background-color: #e8ffe8;
-        }
-        tr.south-row td {
-            background-color: #fff4e5;
-        }
-        tr.midwest-row td {
-            background-color: #fde8ff;
-        }
-        /* Input styling inside cells */
-        td input[type="number"],
-        td input[type="text"] {
-            width: 90%;
-            box-sizing: border-box;
-            font-size: 0.8rem;
-            padding: 2px 3px;
+        
+        .sort-indicator {
+            margin-left: 4px;
+            font-size: 10px;
         }
     </style>
-
-    <!-- SheetJS for Excel download -->
     <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 </head>
 <body>
-<h1>NCAA Fantasy Tracker 2026</h1>
-
-<div class="controls">
-    <div>
-        <label for="default-exp-games">Default Expected Games by Seed:</label>
-        <span>(enter comma-separated values for seeds 1–16, e.g. 4,3.5,3,2.5,...)</span><br>
-        <input type="text" id="default-exp-games" size="60"
-               value="4.0,3.5,3.0,2.7,2.5,2.3,2.1,2.0,1.8,1.7,1.6,1.5,1.4,1.3,1.2,1.1"
-               onblur="updateDefaultExpectedGames()" />
-        <div class="note">If left as is, seeds 1–16 are mapped to the default progression above.</div>
-    </div>
-</div>
+    <div class="container">
+        <h1>🏀 NCAA 2026 Fantasy Tournament Tracker</h1>
+        <p class="subtitle">
+            Click column headers to sort • Click cells to edit owner names, round points, or expected games
+        </p>
+        
+        <div class="leaderboard">
+            <h2>Owner Leaderboard</h2>
+            <div class="leaderboard-grid" id="leaderboard">
+                <div class="owner-card">
+                    <div class="owner-rank">Add owners to see standings</div>
+                </div>
+            </div>
+        </div>
 
 <div class="round-inputs">
     <div>
