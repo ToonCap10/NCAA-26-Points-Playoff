@@ -256,17 +256,7 @@
         16: 1.05
     };
 
-    // >>> Paste your existing players array and all JS functions here <<<
-
-    document.addEventListener('DOMContentLoaded', () => {
-        loadFromStorage();
-        renderTable();
-        updateLeaderboard();
-    });
-    </script>
-</body>
-</html>
-        const players = [
+    const players = [
             {region: "West", seed: 14, team: "Akron", player: "Tavari Johnson", ppg: 20.1, fillColor: "#041E42", fontColor: "#A89968"},
             {region: "West", seed: 14, team: "Akron", player: "Amani Lyles", ppg: 14.6, fillColor: "#041E42", fontColor: "#A89968"},
             {region: "West", seed: 14, team: "Akron", player: "Shammah Scott", ppg: 12.7, fillColor: "#041E42", fontColor: "#A89968"},
@@ -889,15 +879,11 @@ function sortTable(columnIndex) {
     rows.forEach(row => tbody.appendChild(row));
 }
 
-// initial load after DOM is ready
-document.addEventListener('DOMContentLoaded', () => {
-    loadFromStorage();
-    renderTable();
-    updateLeaderboard();
-});
-
-
-    <button onclick="downloadExcel()">Download Excel</button>
-
+    document.addEventListener('DOMContentLoaded', () => {
+        loadFromStorage();
+        renderTable();
+        updateLeaderboard();
+    });
+    </script>
 </body>
 </html>
