@@ -180,6 +180,7 @@
             font-size: 10px;
         }
     </style>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -641,6 +642,49 @@
             {region: "Midwest", seed: 11, team: "Wright State", player: "Kellen Pickett", ppg: 8.7, fillColor: "#006633", fontColor: "#FFCD00"},
             {region: "Midwest", seed: 11, team: "Wright State", player: "Andrea Holden", ppg: 6.3, fillColor: "#006633", fontColor: "#FFCD00"}
         ];
+function downloadExcel() {
+    const excelData = players.map(p => ({
+        Region: p.region,
+        Seed: p.seed,
+        Team: p.team,
+        Player: p.player,
+        PPG: p.ppg,
+        "Expected Games": getExpectedGames(p).toFixed(2),
+        "Expected Points": getExpectedPoints(p).toFixed(1),
+        Owner: p.owner || '',
+        R64: p.r64 || 0,
+        R32: p.r32 || 0,
+        S16: p.s16 || 0,
+        E8: p.e8 || 0,
+        F4: p.f4 || 0,
+        Champ: p.champ || 0,
+        Total: calculateTotal(p).toFixed(1)
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(excelData);
+
+    ws["!cols"] = [
+        { wch: 10 }, // Region
+        { wch: 6 },  // Seed
+        { wch: 22 }, // Team
+        { wch: 22 }, // Player
+        { wch: 8 },  // PPG
+        { wch: 12 }, // Expected Games
+        { wch: 14 }, // Expected Points
+        { wch: 12 }, // Owner
+        { wch: 6 },  // R64
+        { wch: 6 },  // R32
+        { wch: 6 },  // S16
+        { wch: 6 },  // E8
+        { wch: 6 },  // F4
+        { wch: 8 },  // Champ
+        { wch: 10 }  // Total
+    ];
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Fantasy Tracker 2026");
+    XLSX.writeFile(wb, "NCAA_Fantasy_Tracker_2026.xlsx");
+}
 
         function getExpectedGames(player) {
             if (typeof player.expGames === 'number' && !isNaN(player.expGames)) {
@@ -779,5 +823,7 @@
         renderTable();
         updateLeaderboard();
     </script>
+    <button onclick="downloadExcel()">Download Excel</button>
+
 </body>
 </html>
