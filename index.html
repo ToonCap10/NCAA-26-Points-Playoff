@@ -642,12 +642,12 @@
             {region: "Midwest", seed: 11, team: "Wright State", player: "Kellen Pickett", ppg: 8.7, fillColor: "#006633", fontColor: "#FFCD00"},
             {region: "Midwest", seed: 11, team: "Wright State", player: "Andrea Holden", ppg: 6.3, fillColor: "#006633", fontColor: "#FFCD00"}
         ];
-        // add stable keys for persistence (region|seed|team|player|owner)
+// add stable keys for persistence (region|seed|team|player)
 players.forEach(p => {
     p.key = `${p.region}|${p.seed}|${p.team}|${p.player}`;
 });
 
-        const STORAGE_KEY = "fantasy2026_players";
+const STORAGE_KEY = "fantasy2026_players";
 
 function loadFromStorage() {
     const saved = localStorage.getItem(STORAGE_KEY);
@@ -669,6 +669,7 @@ function loadFromStorage() {
         console.error("Bad storage data", e);
     }
 }
+
 function saveToStorage() {
     const byKey = {};
     players.forEach(p => {
@@ -684,17 +685,6 @@ function saveToStorage() {
     });
     localStorage.setItem(STORAGE_KEY, JSON.stringify(byKey));
 }
-const ownerTd = document.createElement("td");
-const ownerInput = document.createElement("input");
-ownerInput.type = "text";
-ownerInput.value = player.owner || "";
-ownerInput.onchange = () => {
-    player.owner = ownerInput.value;
-    updateLeaderboard();
-    saveToStorage();
-};
-ownerTd.appendChild(ownerInput);
-tr.appendChild(ownerTd);
 
 function downloadExcel() {
     const excelData = players.map(p => ({
@@ -740,121 +730,137 @@ function downloadExcel() {
     XLSX.writeFile(wb, "NCAA_Fantasy_Tracker_2026.xlsx");
 }
 
-        function getExpectedGames(player) {
-            if (typeof player.expGames === 'number' && !isNaN(player.expGames)) {
-                return player.expGames;
-            }
-            const base = defaultExpectedGamesBySeed[player.seed] || 1.0;
-            player.expGames = base;
-            return base;
-        }
+function getExpectedGames(player) {
+    if (typeof player.expGames === 'number' && !isNaN(player.expGames)) {
+        return player.expGames;
+    }
+    const base = defaultExpectedGamesBySeed[player.seed] || 1.0;
+    player.expGames = base;
+    return base;
+}
 
-        function getExpectedPoints(player) {
-            const games = getExpectedGames(player);
-            const exp = player.ppg * games;
-            return exp.toFixed(1);
-        }
+function getExpectedPoints(player) {
+    const games = getExpectedGames(player);
+    const exp = player.ppg * games;
+    return exp.toFixed(1);
+}
 
-        function calculateTotal(player) {
-            return (parseFloat(player.r64) || 0) + 
-                   (parseFloat(player.r32) || 0) + 
-                   (parseFloat(player.s16) || 0) + 
-                   (parseFloat(player.e8) || 0) + 
-                   (parseFloat(player.f4) || 0) + 
-                   (parseFloat(player.champ) || 0);
-        }
+// all round factors are effectively 1 here
+function calculateTotal(player) {
+    return (parseFloat(player.r64) || 0) +
+           (parseFloat(player.r32) || 0) +
+           (parseFloat(player.s16) || 0) +
+           (parseFloat(player.e8) || 0) +
+           (parseFloat(player.f4) || 0) +
+           (parseFloat(player.champ) || 0);
+}
 
-        function renderTable() {
-            const tbody = document.getElementById('tableBody');
-            tbody.innerHTML = '';
-            
-            players.forEach((p, index) => {
-                const row = tbody.insertRow();
-                row.innerHTML = `
-                    <td>${p.region}</td>
-                    <td>${p.seed}</td>
-                    <td class="team-cell" style="background-color: ${p.fillColor}; color: ${p.fontColor};">${p.team}</td>
-                    <td>${p.player}</td>
-                    <td>${p.ppg}</td>
-                    <td contenteditable="true" class="editable" data-index="${index}" data-field="expGames">${getExpectedGames(p)}</td>
-                    <td>${getExpectedPoints(p)}</td>
-                    <td contenteditable="true" class="editable" data-index="${index}" data-field="owner">${p.owner || ''}</td>
-                    <td contenteditable="true" class="editable" data-index="${index}" data-field="r64">${p.r64 || ''}</td>
-                    <td contenteditable="true" class="editable" data-index="${index}" data-field="r32">${p.r32 || ''}</td>
-                    <td contenteditable="true" class="editable" data-index="${index}" data-field="s16">${p.s16 || ''}</td>
-                    <td contenteditable="true" class="editable" data-index="${index}" data-field="e8">${p.e8 || ''}</td>
-                    <td contenteditable="true" class="editable" data-index="${index}" data-field="f4">${p.f4 || ''}</td>
-                    <td contenteditable="true" class="editable" data-index="${index}" data-field="champ">${p.champ || ''}</td>
-                    <td class="total-col">${calculateTotal(p)}</td>
-                `;
-            });
-            
-            document.querySelectorAll('.editable').forEach(cell => {
-    cell.addEventListener('blur', function() {
-        const index = parseInt(this.dataset.index, 10);
-        const field = this.dataset.field;
-        const value = this.textContent.trim();
+function renderTable() {
+    const tbody = document.getElementById('tableBody');
+    tbody.innerHTML = '';
 
-        if (field === 'owner') {
-            players[index][field] = value;
-        } else if (field === 'expGames') {
-            const num = parseFloat(value);
-            const safe = isNaN(num)
-                ? defaultExpectedGamesBySeed[players[index].seed] || 1.0
-                : num;
-            players[index][field] = safe;
-            this.textContent = safe.toFixed(1);
-        } else {
-            players[index][field] = parseFloat(value) || 0;
-        }
-
-        recalculate();
+    players.forEach((p, index) => {
+        const row = tbody.insertRow();
+        row.innerHTML = `
+            <td>${p.region}</td>
+            <td>${p.seed}</td>
+            <td class="team-cell" style="background-color: ${p.fillColor}; color: ${p.fontColor};">${p.team}</td>
+            <td>${p.player}</td>
+            <td>${p.ppg}</td>
+            <td contenteditable="true" class="editable" data-index="${index}" data-field="expGames">${getExpectedGames(p)}</td>
+            <td>${getExpectedPoints(p)}</td>
+            <td contenteditable="true" class="editable" data-index="${index}" data-field="owner">${p.owner || ''}</td>
+            <td contenteditable="true" class="editable" data-index="${index}" data-field="r64">${p.r64 || ''}</td>
+            <td contenteditable="true" class="editable" data-index="${index}" data-field="r32">${p.r32 || ''}</td>
+            <td contenteditable="true" class="editable" data-index="${index}" data-field="s16">${p.s16 || ''}</td>
+            <td contenteditable="true" class="editable" data-index="${index}" data-field="e8">${p.e8 || ''}</td>
+            <td contenteditable="true" class="editable" data-index="${index}" data-field="f4">${p.f4 || ''}</td>
+            <td contenteditable="true" class="editable" data-index="${index}" data-field="champ">${p.champ || ''}</td>
+            <td class="total-col">${calculateTotal(p)}</td>
+        `;
     });
-});
-        }
 
-        function recalculate() {
-            renderTable();
-            updateLeaderboard();
-        }
+    document.querySelectorAll('.editable').forEach(cell => {
+        cell.addEventListener('blur', function() {
+            const index = parseInt(this.dataset.index, 10);
+            const field = this.dataset.field;
+            const value = this.textContent.trim();
 
-        function updateLeaderboard() {
-            const ownerTotals = {};
-            players.forEach(p => {
-                if (p.owner) {
-                    ownerTotals[p.owner] = (ownerTotals[p.owner] || 0) + calculateTotal(p);
-                }
-            });
-            
-            const sorted = Object.entries(ownerTotals).sort((a, b) => b[1] - a[1]);
-            const leaderboard = document.getElementById('leaderboard');
-            
-            if (sorted.length === 0) {
-                leaderboard.innerHTML = '<div class="ownerx-card"><div class="owner-rank">Add owners to see standings</div></div>';
-                return;
+            if (field === 'owner') {
+                players[index][field] = value;
+            } else if (field === 'expGames') {
+                const num = parseFloat(value);
+                const safe = isNaN(num)
+                    ? defaultExpectedGamesBySeed[players[index].seed] || 1.0
+                    : num;
+                players[index][field] = safe;
+                this.textContent = safe.toFixed(1);
+            } else {
+                players[index][field] = parseFloat(value) || 0;
             }
-            
-            leaderboard.innerHTML = sorted.map(([owner, points], i) => `
-                <div class="owner-card">
-                    <div class="owner-rank">#${i + 1}</div>
-                    <div class="owner-name">${owner}</div>
-                    <div class="owner-points">${points}</div>
-                </div>
-            `).join('');
-        }
 
-        function sortTable(columnIndex) {
+            // update total cell in-place
+            const row = this.parentElement;
+            const totalCell = row.querySelector('.total-col');
+            if (totalCell) {
+                totalCell.textContent = calculateTotal(players[index]);
+            }
+
+            saveToStorage();
+            updateLeaderboard();
+        });
+    });
+}
+
+function recalculate() {
+    // recalc totals in-place without rebuilding table
+    const tbody = document.getElementById('tableBody');
+    Array.from(tbody.rows).forEach((row, index) => {
+        const totalCell = row.querySelector('.total-col');
+        if (totalCell) {
+            totalCell.textContent = calculateTotal(players[index]);
+        }
+    });
+    updateLeaderboard();
+}
+
+function updateLeaderboard() {
+    const ownerTotals = {};
+    players.forEach(p => {
+        if (p.owner) {
+            ownerTotals[p.owner] = (ownerTotals[p.owner] || 0) + calculateTotal(p);
+        }
+    });
+
+    const sorted = Object.entries(ownerTotals).sort((a, b) => b[1] - a[1]);
+    const leaderboard = document.getElementById('leaderboard');
+
+    if (sorted.length === 0) {
+        leaderboard.innerHTML = '<div class="ownerx-card"><div class="owner-rank">Add owners to see standings</div></div>';
+        return;
+    }
+
+    leaderboard.innerHTML = sorted.map(([owner, points], i) => `
+        <div class="owner-card">
+            <div class="owner-rank">#${i + 1}</div>
+            <div class="owner-name">${owner}</div>
+            <div class="owner-points">${points}</div>
+        </div>
+    `).join('');
+}
+
+function sortTable(columnIndex) {
     const table = document.getElementById('fantasyTable');
     const tbody = table.querySelector('tbody');
     const rows = Array.from(tbody.querySelectorAll('tr'));
-    
+
     rows.sort((a, b) => {
         let aVal = a.cells[columnIndex].textContent.trim();
         let bVal = b.cells[columnIndex].textContent.trim();
-        
+
         const aNum = parseFloat(aVal);
         const bNum = parseFloat(bVal);
-        
+
         if (columnIndex === 1) {
             // Seed: ascending
             if (!isNaN(aNum) && !isNaN(bNum)) {
@@ -866,17 +872,18 @@ function downloadExcel() {
             // All other numeric columns: descending
             return bNum - aNum;
         }
-        
+
         return aVal.localeCompare(bVal);
     });
-    
+
     rows.forEach(row => tbody.appendChild(row));
 }
 
+// initial load
+loadFromStorage();
+renderTable();
+updateLeaderboard();
 
-        renderTable();
-        updateLeaderboard();
-    </script>
     <button onclick="downloadExcel()">Download Excel</button>
 
 </body>
