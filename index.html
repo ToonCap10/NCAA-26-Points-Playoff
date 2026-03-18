@@ -2,261 +2,186 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NCAA 2026 Fantasy Tracker</title>
+    <title>NCAA Fantasy Tracker 2026</title>
     <style>
-        :root {
-            --color-background: #fcfcf9;
-            --color-surface: #fffffd;
-            --color-text: #13343b;
-            --color-border: rgba(94, 82, 64, 0.2);
-            --color-primary: #21808d;
-        }
-        
-        * { box-sizing: border-box; }
-        
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            margin: 0;
-            padding: 20px;
-            background: var(--color-background);
-            color: var(--color-text);
+            font-family: Arial, sans-serif;
+            max-width: 1400px;
+            margin: 20px auto;
+            padding: 0 10px;
         }
-        
-        .container {
-            max-width: 1600px;
-            margin: 0 auto;
-        }
-        
         h1 {
-            font-size: 32px;
-            font-weight: 600;
-            margin: 0 0 8px 0;
-        }
-        
-        .subtitle {
-            color: #626c71;
-            margin-bottom: 24px;
-        }
-        
-        .leaderboard {
-            background: var(--color-surface);
-            border: 1px solid var(--color-border);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 24px;
-        }
-        
-        .leaderboard h2 {
-            font-size: 20px;
-            font-weight: 600;
-            margin: 0 0 16px 0;
-        }
-        
-        .leaderboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 12px;
-        }
-        
-        .owner-card {
-            padding: 12px;
-            background: rgba(33, 128, 141, 0.08);
-            border: 1px solid rgba(33, 128, 141, 0.2);
-            border-radius: 8px;
-        }
-        
-        .owner-name {
-            font-weight: 600;
-            font-size: 14px;
-        }
-        
-        .owner-points {
-            font-size: 24px;
-            font-weight: 600;
-            color: var(--color-primary);
-            margin: 4px 0;
-        }
-        
-        .owner-rank {
-            font-size: 12px;
-            color: #626c71;
-        }
-        
-        .controls {
-            margin-bottom: 16px;
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-        
-        button {
-            padding: 8px 16px;
-            background: var(--color-primary);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: opacity 0.2s;
-        }
-        
-        button:hover {
-            opacity: 0.85;
-        }
-        
-        .table-container {
-            background: var(--color-surface);
-            border: 1px solid var(--color-border);
-            border-radius: 12px;
-            overflow: hidden;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-        }
-        
-        thead {
-            background: rgba(94, 82, 64, 0.06);
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-        
-        th {
-            padding: 12px 8px;
-            text-align: left;
-            font-weight: 600;
-            border-bottom: 1px solid var(--color-border);
-            cursor: pointer;
-            user-select: none;
-            white-space: nowrap;
-        }
-        
-        th:hover {
-            background: rgba(94, 82, 64, 0.1);
-        }
-        
-        td {
-            padding: 10px 8px;
-            border-bottom: 1px solid rgba(94, 82, 64, 0.1);
-        }
-        
-        tr:hover {
-            background: rgba(33, 128, 141, 0.04);
-        }
-        
-        .team-cell {
-            font-weight: 500;
-            padding: 8px;
-            border-radius: 4px;
-        }
-        
-        .editable {
-            background: rgba(33, 128, 141, 0.08);
-            border: 1px solid transparent;
-            padding: 6px;
-            border-radius: 4px;
-            min-width: 60px;
             text-align: center;
         }
-        
-        .editable:focus {
-            outline: 2px solid var(--color-primary);
-            background: white;
+        .controls {
+            margin-bottom: 15px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
         }
-        
-        .total-col {
-            font-weight: 600;
-            color: var(--color-primary);
-            font-size: 14px;
+        .controls label {
+            margin-right: 8px;
         }
-        
-        .sort-indicator {
-            margin-left: 4px;
-            font-size: 10px;
+        .controls input, .controls select {
+            margin-right: 15px;
+        }
+        .controls button {
+            margin-right: 10px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            font-size: 0.85rem;
+        }
+        thead {
+            position: sticky;
+            top: 0;
+            background: #f2f2f2;
+            z-index: 2;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 4px 6px;
+            text-align: center;
+        }
+        th.sortable {
+            cursor: pointer;
+        }
+        th.sortable:hover {
+            background: #e0e0e0;
+        }
+        .right {
+            text-align: right;
+        }
+        .leaderboard {
+            margin-top: 25px;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+        .leaderboard h2 {
+            margin-top: 0;
+        }
+        .round-inputs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .round-inputs label {
+            font-size: 0.85rem;
+        }
+        .search-owner {
+            margin-left: auto;
+        }
+        .note {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 5px;
         }
     </style>
+
+    <!-- SheetJS for Excel download -->
     <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 </head>
 <body>
-    <div class="container">
-        <h1>🏀 NCAA 2026 Fantasy Tournament Tracker</h1>
-        <p class="subtitle">
-            Click column headers to sort • Click cells to edit owner names, round points, or expected games
-        </p>
-        
-        <div class="leaderboard">
-            <h2>Owner Leaderboard</h2>
-            <div class="leaderboard-grid" id="leaderboard">
-                <div class="owner-card">
-                    <div class="owner-rank">Add owners to see standings</div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="controls">
-            <button onclick="recalculate()">Recalculate Totals</button>
-            <button onclick="sortTable(0)">Sort by Region</button>
-            <button onclick="sortTable(1)">Sort by Seed</button>
-            <button onclick="sortTable(6)">Sort by Exp Pts</button>
-            <button onclick="sortTable(7)">Sort by Owner</button>
-            <button onclick="sortTable(14)">Sort by Total Points</button>
-        </div>
-        
-        <div class="table-container">
-            <table id="fantasyTable">
-                <thead>
-                    <tr>
-                        <th onclick="sortTable(0)">Region</th>
-                        <th onclick="sortTable(1)">Seed</th>
-                        <th onclick="sortTable(2)">Team</th>
-                        <th onclick="sortTable(3)">Player</th>
-                        <th onclick="sortTable(4)">PPG</th>
-                        <th onclick="sortTable(5)">Exp Games</th>
-                        <th onclick="sortTable(6)">Exp Pts</th>
-                        <th onclick="sortTable(7)">Owner</th>
-                        <th onclick="sortTable(8)">R64</th>
-                        <th onclick="sortTable(9)">R32</th>
-                        <th onclick="sortTable(10)">S16</th>
-                        <th onclick="sortTable(11)">E8</th>
-                        <th onclick="sortTable(12)">F4</th>
-                        <th onclick="sortTable(13)">Champ</th>
-                        <th onclick="sortTable(14)">Total</th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody">
-                </tbody>
-            </table>
-        </div>
-    </div>
-    
-    <script>
-        // Seed-based baseline expectations (owners can override per player via Exp Games).
-        // These reflect historical advancement patterns by seed. [web:523][web:524][web:540]
-        const defaultExpectedGamesBySeed = {
-            1: 4.2,
-            2: 3.5,
-            3: 3.0,
-            4: 2.6,
-            5: 2.2,
-            6: 2.0,
-            7: 1.8,
-            8: 1.6,
-            9: 1.5,
-            10: 1.5,
-            11: 1.4,
-            12: 1.3,
-            13: 1.2,
-            14: 1.15,
-            15: 1.1,
-            16: 1.05
-        };
+<h1>NCAA Fantasy Tracker 2026</h1>
 
-        const players = [
+<div class="controls">
+    <div>
+        <label for="default-exp-games">Default Expected Games by Seed:</label>
+        <span>(enter comma-separated values for seeds 1–16, e.g. 4,3.5,3,2.5,...)</span><br>
+        <input type="text" id="default-exp-games" size="60"
+               value="4.0,3.5,3.0,2.7,2.5,2.3,2.1,2.0,1.8,1.7,1.6,1.5,1.4,1.3,1.2,1.1"
+               onblur="updateDefaultExpectedGames()" />
+        <div class="note">If left as is, seeds 1–16 are mapped to the default progression above.</div>
+    </div>
+</div>
+
+<div class="round-inputs">
+    <div>
+        <label>Round of 64 factor:
+            <input type="number" id="r64-factor" value="1" step="0.1" onchange="recalculate()" />
+        </label>
+    </div>
+    <div>
+        <label>Round of 32 factor:
+            <input type="number" id="r32-factor" value="1" step="0.1" onchange="recalculate()" />
+        </label>
+    </div>
+    <div>
+        <label>Sweet 16 factor:
+            <input type="number" id="s16-factor" value="1" step="0.1" onchange="recalculate()" />
+        </label>
+    </div>
+    <div>
+        <label>Elite 8 factor:
+            <input type="number" id="e8-factor" value="1" step="0.1" onchange="recalculate()" />
+        </label>
+    </div>
+    <div>
+        <label>Final Four factor:
+            <input type="number" id="f4-factor" value="1" step="0.1" onchange="recalculate()" />
+        </label>
+    </div>
+    <div>
+        <label>Championship factor:
+            <input type="number" id="champ-factor" value="1" step="0.1" onchange="recalculate()" />
+        </label>
+    </div>
+</div>
+
+<div class="controls">
+    <button onclick="recalculate()">Recalculate Totals</button>
+    <button onclick="resetBracket()">Reset Bracket Outcomes</button>
+    <button onclick="downloadExcel()">Download Excel</button>
+    <div class="search-owner">
+        <label for="owner-filter">Filter by Owner:</label>
+        <select id="owner-filter" onchange="renderTable()">
+            <option value="">All</option>
+            <option value="Sam">Sam</option>
+            <option value="Tom">Tom</option>
+            <option value="Terry">Terry</option>
+            <option value="Brandon">Brandon</option>
+            <option value="Greg">Greg</option>
+            <option value="Jeff">Jeff</option>
+            <option value="Alex">Alex</option>
+        </select>
+    </div>
+</div>
+
+<table id="players-table">
+    <thead>
+    <tr>
+        <th class="sortable" onclick="sortTable('region')">Region</th>
+        <th class="sortable" onclick="sortTable('seed')">Seed</th>
+        <th class="sortable" onclick="sortTable('team')">Team</th>
+        <th class="sortable" onclick="sortTable('player')">Player</th>
+        <th class="sortable" onclick="sortTable('ppg')">PPG</th>
+        <th>Expected Games</th>
+        <th>Expected Points</th>
+        <th class="sortable" onclick="sortTable('owner')">Owner</th>
+        <th>R64</th>
+        <th>R32</th>
+        <th>S16</th>
+        <th>E8</th>
+        <th>F4</th>
+        <th>Champ</th>
+        <th class="sortable" onclick="sortTable('total')">Total</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- Filled by JS -->
+    </tbody>
+</table>
+
+<div class="leaderboard" id="leaderboard">
+    <h2>Owner Leaderboard</h2>
+    <div id="leaderboard-content"></div>
+</div>
+
+<script>
+// const players = [
             {region: "West", seed: 14, team: "Akron", player: "Tavari Johnson", ppg: 20.1, fillColor: "#041E42", fontColor: "#A89968"},
             {region: "West", seed: 14, team: "Akron", player: "Amani Lyles", ppg: 14.6, fillColor: "#041E42", fontColor: "#A89968"},
             {region: "West", seed: 14, team: "Akron", player: "Shammah Scott", ppg: 12.7, fillColor: "#041E42", fontColor: "#A89968"},
@@ -642,14 +567,16 @@
             {region: "Midwest", seed: 11, team: "Wright State", player: "Kellen Pickett", ppg: 8.7, fillColor: "#006633", fontColor: "#FFCD00"},
             {region: "Midwest", seed: 11, team: "Wright State", player: "Andrea Holden", ppg: 6.3, fillColor: "#006633", fontColor: "#FFCD00"}
         ];
-        const STORAGE_KEY = "fantasy2026_players";
 
+// localStorage key
+const STORAGE_KEY = "fantasy2026_players";
+
+// load saved data from localStorage
 function loadFromStorage() {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (!saved) return;
     try {
         const stored = JSON.parse(saved);
-        // merge by index; assumes same order/length as original array
         stored.forEach((p, i) => {
             if (!players[i]) return;
             players[i].owner = p.owner ?? players[i].owner;
@@ -665,6 +592,251 @@ function loadFromStorage() {
     }
 }
 
+// save only fields that change to localStorage
+function saveToStorage() {
+    const minimal = players.map(p => ({
+        owner: p.owner || "",
+        r64: p.r64 || 0,
+        r32: p.r32 || 0,
+        s16: p.s16 || 0,
+        e8: p.e8 || 0,
+        f4: p.f4 || 0,
+        champ: p.champ || 0
+    }));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(minimal));
+}
+
+// default expected games by seed
+let defaultExpectedGamesBySeed = {
+    1: 4.0, 2: 3.5, 3: 3.0, 4: 2.7,
+    5: 2.5, 6: 2.3, 7: 2.1, 8: 2.0,
+    9: 1.8, 10: 1.7, 11: 1.6, 12: 1.5,
+    13: 1.4, 14: 1.3, 15: 1.2, 16: 1.1
+};
+
+function updateDefaultExpectedGames() {
+    const input = document.getElementById('default-exp-games').value.trim();
+    if (!input) return;
+    const parts = input.split(',').map(p => parseFloat(p.trim())).filter(p => !isNaN(p));
+    if (parts.length !== 16) {
+        alert("Please enter exactly 16 numeric values for seeds 1-16.");
+        return;
+    }
+    const newMap = {};
+    for (let i = 0; i < 16; i++) newMap[i + 1] = parts[i];
+    defaultExpectedGamesBySeed = newMap;
+    recalculate();
+}
+
+function getExpectedGames(player) {
+    if (player.expGames != null && !isNaN(player.expGames)) return parseFloat(player.expGames);
+    return defaultExpectedGamesBySeed[player.seed] || 1.0;
+}
+
+function getExpectedPoints(player) {
+    return player.ppg * getExpectedGames(player);
+}
+
+// all round factors = 1
+function calculateTotal(player) {
+    let r64 = parseFloat(player.r64 || 0);
+    let r32 = parseFloat(player.r32 || 0);
+    let s16 = parseFloat(player.s16 || 0);
+    let e8 = parseFloat(player.e8 || 0);
+    let f4 = parseFloat(player.f4 || 0);
+    let champ = parseFloat(player.champ || 0);
+
+    const r64Factor = 1;
+    const r32Factor = 1;
+    const s16Factor = 1;
+    const e8Factor = 1;
+    const f4Factor = 1;
+    const champFactor = 1;
+
+    return (r64 * r64Factor) +
+           (r32 * r32Factor) +
+           (s16 * s16Factor) +
+           (e8 * e8Factor) +
+           (f4 * f4Factor) +
+           (champ * champFactor);
+}
+
+function renderTable() {
+    const tbody = document.querySelector("#players-table tbody");
+    tbody.innerHTML = "";
+
+    const ownerFilter = document.getElementById('owner-filter').value;
+
+    players.forEach((player) => {
+        if (ownerFilter && player.owner !== ownerFilter) return;
+
+        const tr = document.createElement("tr");
+
+        const regionTd = document.createElement("td");
+        regionTd.textContent = player.region;
+        tr.appendChild(regionTd);
+
+        const seedTd = document.createElement("td");
+        seedTd.textContent = player.seed;
+        tr.appendChild(seedTd);
+
+        const teamTd = document.createElement("td");
+        teamTd.textContent = player.team;
+        tr.appendChild(teamTd);
+
+        const playerTd = document.createElement("td");
+        playerTd.textContent = player.player;
+        tr.appendChild(playerTd);
+
+        const ppgTd = document.createElement("td");
+        ppgTd.textContent = player.ppg.toFixed(1);
+        tr.appendChild(ppgTd);
+
+        const expGamesTd = document.createElement("td");
+        expGamesTd.textContent = getExpectedGames(player).toFixed(2);
+        tr.appendChild(expGamesTd);
+
+        const expPtsTd = document.createElement("td");
+        expPtsTd.textContent = getExpectedPoints(player).toFixed(1);
+        tr.appendChild(expPtsTd);
+
+        // Editable owner cell with persistence
+        const ownerTd = document.createElement("td");
+        const ownerInput = document.createElement("input");
+        ownerInput.type = "text";
+        ownerInput.value = player.owner || "";
+        ownerInput.onchange = () => {
+            player.owner = ownerInput.value;
+            updateLeaderboard();
+            saveToStorage();
+        };
+        ownerTd.appendChild(ownerInput);
+        tr.appendChild(ownerTd);
+
+        // Round inputs, also persistent
+        ["r64","r32","s16","e8","f4","champ"].forEach(round => {
+            const td = document.createElement("td");
+            const input = document.createElement("input");
+            input.type = "number";
+            input.step = "0.1";
+            input.value = player[round] != null ? player[round] : "";
+            input.onchange = () => {
+                player[round] = parseFloat(input.value) || 0;
+                totalTd.textContent = calculateTotal(player).toFixed(1);
+                updateLeaderboard();
+                saveToStorage();
+            };
+            td.appendChild(input);
+            tr.appendChild(td);
+        });
+
+        const totalTd = document.createElement("td");
+        totalTd.textContent = calculateTotal(player).toFixed(1);
+        tr.appendChild(totalTd);
+
+        tbody.appendChild(tr);
+    });
+
+    updateLeaderboard();
+}
+
+function updateLeaderboard() {
+    const ownerTotals = {};
+    players.forEach(p => {
+        const key = p.owner || "";
+        const total = calculateTotal(p);
+        if (!ownerTotals[key]) ownerTotals[key] = 0;
+        ownerTotals[key] += total;
+    });
+
+    const sortedOwners = Object.entries(ownerTotals).sort((a, b) => b[1] - a[1]);
+    const leaderboardDiv = document.getElementById("leaderboard-content");
+    leaderboardDiv.innerHTML = "";
+
+    const table = document.createElement("table");
+    table.style.width = "100%";
+    const thead = document.createElement("thead");
+    const headRow = document.createElement("tr");
+    ["Owner", "Total Points"].forEach(text => {
+        const th = document.createElement("th");
+        th.textContent = text;
+        headRow.appendChild(th);
+    });
+    thead.appendChild(headRow);
+    table.appendChild(thead);
+
+    const tbody = document.createElement("tbody");
+    sortedOwners.forEach(([owner, total]) => {
+        const tr = document.createElement("tr");
+        const ownerTd = document.createElement("td");
+        ownerTd.textContent = owner;
+        const totalTd = document.createElement("td");
+        totalTd.textContent = total.toFixed(1);
+        totalTd.classList.add("right");
+        tr.appendChild(ownerTd);
+        tr.appendChild(totalTd);
+        tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+
+    leaderboardDiv.appendChild(table);
+}
+
+let currentSort = { key: null, asc: true };
+
+function sortTable(key) {
+    if (currentSort.key === key) {
+        currentSort.asc = !currentSort.asc;
+    } else {
+        currentSort.key = key;
+        currentSort.asc = true;
+    }
+
+    players.sort((a, b) => {
+        let valA, valB;
+        if (key === 'total') {
+            valA = calculateTotal(a);
+            valB = calculateTotal(b);
+        } else if (key === 'ppg') {
+            valA = a.ppg;
+            valB = b.ppg;
+        } else if (key === 'seed') {
+            valA = a.seed;
+            valB = b.seed;
+        } else if (['region','team','player','owner'].includes(key)) {
+            valA = a[key] || "";
+            valB = b[key] || "";
+            if (valA < valB) return currentSort.asc ? -1 : 1;
+            if (valA > valB) return currentSort.asc ? 1 : -1;
+            return 0;
+        } else {
+            valA = a[key];
+            valB = b[key];
+        }
+        return currentSort.asc ? valA - valB : valB - valA;
+    });
+
+    renderTable();
+}
+
+function recalculate() {
+    renderTable();
+}
+
+function resetBracket() {
+    players.forEach(p => {
+        p.r64 = 0;
+        p.r32 = 0;
+        p.s16 = 0;
+        p.e8 = 0;
+        p.f4 = 0;
+        p.champ = 0;
+    });
+    saveToStorage();
+    renderTable();
+}
+
+// Excel download
 function downloadExcel() {
     const excelData = players.map(p => ({
         Region: p.region,
@@ -674,7 +846,7 @@ function downloadExcel() {
         PPG: p.ppg,
         "Expected Games": getExpectedGames(p).toFixed(2),
         "Expected Points": getExpectedPoints(p).toFixed(1),
-        Owner: p.owner || '',
+        Owner: p.owner || "",
         R64: p.r64 || 0,
         R32: p.r32 || 0,
         S16: p.s16 || 0,
@@ -709,144 +881,10 @@ function downloadExcel() {
     XLSX.writeFile(wb, "NCAA_Fantasy_Tracker_2026.xlsx");
 }
 
-        function getExpectedGames(player) {
-            if (typeof player.expGames === 'number' && !isNaN(player.expGames)) {
-                return player.expGames;
-            }
-            const base = defaultExpectedGamesBySeed[player.seed] || 1.0;
-            player.expGames = base;
-            return base;
-        }
-
-        function getExpectedPoints(player) {
-            const games = getExpectedGames(player);
-            const exp = player.ppg * games;
-            return exp.toFixed(1);
-        }
-
-        function calculateTotal(player) {
-            return (parseFloat(player.r64) || 0) + 
-                   (parseFloat(player.r32) || 0) + 
-                   (parseFloat(player.s16) || 0) + 
-                   (parseFloat(player.e8) || 0) + 
-                   (parseFloat(player.f4) || 0) + 
-                   (parseFloat(player.champ) || 0);
-        }
-
-        function renderTable() {
-            const tbody = document.getElementById('tableBody');
-            tbody.innerHTML = '';
-            
-            players.forEach((p, index) => {
-                const row = tbody.insertRow();
-                row.innerHTML = `
-                    <td>${p.region}</td>
-                    <td>${p.seed}</td>
-                    <td class="team-cell" style="background-color: ${p.fillColor}; color: ${p.fontColor};">${p.team}</td>
-                    <td>${p.player}</td>
-                    <td>${p.ppg}</td>
-                    <td contenteditable="true" class="editable" data-index="${index}" data-field="expGames">${getExpectedGames(p)}</td>
-                    <td>${getExpectedPoints(p)}</td>
-                    <td contenteditable="true" class="editable" data-index="${index}" data-field="owner">${p.owner || ''}</td>
-                    <td contenteditable="true" class="editable" data-index="${index}" data-field="r64">${p.r64 || ''}</td>
-                    <td contenteditable="true" class="editable" data-index="${index}" data-field="r32">${p.r32 || ''}</td>
-                    <td contenteditable="true" class="editable" data-index="${index}" data-field="s16">${p.s16 || ''}</td>
-                    <td contenteditable="true" class="editable" data-index="${index}" data-field="e8">${p.e8 || ''}</td>
-                    <td contenteditable="true" class="editable" data-index="${index}" data-field="f4">${p.f4 || ''}</td>
-                    <td contenteditable="true" class="editable" data-index="${index}" data-field="champ">${p.champ || ''}</td>
-                    <td class="total-col">${calculateTotal(p)}</td>
-                `;
-            });
-            
-            document.querySelectorAll('.editable').forEach(cell => {
-    cell.addEventListener('blur', function() {
-        const index = parseInt(this.dataset.index, 10);
-        const field = this.dataset.field;
-        const value = this.textContent.trim();
-
-        if (field === 'owner') {
-            players[index][field] = value;
-        } else if (field === 'expGames') {
-            const num = parseFloat(value);
-            const safe = isNaN(num)
-                ? defaultExpectedGamesBySeed[players[index].seed] || 1.0
-                : num;
-            players[index][field] = safe;
-            this.textContent = safe.toFixed(1);
-        } else {
-            players[index][field] = parseFloat(value) || 0;
-        }
-
-        recalculate();
-    });
-});
-        }
-
-        function recalculate() {
-            renderTable();
-            updateLeaderboard();
-        }
-
-        function updateLeaderboard() {
-            const ownerTotals = {};
-            players.forEach(p => {
-                if (p.owner) {
-                    ownerTotals[p.owner] = (ownerTotals[p.owner] || 0) + calculateTotal(p);
-                }
-            });
-            
-            const sorted = Object.entries(ownerTotals).sort((a, b) => b[1] - a[1]);
-            const leaderboard = document.getElementById('leaderboard');
-            
-            if (sorted.length === 0) {
-                leaderboard.innerHTML = '<div class="ownerx-card"><div class="owner-rank">Add owners to see standings</div></div>';
-                return;
-            }
-            
-            leaderboard.innerHTML = sorted.map(([owner, points], i) => `
-                <div class="owner-card">
-                    <div class="owner-rank">#${i + 1}</div>
-                    <div class="owner-name">${owner}</div>
-                    <div class="owner-points">${points}</div>
-                </div>
-            `).join('');
-        }
-
-        function sortTable(columnIndex) {
-    const table = document.getElementById('fantasyTable');
-    const tbody = table.querySelector('tbody');
-    const rows = Array.from(tbody.querySelectorAll('tr'));
-    
-    rows.sort((a, b) => {
-        let aVal = a.cells[columnIndex].textContent.trim();
-        let bVal = b.cells[columnIndex].textContent.trim();
-        
-        const aNum = parseFloat(aVal);
-        const bNum = parseFloat(bVal);
-        
-        if (columnIndex === 1) {
-            // Seed: ascending
-            if (!isNaN(aNum) && !isNaN(bNum)) {
-                return aNum - bNum;
-            }
-        }
-
-        if (!isNaN(aNum) && !isNaN(bNum)) {
-            // All other numeric columns: descending
-            return bNum - aNum;
-        }
-        
-        return aVal.localeCompare(bVal);
-    });
-    
-    rows.forEach(row => tbody.appendChild(row));
-}
-
-
-        renderTable();
-        updateLeaderboard();
-    </script>
-    <button onclick="downloadExcel()">Download Excel</button>
+// initial load + render
+loadFromStorage();
+renderTable();
+</script>
 
 </body>
 </html>
