@@ -642,6 +642,11 @@
             {region: "Midwest", seed: 11, team: "Wright State", player: "Kellen Pickett", ppg: 8.7, fillColor: "#006633", fontColor: "#FFCD00"},
             {region: "Midwest", seed: 11, team: "Wright State", player: "Andrea Holden", ppg: 6.3, fillColor: "#006633", fontColor: "#FFCD00"}
         ];
+        // add stable keys for persistence (region|seed|team|player|owner)
+players.forEach(p => {
+    p.key = `${p.region}|${p.seed}|${p.team}|${p.player}`;
+});
+
         const STORAGE_KEY = "fantasy2026_players";
 
 function loadFromStorage() {
@@ -649,21 +654,47 @@ function loadFromStorage() {
     if (!saved) return;
     try {
         const stored = JSON.parse(saved);
-        // merge by index; assumes same order/length as original array
-        stored.forEach((p, i) => {
-            if (!players[i]) return;
-            players[i].owner = p.owner ?? players[i].owner;
-            players[i].r64 = p.r64 ?? players[i].r64;
-            players[i].r32 = p.r32 ?? players[i].r32;
-            players[i].s16 = p.s16 ?? players[i].s16;
-            players[i].e8 = p.e8 ?? players[i].e8;
-            players[i].f4 = p.f4 ?? players[i].f4;
-            players[i].champ = p.champ ?? players[i].champ;
+        players.forEach(p => {
+            const data = stored[p.key];
+            if (!data) return;
+            p.owner = data.owner ?? p.owner;
+            p.r64 = data.r64 ?? p.r64;
+            p.r32 = data.r32 ?? p.r32;
+            p.s16 = data.s16 ?? p.s16;
+            p.e8 = data.e8 ?? p.e8;
+            p.f4 = data.f4 ?? p.f4;
+            p.champ = data.champ ?? p.champ;
         });
     } catch (e) {
         console.error("Bad storage data", e);
     }
 }
+function saveToStorage() {
+    const byKey = {};
+    players.forEach(p => {
+        byKey[p.key] = {
+            owner: p.owner || "",
+            r64: p.r64 || 0,
+            r32: p.r32 || 0,
+            s16: p.s16 || 0,
+            e8: p.e8 || 0,
+            f4: p.f4 || 0,
+            champ: p.champ || 0
+        };
+    });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(byKey));
+}
+const ownerTd = document.createElement("td");
+const ownerInput = document.createElement("input");
+ownerInput.type = "text";
+ownerInput.value = player.owner || "";
+ownerInput.onchange = () => {
+    player.owner = ownerInput.value;
+    updateLeaderboard();
+    saveToStorage();
+};
+ownerTd.appendChild(ownerInput);
+tr.appendChild(ownerTd);
 
 function downloadExcel() {
     const excelData = players.map(p => ({
