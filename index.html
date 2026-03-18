@@ -2,782 +2,861 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NCAA 2026 Fantasy Tracker</title>
+    <title>NCAA Fantasy Tracker 2026</title>
     <style>
-        :root {
-            --color-background: #fcfcf9;
-            --color-surface: #fffffd;
-            --color-text: #13343b;
-            --color-border: rgba(94, 82, 64, 0.2);
-            --color-primary: #21808d;
-        }
-        
-        * { box-sizing: border-box; }
-        
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            margin: 0;
-            padding: 20px;
-            background: var(--color-background);
-            color: var(--color-text);
+            font-family: Arial, sans-serif;
+            max-width: 1400px;
+            margin: 20px auto;
+            padding: 0 10px;
         }
-        
-        .container {
-            max-width: 1600px;
-            margin: 0 auto;
-        }
-        
         h1 {
-            font-size: 32px;
-            font-weight: 600;
-            margin: 0 0 8px 0;
-        }
-        
-        .subtitle {
-            color: #626c71;
-            margin-bottom: 24px;
-        }
-        
-        .leaderboard {
-            background: var(--color-surface);
-            border: 1px solid var(--color-border);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 24px;
-        }
-        
-        .leaderboard h2 {
-            font-size: 20px;
-            font-weight: 600;
-            margin: 0 0 16px 0;
-        }
-        
-        .leaderboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 12px;
-        }
-        
-        .owner-card {
-            padding: 12px;
-            background: rgba(33, 128, 141, 0.08);
-            border: 1px solid rgba(33, 128, 141, 0.2);
-            border-radius: 8px;
-        }
-        
-        .owner-name {
-            font-weight: 600;
-            font-size: 14px;
-        }
-        
-        .owner-points {
-            font-size: 24px;
-            font-weight: 600;
-            color: var(--color-primary);
-            margin: 4px 0;
-        }
-        
-        .owner-rank {
-            font-size: 12px;
-            color: #626c71;
-        }
-        
-        .controls {
-            margin-bottom: 16px;
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-        
-        button {
-            padding: 8px 16px;
-            background: var(--color-primary);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: opacity 0.2s;
-        }
-        
-        button:hover {
-            opacity: 0.85;
-        }
-        
-        .table-container {
-            background: var(--color-surface);
-            border: 1px solid var(--color-border);
-            border-radius: 12px;
-            overflow: hidden;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-        }
-        
-        thead {
-            background: rgba(94, 82, 64, 0.06);
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-        
-        th {
-            padding: 12px 8px;
-            text-align: left;
-            font-weight: 600;
-            border-bottom: 1px solid var(--color-border);
-            cursor: pointer;
-            user-select: none;
-            white-space: nowrap;
-        }
-        
-        th:hover {
-            background: rgba(94, 82, 64, 0.1);
-        }
-        
-        td {
-            padding: 10px 8px;
-            border-bottom: 1px solid rgba(94, 82, 64, 0.1);
-        }
-        
-        tr:hover {
-            background: rgba(33, 128, 141, 0.04);
-        }
-        
-        .team-cell {
-            font-weight: 500;
-            padding: 8px;
-            border-radius: 4px;
-        }
-        
-        .editable {
-            background: rgba(33, 128, 141, 0.08);
-            border: 1px solid transparent;
-            padding: 6px;
-            border-radius: 4px;
-            min-width: 60px;
             text-align: center;
         }
-        
-        .editable:focus {
-            outline: 2px solid var(--color-primary);
-            background: white;
+        .controls {
+            margin-bottom: 15px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
         }
-        
-        .total-col {
-            font-weight: 600;
-            color: var(--color-primary);
-            font-size: 14px;
+        .controls label {
+            margin-right: 8px;
         }
-        
-        .sort-indicator {
-            margin-left: 4px;
-            font-size: 10px;
+        .controls input, .controls select {
+            margin-right: 15px;
+        }
+        .controls button {
+            margin-right: 10px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            font-size: 0.85rem;
+        }
+        thead {
+            position: sticky;
+            top: 0;
+            background: #f2f2f2;
+            z-index: 2;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 4px 6px;
+            text-align: center;
+        }
+        th.sortable {
+            cursor: pointer;
+        }
+        th.sortable:hover {
+            background: #e0e0e0;
+        }
+        .right {
+            text-align: right;
+        }
+        .leaderboard {
+            margin-top: 25px;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+        .leaderboard h2 {
+            margin-top: 0;
+        }
+        .highlight {
+            background-color: #ffffcc;
+        }
+        .champion {
+            background-color: #c6efce;
+        }
+        .loser {
+            background-color: #ffc7ce;
+        }
+        .round-inputs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .round-inputs label {
+            font-size: 0.85rem;
+        }
+        .search-owner {
+            margin-left: auto;
+        }
+        .note {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 5px;
         }
     </style>
+
+    <!-- SheetJS for Excel download -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 </head>
 <body>
-    <div class="container">
-        <h1>🏀 NCAA 2026 Fantasy Tournament Tracker</h1>
-        <p class="subtitle">
-            Click column headers to sort • Click cells to edit owner names, round points, or expected games
-        </p>
-        
-        <div class="leaderboard">
-            <h2>Owner Leaderboard</h2>
-            <div class="leaderboard-grid" id="leaderboard">
-                <div class="owner-card">
-                    <div class="owner-rank">Add owners to see standings</div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="controls">
-            <button onclick="recalculate()">Recalculate Totals</button>
-            <button onclick="sortTable(0)">Sort by Region</button>
-            <button onclick="sortTable(1)">Sort by Seed</button>
-            <button onclick="sortTable(6)">Sort by Exp Pts</button>
-            <button onclick="sortTable(7)">Sort by Owner</button>
-            <button onclick="sortTable(14)">Sort by Total Points</button>
-        </div>
-        
-        <div class="table-container">
-            <table id="fantasyTable">
-                <thead>
-                    <tr>
-                        <th onclick="sortTable(0)">Region</th>
-                        <th onclick="sortTable(1)">Seed</th>
-                        <th onclick="sortTable(2)">Team</th>
-                        <th onclick="sortTable(3)">Player</th>
-                        <th onclick="sortTable(4)">PPG</th>
-                        <th onclick="sortTable(5)">Exp Games</th>
-                        <th onclick="sortTable(6)">Exp Pts</th>
-                        <th onclick="sortTable(7)">Owner</th>
-                        <th onclick="sortTable(8)">R64</th>
-                        <th onclick="sortTable(9)">R32</th>
-                        <th onclick="sortTable(10)">S16</th>
-                        <th onclick="sortTable(11)">E8</th>
-                        <th onclick="sortTable(12)">F4</th>
-                        <th onclick="sortTable(13)">Champ</th>
-                        <th onclick="sortTable(14)">Total</th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody">
-                </tbody>
-            </table>
-        </div>
+<h1>NCAA Fantasy Tracker 2026</h1>
+
+<div class="controls">
+    <div>
+        <label for="default-exp-games">Default Expected Games by Seed:</label>
+        <span>(enter comma-separated values for seeds 1–16, e.g. 4,3.5,3,2.5,...)</span><br>
+        <input type="text" id="default-exp-games" size="60"
+               value="4.0,3.5,3.0,2.7,2.5,2.3,2.1,2.0,1.8,1.7,1.6,1.5,1.4,1.3,1.2,1.1"
+               onblur="updateDefaultExpectedGames()" />
+        <div class="note">If left as is, seeds 1–16 are mapped to the default progression above.</div>
     </div>
-    
-    <script>
-        // Seed-based baseline expectations (owners can override per player via Exp Games).
-        // These reflect historical advancement patterns by seed. [web:523][web:524][web:540]
-        const defaultExpectedGamesBySeed = {
-            1: 4.2,
-            2: 3.5,
-            3: 3.0,
-            4: 2.6,
-            5: 2.2,
-            6: 2.0,
-            7: 1.8,
-            8: 1.6,
-            9: 1.5,
-            10: 1.5,
-            11: 1.4,
-            12: 1.3,
-            13: 1.2,
-            14: 1.15,
-            15: 1.1,
-            16: 1.05
-        };
+</div>
 
-        const players = [
-            {region: "West", seed: 14, team: "Akron", player: "Tavari Johnson", ppg: 20.1, fillColor: "#041E42", fontColor: "#A89968"},
-            {region: "West", seed: 14, team: "Akron", player: "Amani Lyles", ppg: 14.6, fillColor: "#041E42", fontColor: "#A89968"},
-            {region: "West", seed: 14, team: "Akron", player: "Shammah Scott", ppg: 12.7, fillColor: "#041E42", fontColor: "#A89968"},
-            {region: "West", seed: 14, team: "Akron", player: "Evan Mahaffey", ppg: 10.2, fillColor: "#041E42", fontColor: "#A89968"},
-            {region: "West", seed: 14, team: "Akron", player: "Bowen Hardman", ppg: 7.8, fillColor: "#041E42", fontColor: "#A89968"},
-            {region: "West", seed: 14, team: "Akron", player: "Sharron Young", ppg: 7.3, fillColor: "#041E42", fontColor: "#A89968"},
-            {region: "Midwest", seed: 4, team: "Alabama", player: "Labaron Philon", ppg: 21.7, fillColor: "#9E1B32", fontColor: "#FFFFFF"},
-            {region: "Midwest", seed: 4, team: "Alabama", player: "Aden Holloway", ppg: 16.8, fillColor: "#9E1B32", fontColor: "#FFFFFF"},
-            {region: "Midwest", seed: 4, team: "Alabama", player: "Latrell Wrightsell Jr.", ppg: 12.8, fillColor: "#9E1B32", fontColor: "#FFFFFF"},
-            {region: "Midwest", seed: 4, team: "Alabama", player: "Amari Allen", ppg: 11.7, fillColor: "#9E1B32", fontColor: "#FFFFFF"},
-            {region: "Midwest", seed: 4, team: "Alabama", player: "Aiden Sherrell", ppg: 11.1, fillColor: "#9E1B32", fontColor: "#FFFFFF"},
-            {region: "Midwest", seed: 4, team: "Alabama", player: "Charles Bediako", ppg: 10.0, fillColor: "#9E1B32", fontColor: "#FFFFFF"},
-            {region: "West", seed: 1, team: "Arizona", player: "Brayden Burries", ppg: 15.9, fillColor: "#CC0033", fontColor: "#003366"},
-            {region: "West", seed: 1, team: "Arizona", player: "Koa Peat", ppg: 13.6, fillColor: "#CC0033", fontColor: "#003366"},
-            {region: "West", seed: 1, team: "Arizona", player: "Jaden Bradley", ppg: 13.3, fillColor: "#CC0033", fontColor: "#003366"},
-            {region: "West", seed: 1, team: "Arizona", player: "Motiejus Krivas", ppg: 10.5, fillColor: "#CC0033", fontColor: "#003366"},
-            {region: "West", seed: 1, team: "Arizona", player: "Ivan Kharchenkov", ppg: 10.1, fillColor: "#CC0033", fontColor: "#003366"},
-            {region: "West", seed: 1, team: "Arizona", player: "Tobe Awaka", ppg: 9.4, fillColor: "#CC0033", fontColor: "#003366"},
-            {region: "West", seed: 4, team: "Arkansas", player: "Darius Acuff Jr.", ppg: 22.7, fillColor: "#9D2235", fontColor: "#FFFFFF"},
-            {region: "West", seed: 4, team: "Arkansas", player: "Meleek Thomas", ppg: 15.5, fillColor: "#9D2235", fontColor: "#FFFFFF"},
-            {region: "West", seed: 4, team: "Arkansas", player: "Trevon Brazile", ppg: 13.1, fillColor: "#9D2235", fontColor: "#FFFFFF"},
-            {region: "West", seed: 4, team: "Arkansas", player: "Billy Richmond III", ppg: 10.8, fillColor: "#9D2235", fontColor: "#FFFFFF"},
-            {region: "West", seed: 4, team: "Arkansas", player: "Karter Knox", ppg: 10.1, fillColor: "#9D2235", fontColor: "#FFFFFF"},
-            {region: "West", seed: 4, team: "Arkansas", player: "Boogie Fland", ppg: 9.5, fillColor: "#9D2235", fontColor: "#FFFFFF"},
-            {region: "West", seed: 6, team: "BYU", player: "AJ Dybantsa", ppg: 25.3, fillColor: "#002E5D", fontColor: "#FFFFFF"},
-            {region: "West", seed: 6, team: "BYU", player: "Robert Wright III", ppg: 18.2, fillColor: "#002E5D", fontColor: "#FFFFFF"},
-            {region: "West", seed: 6, team: "BYU", player: "Richie Saunders", ppg: 18.0, fillColor: "#002E5D", fontColor: "#FFFFFF"},
-            {region: "West", seed: 6, team: "BYU", player: "Kennard Davis Jr.", ppg: 8.5, fillColor: "#002E5D", fontColor: "#FFFFFF"},
-            {region: "West", seed: 6, team: "BYU", player: "Dawson Baker", ppg: 7.5, fillColor: "#002E5D", fontColor: "#FFFFFF"},
-            {region: "West", seed: 6, team: "BYU", player: "Keba Keita", ppg: 6.3, fillColor: "#002E5D", fontColor: "#FFFFFF"},
-            {region: "Midwest", seed: 15, team: "Cal Baptist", player: "Dominique Daniels Jr.", ppg: 23.2, fillColor: "#004990", fontColor: "#FDB927"},
-            {region: "Midwest", seed: 15, team: "Cal Baptist", player: "Jayden Jackson", ppg: 12.9, fillColor: "#004990", fontColor: "#FDB927"},
-            {region: "Midwest", seed: 15, team: "Cal Baptist", player: "Martel Williams", ppg: 12.7, fillColor: "#004990", fontColor: "#FDB927"},
-            {region: "Midwest", seed: 15, team: "Cal Baptist", player: "Jonathan Griman", ppg: 7.5, fillColor: "#004990", fontColor: "#FDB927"},
-            {region: "Midwest", seed: 15, team: "Cal Baptist", player: "Jordan Muller", ppg: 6.6, fillColor: "#004990", fontColor: "#FDB927"},
-            {region: "Midwest", seed: 15, team: "Cal Baptist", player: "Thomas Ndong", ppg: 5.0, fillColor: "#004990", fontColor: "#FDB927"},
-            {region: "South", seed: 8, team: "Clemson", player: "RJ Godfrey", ppg: 11.9, fillColor: "#F66733", fontColor: "#522D80"},
-            {region: "South", seed: 8, team: "Clemson", player: "Carter Welling", ppg: 10.2, fillColor: "#F66733", fontColor: "#522D80"},
-            {region: "South", seed: 8, team: "Clemson", player: "Jestin Porter", ppg: 9.6, fillColor: "#F66733", fontColor: "#522D80"},
-            {region: "South", seed: 8, team: "Clemson", player: "Nick Davidson", ppg: 9.1, fillColor: "#F66733", fontColor: "#522D80"},
-            {region: "South", seed: 8, team: "Clemson", player: "Ace Buckner", ppg: 8.4, fillColor: "#F66733", fontColor: "#522D80"},
-            {region: "South", seed: 8, team: "Clemson", player: "Dillon Hunter", ppg: 7.5, fillColor: "#F66733", fontColor: "#522D80"},
-            {region: "East", seed: 1, team: "Duke", player: "Cameron Boozer", ppg: 22.5, fillColor: "#003087", fontColor: "#FFFFFF"},
-            {region: "East", seed: 1, team: "Duke", player: "Isaiah Evans", ppg: 14.9, fillColor: "#003087", fontColor: "#FFFFFF"},
-            {region: "East", seed: 1, team: "Duke", player: "Patrick Ngongba II", ppg: 10.7, fillColor: "#003087", fontColor: "#FFFFFF"},
-            {region: "East", seed: 1, team: "Duke", player: "Caleb Foster", ppg: 8.5, fillColor: "#003087", fontColor: "#FFFFFF"},
-            {region: "East", seed: 1, team: "Duke", player: "Cayden Boozer", ppg: 7.1, fillColor: "#003087", fontColor: "#FFFFFF"},
-            {region: "East", seed: 1, team: "Duke", player: "Dame Sarr", ppg: 6.3, fillColor: "#003087", fontColor: "#FFFFFF"},
-            {region: "South", seed: 1, team: "Florida", player: "Thomas Haugh", ppg: 17.1, fillColor: "#0021A5", fontColor: "#FA4616"},
-            {region: "South", seed: 1, team: "Florida", player: "Alex Condon", ppg: 15.0, fillColor: "#0021A5", fontColor: "#FA4616"},
-            {region: "South", seed: 1, team: "Florida", player: "Boogie Fland", ppg: 11.6, fillColor: "#0021A5", fontColor: "#FA4616"},
-            {region: "South", seed: 1, team: "Florida", player: "Xaivian Lee", ppg: 11.5, fillColor: "#0021A5", fontColor: "#FA4616"},
-            {region: "South", seed: 1, team: "Florida", player: "Rueben Chinyelu", ppg: 11.2, fillColor: "#0021A5", fontColor: "#FA4616"},
-            {region: "South", seed: 1, team: "Florida", player: "Urban Klavzar", ppg: 9.7, fillColor: "#0021A5", fontColor: "#FA4616"},
-            {region: "Midwest", seed: 13, team: "Furman", player: "Nick Anderson", ppg: 18.7, fillColor: "#582C83", fontColor: "#FFFFFF"},
-            {region: "Midwest", seed: 13, team: "Furman", player: "Cooper Bowser", ppg: 13.3, fillColor: "#582C83", fontColor: "#FFFFFF"},
-            {region: "Midwest", seed: 13, team: "Furman", player: "Matt Rafferty", ppg: 11.2, fillColor: "#582C83", fontColor: "#FFFFFF"},
-            {region: "Midwest", seed: 13, team: "Furman", player: "Garrett Hien", ppg: 9.4, fillColor: "#582C83", fontColor: "#FFFFFF"},
-            {region: "Midwest", seed: 13, team: "Furman", player: "Jackson Price", ppg: 8.8, fillColor: "#582C83", fontColor: "#FFFFFF"},
-            {region: "Midwest", seed: 13, team: "Furman", player: "Cameron Calhoun", ppg: 6.8, fillColor: "#582C83", fontColor: "#FFFFFF"},
-            {region: "Midwest", seed: 8, team: "Georgia", player: "Jeremiah Wilkinson", ppg: 17.0, fillColor: "#BA0C2F", fontColor: "#000000"},
-            {region: "Midwest", seed: 8, team: "Georgia", player: "Blue Cain", ppg: 13.3, fillColor: "#BA0C2F", fontColor: "#000000"},
-            {region: "Midwest", seed: 8, team: "Georgia", player: "Kanon Catchings", ppg: 12.0, fillColor: "#BA0C2F", fontColor: "#000000"},
-            {region: "Midwest", seed: 8, team: "Georgia", player: "Marcus Millender", ppg: 11.9, fillColor: "#BA0C2F", fontColor: "#000000"},
-            {region: "Midwest", seed: 8, team: "Georgia", player: "Somtochukwu Cyril", ppg: 9.6, fillColor: "#BA0C2F", fontColor: "#000000"},
-            {region: "Midwest", seed: 8, team: "Georgia", player: "Jordan Ross", ppg: 6.6, fillColor: "#BA0C2F", fontColor: "#000000"},
-            {region: "West", seed: 3, team: "Gonzaga", player: "Graham Ike", ppg: 19.7, fillColor: "#041E42", fontColor: "#C8102E"},
-            {region: "West", seed: 3, team: "Gonzaga", player: "Braden Huff", ppg: 17.8, fillColor: "#041E42", fontColor: "#C8102E"},
-            {region: "West", seed: 3, team: "Gonzaga", player: "Tyon Grant-Foster", ppg: 11.2, fillColor: "#041E42", fontColor: "#C8102E"},
-            {region: "West", seed: 3, team: "Gonzaga", player: "Mario Saint-Supery", ppg: 8.6, fillColor: "#041E42", fontColor: "#C8102E"},
-            {region: "West", seed: 3, team: "Gonzaga", player: "Davis Fogle", ppg: 8.4, fillColor: "#041E42", fontColor: "#C8102E"},
-            {region: "West", seed: 3, team: "Gonzaga", player: "Adam Miller", ppg: 7.6, fillColor: "#041E42", fontColor: "#C8102E"},
-            {region: "South", seed: 16, team: "Hawaii", player: "Gytis Nemeiksa", ppg: 14.1, fillColor: "#024731", fontColor: "#FFFFFF"},
-            {region: "South", seed: 16, team: "Hawaii", player: "Marcus Greene", ppg: 13.5, fillColor: "#024731", fontColor: "#FFFFFF"},
-            {region: "South", seed: 16, team: "Hawaii", player: "Tanner Christensen", ppg: 10.8, fillColor: "#024731", fontColor: "#FFFFFF"},
-            {region: "South", seed: 16, team: "Hawaii", player: "AJ Aros", ppg: 9.3, fillColor: "#024731", fontColor: "#FFFFFF"},
-            {region: "South", seed: 16, team: "Hawaii", player: "Akira Jacobs", ppg: 9.1, fillColor: "#024731", fontColor: "#FFFFFF"},
-            {region: "South", seed: 16, team: "Hawaii", player: "Ryan Rapp", ppg: 8.5, fillColor: "#024731", fontColor: "#FFFFFF"},
-            {region: "East", seed: 16, team: "High Point", player: "Terry Anderson", ppg: 16.0, fillColor: "#582C83", fontColor: "#FFFFFF"},
-            {region: "East", seed: 16, team: "High Point", player: "Rob Martin", ppg: 15.3, fillColor: "#582C83", fontColor: "#FFFFFF"},
-            {region: "East", seed: 16, team: "High Point", player: "Cam'Ron Fletcher", ppg: 12.7, fillColor: "#582C83", fontColor: "#FFFFFF"},
-            {region: "East", seed: 16, team: "High Point", player: "Owen Aquino", ppg: 9.4, fillColor: "#582C83", fontColor: "#FFFFFF"},
-            {region: "East", seed: 16, team: "High Point", player: "Conrad Martinez", ppg: 8.7, fillColor: "#582C83", fontColor: "#FFFFFF"},
-            {region: "East", seed: 16, team: "High Point", player: "Braden Hausen", ppg: 6.8, fillColor: "#582C83", fontColor: "#FFFFFF"},
-            {region: "West", seed: 13, team: "Hofstra", player: "Cruz Davis", ppg: 20.2, fillColor: "#00405B", fontColor: "#F7941D"},
-            {region: "West", seed: 13, team: "Hofstra", player: "Preston Edmead", ppg: 15.8, fillColor: "#00405B", fontColor: "#F7941D"},
-            {region: "West", seed: 13, team: "Hofstra", player: "Biggie Patterson", ppg: 9.5, fillColor: "#00405B", fontColor: "#F7941D"},
-            {region: "West", seed: 13, team: "Hofstra", player: "German Plotnikov", ppg: 8.9, fillColor: "#00405B", fontColor: "#F7941D"},
-            {region: "West", seed: 13, team: "Hofstra", player: "Victory Onuetu", ppg: 5.2, fillColor: "#00405B", fontColor: "#F7941D"},
-            {region: "West", seed: 13, team: "Hofstra", player: "Silas Sunday", ppg: 4.7, fillColor: "#00405B", fontColor: "#F7941D"},
-            {region: "South", seed: 2, team: "Houston", player: "Kingston Flemings", ppg: 16.4, fillColor: "#C8102E", fontColor: "#FFFFFF"},
-            {region: "South", seed: 2, team: "Houston", player: "Emanuel Sharp", ppg: 15.3, fillColor: "#C8102E", fontColor: "#FFFFFF"},
-            {region: "South", seed: 2, team: "Houston", player: "Milos Uzan", ppg: 11.1, fillColor: "#C8102E", fontColor: "#FFFFFF"},
-            {region: "South", seed: 2, team: "Houston", player: "Chris Cenac Jr.", ppg: 9.5, fillColor: "#C8102E", fontColor: "#FFFFFF"},
-            {region: "South", seed: 2, team: "Houston", player: "Joseph Tugler", ppg: 8.4, fillColor: "#C8102E", fontColor: "#FFFFFF"},
-            {region: "South", seed: 2, team: "Houston", player: "Mercy Miller", ppg: 4.8, fillColor: "#C8102E", fontColor: "#FFFFFF"},
-            {region: "West", seed: 16, team: "Idaho", player: "Julius Mims", ppg: 21.6, fillColor: "#000000", fontColor: "#BFA567"},
-            {region: "West", seed: 16, team: "Idaho", player: "Kolton Mitchell", ppg: 17.8, fillColor: "#000000", fontColor: "#BFA567"},
-            {region: "West", seed: 16, team: "Idaho", player: "Tyler Mrus", ppg: 11.2, fillColor: "#000000", fontColor: "#BFA567"},
-            {region: "West", seed: 16, team: "Idaho", player: "Isaiah Brickner", ppg: 8.9, fillColor: "#000000", fontColor: "#BFA567"},
-            {region: "West", seed: 16, team: "Idaho", player: "Kyson Rose", ppg: 8.4, fillColor: "#000000", fontColor: "#BFA567"},
-            {region: "West", seed: 16, team: "Idaho", player: "Jack Payne", ppg: 6.7, fillColor: "#000000", fontColor: "#BFA567"},
-            {region: "South", seed: 3, team: "Illinois", player: "Keaton Wagler", ppg: 17.9, fillColor: "#E84A27", fontColor: "#13294B"},
-            {region: "South", seed: 3, team: "Illinois", player: "David Mirkovic", ppg: 13.4, fillColor: "#E84A27", fontColor: "#13294B"},
-            {region: "South", seed: 3, team: "Illinois", player: "Kylan Boswell", ppg: 13.2, fillColor: "#E84A27", fontColor: "#13294B"},
-            {region: "South", seed: 3, team: "Illinois", player: "Andrej Stojakovic", ppg: 12.9, fillColor: "#E84A27", fontColor: "#13294B"},
-            {region: "South", seed: 3, team: "Illinois", player: "Zvonimir Ivisic", ppg: 11.3, fillColor: "#E84A27", fontColor: "#13294B"},
-            {region: "South", seed: 3, team: "Illinois", player: "Tomislav Ivisic", ppg: 7.0, fillColor: "#E84A27", fontColor: "#13294B"},
-            {region: "South", seed: 9, team: "Iowa", player: "Bennett Stirtz", ppg: 20.2, fillColor: "#000000", fontColor: "#FFCD00"},
-            {region: "South", seed: 9, team: "Iowa", player: "Tavion Banks", ppg: 10.5, fillColor: "#000000", fontColor: "#FFCD00"},
-            {region: "South", seed: 9, team: "Iowa", player: "Cam Manyawu", ppg: 7.1, fillColor: "#000000", fontColor: "#FFCD00"},
-            {region: "South", seed: 9, team: "Iowa", player: "Kael Combs", ppg: 5.9, fillColor: "#000000", fontColor: "#FFCD00"},
-            {region: "South", seed: 9, team: "Iowa", player: "Tate Sage", ppg: 5.7, fillColor: "#000000", fontColor: "#FFCD00"},
-            {region: "South", seed: 9, team: "Iowa", player: "Isaia Howard", ppg: 5.4, fillColor: "#000000", fontColor: "#FFCD00"},
-            {region: "Midwest", seed: 2, team: "Iowa State", player: "Milan Momcilovic", ppg: 16.5, fillColor: "#C8102E", fontColor: "#FFC72C"},
-            {region: "Midwest", seed: 2, team: "Iowa State", player: "Joshua Jefferson", ppg: 15.1, fillColor: "#C8102E", fontColor: "#FFC72C"},
-            {region: "Midwest", seed: 2, team: "Iowa State", player: "Tamin Lipsey", ppg: 14.4, fillColor: "#C8102E", fontColor: "#FFC72C"},
-            {region: "Midwest", seed: 2, team: "Iowa State", player: "Blake Buchanan", ppg: 12.3, fillColor: "#C8102E", fontColor: "#FFC72C"},
-            {region: "Midwest", seed: 2, team: "Iowa State", player: "Killyan Toure", ppg: 8.1, fillColor: "#C8102E", fontColor: "#FFC72C"},
-            {region: "Midwest", seed: 2, team: "Iowa State", player: "Jamarion Batemon", ppg: 6.9, fillColor: "#C8102E", fontColor: "#FFC72C"},
-            {region: "East", seed: 4, team: "Kansas", player: "Darryn Peterson", ppg: 19.9, fillColor: "#0051BA", fontColor: "#E8000D"},
-            {region: "East", seed: 4, team: "Kansas", player: "Tre White", ppg: 14.3, fillColor: "#0051BA", fontColor: "#E8000D"},
-            {region: "East", seed: 4, team: "Kansas", player: "Flory Bidunga", ppg: 13.8, fillColor: "#0051BA", fontColor: "#E8000D"},
-            {region: "East", seed: 4, team: "Kansas", player: "Melvin Council Jr.", ppg: 13.4, fillColor: "#0051BA", fontColor: "#E8000D"},
-            {region: "East", seed: 4, team: "Kansas", player: "Bryson Tiller", ppg: 8.2, fillColor: "#0051BA", fontColor: "#E8000D"},
-            {region: "East", seed: 4, team: "Kansas", player: "Elmarko Jackson", ppg: 4.9, fillColor: "#0051BA", fontColor: "#E8000D"},
-            {region: "East", seed: 14, team: "Kennesaw State", player: "Simeon Cottle", ppg: 20.2, fillColor: "#000000", fontColor: "#FDB927"},
-            {region: "East", seed: 14, team: "Kennesaw State", player: "RJ Johnson", ppg: 14.2, fillColor: "#000000", fontColor: "#FDB927"},
-            {region: "East", seed: 14, team: "Kennesaw State", player: "Braedan Lue", ppg: 11.4, fillColor: "#000000", fontColor: "#FDB927"},
-            {region: "East", seed: 14, team: "Kennesaw State", player: "Adrian Wooley", ppg: 10.6, fillColor: "#000000", fontColor: "#FDB927"},
-            {region: "East", seed: 14, team: "Kennesaw State", player: "Trey Simpson", ppg: 9.3, fillColor: "#000000", fontColor: "#FDB927"},
-            {region: "East", seed: 14, team: "Kennesaw State", player: "Ramone Seals", ppg: 7.6, fillColor: "#000000", fontColor: "#FDB927"},
-            {region: "Midwest", seed: 7, team: "Kentucky", player: "Otega Oweh", ppg: 18.2, fillColor: "#0033A0", fontColor: "#FFFFFF"},
-            {region: "Midwest", seed: 7, team: "Kentucky", player: "Denzel Aberdeen", ppg: 13.2, fillColor: "#0033A0", fontColor: "#FFFFFF"},
-            {region: "Midwest", seed: 7, team: "Kentucky", player: "Collin Chandler", ppg: 9.9, fillColor: "#0033A0", fontColor: "#FFFFFF"},
-            {region: "Midwest", seed: 7, team: "Kentucky", player: "Mouhamed Dioubate", ppg: 8.7, fillColor: "#0033A0", fontColor: "#FFFFFF"},
-            {region: "Midwest", seed: 7, team: "Kentucky", player: "Malachi Moreno", ppg: 8.0, fillColor: "#0033A0", fontColor: "#FFFFFF"},
-            {region: "Midwest", seed: 7, team: "Kentucky", player: "Jaland Lowe", ppg: 8.0, fillColor: "#0033A0", fontColor: "#FFFFFF"},
-            {region: "South", seed: 15, team: "LIU", player: "Jamal Fuller", ppg: 16.4, fillColor: "#003087", fontColor: "#FFC82D"},
-            {region: "South", seed: 15, team: "LIU", player: "Malachi Davis", ppg: 14.4, fillColor: "#003087", fontColor: "#FFC82D"},
-            {region: "South", seed: 15, team: "LIU", player: "Greg Gordon", ppg: 14.1, fillColor: "#003087", fontColor: "#FFC82D"},
-            {region: "South", seed: 15, team: "LIU", player: "Jomo Goings", ppg: 10.0, fillColor: "#003087", fontColor: "#FFC82D"},
-            {region: "South", seed: 15, team: "LIU", player: "Mason Porter-Brown", ppg: 7.5, fillColor: "#003087", fontColor: "#FFC82D"},
-            {region: "South", seed: 15, team: "LIU", player: "Shadrak Lasu", ppg: 5.2, fillColor: "#003087", fontColor: "#FFC82D"},
-            {region: "East", seed: 6, team: "Louisville", player: "Ryan Conwell", ppg: 18.7, fillColor: "#AD0000", fontColor: "#000000"},
-            {region: "East", seed: 6, team: "Louisville", player: "Mikel Brown Jr.", ppg: 18.2, fillColor: "#AD0000", fontColor: "#000000"},
-            {region: "East", seed: 6, team: "Louisville", player: "J'Vonne Hadley", ppg: 11.8, fillColor: "#AD0000", fontColor: "#000000"},
-            {region: "East", seed: 6, team: "Louisville", player: "Isaac McKneely", ppg: 10.6, fillColor: "#AD0000", fontColor: "#000000"},
-            {region: "East", seed: 6, team: "Louisville", player: "Sananda Fru", ppg: 9.2, fillColor: "#AD0000", fontColor: "#000000"},
-            {region: "East", seed: 6, team: "Louisville", player: "Adrian Wooley", ppg: 8.5, fillColor: "#AD0000", fontColor: "#000000"},
-            {region: "South", seed: 14, team: "McNeese", player: "Quadir Copeland", ppg: 17.3, fillColor: "#002D72", fontColor: "#FFC72C"},
-            {region: "South", seed: 14, team: "McNeese", player: "Christian Shumate", ppg: 14.9, fillColor: "#002D72", fontColor: "#FFC72C"},
-            {region: "South", seed: 14, team: "McNeese", player: "CJ Felder", ppg: 13.6, fillColor: "#002D72", fontColor: "#FFC72C"},
-            {region: "South", seed: 14, team: "McNeese", player: "Javohn Garcia", ppg: 13.1, fillColor: "#002D72", fontColor: "#FFC72C"},
-            {region: "South", seed: 14, team: "McNeese", player: "Joe Charles", ppg: 9.8, fillColor: "#002D72", fontColor: "#FFC72C"},
-            {region: "South", seed: 14, team: "McNeese", player: "Isaiah Nelson", ppg: 8.1, fillColor: "#002D72", fontColor: "#FFC72C"},
-            {region: "West", seed: 7, team: "Miami", player: "Malik Reneau", ppg: 18.8, fillColor: "#F47321", fontColor: "#005030"},
-            {region: "West", seed: 7, team: "Miami", player: "Tre Donaldson", ppg: 16.5, fillColor: "#F47321", fontColor: "#005030"},
-            {region: "West", seed: 7, team: "Miami", player: "Shelton Henderson", ppg: 13.7, fillColor: "#F47321", fontColor: "#005030"},
-            {region: "West", seed: 7, team: "Miami", player: "Tru Washington", ppg: 12.1, fillColor: "#F47321", fontColor: "#005030"},
-            {region: "West", seed: 7, team: "Miami", player: "Ernest Udeh Jr.", ppg: 6.9, fillColor: "#F47321", fontColor: "#005030"},
-            {region: "West", seed: 7, team: "Miami", player: "Dante Allen", ppg: 6.4, fillColor: "#F47321", fontColor: "#005030"},
-            {region: "East", seed: 11, team: "Miami (OH)/SMU", player: "Boopie Miller", ppg: 19.2, fillColor: "#C8102E", fontColor: "#003087"},
-            {region: "East", seed: 11, team: "Miami (OH)/SMU", player: "Jaron Pierre Jr.", ppg: 17.6, fillColor: "#C8102E", fontColor: "#003087"},
-            {region: "East", seed: 11, team: "Miami (OH)/SMU", player: "Peter Suder", ppg: 14.6, fillColor: "#C8102E", fontColor: "#003087"},
-            {region: "East", seed: 11, team: "Miami (OH)/SMU", player: "Brant Byers", ppg: 14.2, fillColor: "#C8102E", fontColor: "#003087"},
-            {region: "East", seed: 11, team: "Miami (OH)/SMU", player: "Evan Ipsaro", ppg: 13.9, fillColor: "#C8102E", fontColor: "#003087"},
-            {region: "East", seed: 11, team: "Miami (OH)/SMU", player: "Eian Elmer", ppg: 12.6, fillColor: "#C8102E", fontColor: "#003087"},
-            {region: "Midwest", seed: 1, team: "Michigan", player: "Yaxel Lendeborg", ppg: 14.4, fillColor: "#00274C", fontColor: "#FFCB05"},
-            {region: "Midwest", seed: 1, team: "Michigan", player: "Morez Johnson Jr.", ppg: 13.3, fillColor: "#00274C", fontColor: "#FFCB05"},
-            {region: "Midwest", seed: 1, team: "Michigan", player: "Aday Mara", ppg: 11.6, fillColor: "#00274C", fontColor: "#FFCB05"},
-            {region: "Midwest", seed: 1, team: "Michigan", player: "Elliot Cadeau", ppg: 10.2, fillColor: "#00274C", fontColor: "#FFCB05"},
-            {region: "Midwest", seed: 1, team: "Michigan", player: "Trey McKenney", ppg: 9.7, fillColor: "#00274C", fontColor: "#FFCB05"},
-            {region: "Midwest", seed: 1, team: "Michigan", player: "L.J. Cason", ppg: 8.4, fillColor: "#00274C", fontColor: "#FFCB05"},
-            {region: "East", seed: 3, team: "Michigan State", player: "Jeremy Fears Jr.", ppg: 15.7, fillColor: "#18453B", fontColor: "#FFFFFF"},
-            {region: "East", seed: 3, team: "Michigan State", player: "Jaxon Kohler", ppg: 12.7, fillColor: "#18453B", fontColor: "#FFFFFF"},
-            {region: "East", seed: 3, team: "Michigan State", player: "Coen Carr", ppg: 11.6, fillColor: "#18453B", fontColor: "#FFFFFF"},
-            {region: "East", seed: 3, team: "Michigan State", player: "Carson Cooper", ppg: 10.8, fillColor: "#18453B", fontColor: "#FFFFFF"},
-            {region: "East", seed: 3, team: "Michigan State", player: "Kur Teng", ppg: 7.7, fillColor: "#18453B", fontColor: "#FFFFFF"},
-            {region: "East", seed: 3, team: "Michigan State", player: "Jordan Scott", ppg: 5.9, fillColor: "#18453B", fontColor: "#FFFFFF"},
-            {region: "West", seed: 10, team: "Missouri", player: "Mark Mitchell", ppg: 18.3, fillColor: "#000000", fontColor: "#F1B82D"},
-            {region: "West", seed: 10, team: "Missouri", player: "Jayden Stone", ppg: 13.2, fillColor: "#000000", fontColor: "#F1B82D"},
-            {region: "West", seed: 10, team: "Missouri", player: "Trent Pierce", ppg: 10.6, fillColor: "#000000", fontColor: "#F1B82D"},
-            {region: "West", seed: 10, team: "Missouri", player: "T.O. Barrett", ppg: 8.9, fillColor: "#000000", fontColor: "#F1B82D"},
-            {region: "West", seed: 10, team: "Missouri", player: "Anthony Robinson II", ppg: 8.8, fillColor: "#000000", fontColor: "#F1B82D"},
-            {region: "West", seed: 10, team: "Missouri", player: "Jacob Crews", ppg: 8.6, fillColor: "#000000", fontColor: "#F1B82D"},
-            {region: "South", seed: 4, team: "Nebraska", player: "Pryce Sandfort", ppg: 17.8, fillColor: "#E41C38", fontColor: "#FFFFFF"},
-            {region: "South", seed: 4, team: "Nebraska", player: "Rienk Mast", ppg: 13.5, fillColor: "#E41C38", fontColor: "#FFFFFF"},
-            {region: "South", seed: 4, team: "Nebraska", player: "Braden Frager", ppg: 11.6, fillColor: "#E41C38", fontColor: "#FFFFFF"},
-            {region: "South", seed: 4, team: "Nebraska", player: "Jamarques Lawrence", ppg: 9.7, fillColor: "#E41C38", fontColor: "#FFFFFF"},
-            {region: "South", seed: 4, team: "Nebraska", player: "Sam Hoiberg", ppg: 9.6, fillColor: "#E41C38", fontColor: "#FFFFFF"},
-            {region: "South", seed: 4, team: "Nebraska", player: "Ugnius Jarusevicius", ppg: 7.0, fillColor: "#E41C38", fontColor: "#FFFFFF"},
-            {region: "South", seed: 6, team: "North Carolina", player: "Caleb Wilson", ppg: 19.8, fillColor: "#7BAFD4", fontColor: "#FFFFFF"},
-            {region: "South", seed: 6, team: "North Carolina", player: "Henri Veesaar", ppg: 16.7, fillColor: "#7BAFD4", fontColor: "#FFFFFF"},
-            {region: "South", seed: 6, team: "North Carolina", player: "Jarin Stevenson", ppg: 14.9, fillColor: "#7BAFD4", fontColor: "#FFFFFF"},
-            {region: "South", seed: 6, team: "North Carolina", player: "Drake Powell", ppg: 10.3, fillColor: "#7BAFD4", fontColor: "#FFFFFF"},
-            {region: "South", seed: 6, team: "North Carolina", player: "Tessa Johnson", ppg: 8.9, fillColor: "#7BAFD4", fontColor: "#FFFFFF"},
-            {region: "South", seed: 6, team: "North Carolina", player: "Jonathan Rosario", ppg: 6.7, fillColor: "#7BAFD4", fontColor: "#FFFFFF"},
-            {region: "Midwest", seed: 14, team: "North Dakota State", player: "Jacari White", ppg: 18.8, fillColor: "#006747", fontColor: "#FFC72C"},
-            {region: "Midwest", seed: 14, team: "North Dakota State", player: "Brennan Watkins", ppg: 12.3, fillColor: "#006747", fontColor: "#FFC72C"},
-            {region: "Midwest", seed: 14, team: "North Dakota State", player: "Masen Miller", ppg: 11.6, fillColor: "#006747", fontColor: "#FFC72C"},
-            {region: "Midwest", seed: 14, team: "North Dakota State", player: "Ryan Conger", ppg: 8.2, fillColor: "#006747", fontColor: "#FFC72C"},
-            {region: "Midwest", seed: 14, team: "North Dakota State", player: "Tay Smith", ppg: 7.5, fillColor: "#006747", fontColor: "#FFC72C"},
-            {region: "Midwest", seed: 14, team: "North Dakota State", player: "Carson Smith", ppg: 4.2, fillColor: "#006747", fontColor: "#FFC72C"},
-            {region: "East", seed: 13, team: "Northern Iowa", player: "Tytan Anderson", ppg: 21.1, fillColor: "#4B116F", fontColor: "#FFC72C"},
-            {region: "East", seed: 13, team: "Northern Iowa", player: "Leon Bond III", ppg: 18.8, fillColor: "#4B116F", fontColor: "#FFC72C"},
-            {region: "East", seed: 13, team: "Northern Iowa", player: "Trey Campbell", ppg: 8.8, fillColor: "#4B116F", fontColor: "#FFC72C"},
-            {region: "East", seed: 13, team: "Northern Iowa", player: "Adam Borgerding", ppg: 5.4, fillColor: "#4B116F", fontColor: "#FFC72C"},
-            {region: "East", seed: 13, team: "Northern Iowa", player: "AJ Green", ppg: 5.0, fillColor: "#4B116F", fontColor: "#FFC72C"},
-            {region: "East", seed: 13, team: "Northern Iowa", player: "Tray Croft", ppg: 4.6, fillColor: "#4B116F", fontColor: "#FFC72C"},
-            {region: "East", seed: 8, team: "Ohio State", player: "Bruce Thornton", ppg: 20.3, fillColor: "#BB0000", fontColor: "#666666"},
-            {region: "East", seed: 8, team: "Ohio State", player: "John Mobley Jr.", ppg: 15.6, fillColor: "#BB0000", fontColor: "#666666"},
-            {region: "East", seed: 8, team: "Ohio State", player: "Devin Royal", ppg: 13.7, fillColor: "#BB0000", fontColor: "#666666"},
-            {region: "East", seed: 8, team: "Ohio State", player: "Christoph Tilly", ppg: 11.0, fillColor: "#BB0000", fontColor: "#666666"},
-            {region: "East", seed: 8, team: "Ohio State", player: "Amare Bynum", ppg: 9.7, fillColor: "#BB0000", fontColor: "#666666"},
-            {region: "East", seed: 8, team: "Ohio State", player: "Brandon Noel", ppg: 7.1, fillColor: "#BB0000", fontColor: "#666666"},
-            {region: "South", seed: 13, team: "Penn", player: "Sam Brown", ppg: 18.7, fillColor: "#011F5B", fontColor: "#C41230"},
-            {region: "South", seed: 13, team: "Penn", player: "Tyler Perkins", ppg: 15.2, fillColor: "#011F5B", fontColor: "#C41230"},
-            {region: "South", seed: 13, team: "Penn", player: "Ethan Roberts", ppg: 13.4, fillColor: "#011F5B", fontColor: "#C41230"},
-            {region: "South", seed: 13, team: "Penn", player: "Nick Spinoso", ppg: 11.8, fillColor: "#011F5B", fontColor: "#C41230"},
-            {region: "South", seed: 13, team: "Penn", player: "Michael Moshkovitz", ppg: 9.1, fillColor: "#011F5B", fontColor: "#C41230"},
-            {region: "South", seed: 13, team: "Penn", player: "George Smith", ppg: 7.5, fillColor: "#011F5B", fontColor: "#C41230"},
-            {region: "Midwest", seed: 16, team: "Prairie View/Lehigh", player: "Nasir Whitlock", ppg: 21.1, fillColor: "#582C83", fontColor: "#FFC72C"},
-            {region: "Midwest", seed: 16, team: "Prairie View/Lehigh", player: "Dontae Horne", ppg: 20.4, fillColor: "#582C83", fontColor: "#FFC72C"},
-            {region: "Midwest", seed: 16, team: "Prairie View/Lehigh", player: "Tai'Reon Joseph", ppg: 17.9, fillColor: "#582C83", fontColor: "#FFC72C"},
-            {region: "Midwest", seed: 16, team: "Prairie View/Lehigh", player: "Hank Alvey", ppg: 15.0, fillColor: "#582C83", fontColor: "#FFC72C"},
-            {region: "Midwest", seed: 16, team: "Prairie View/Lehigh", player: "Cory Wells", ppg: 13.1, fillColor: "#582C83", fontColor: "#FFC72C"},
-            {region: "Midwest", seed: 16, team: "Prairie View/Lehigh", player: "Lance Williams", ppg: 9.9, fillColor: "#582C83", fontColor: "#FFC72C"},
-            {region: "West", seed: 2, team: "Purdue", player: "Braden Smith", ppg: 14.0, fillColor: "#000000", fontColor: "#CFB991"},
-            {region: "West", seed: 2, team: "Purdue", player: "Fletcher Loyer", ppg: 13.8, fillColor: "#000000", fontColor: "#CFB991"},
-            {region: "West", seed: 2, team: "Purdue", player: "Trey Kaufman-Renn", ppg: 13.4, fillColor: "#000000", fontColor: "#CFB991"},
-            {region: "West", seed: 2, team: "Purdue", player: "Oscar Cluff", ppg: 10.3, fillColor: "#000000", fontColor: "#CFB991"},
-            {region: "West", seed: 2, team: "Purdue", player: "C.J. Cox", ppg: 8.4, fillColor: "#000000", fontColor: "#CFB991"},
-            {region: "West", seed: 2, team: "Purdue", player: "Daniel Jacobsen", ppg: 6.2, fillColor: "#000000", fontColor: "#CFB991"},
-            {region: "East", seed: 15, team: "Queens", player: "Nasir Mann", ppg: 13.4, fillColor: "#003087", fontColor: "#CC0000"},
-            {region: "East", seed: 15, team: "Queens", player: "Yoav Berman", ppg: 12.6, fillColor: "#003087", fontColor: "#CC0000"},
-            {region: "East", seed: 15, team: "Queens", player: "Jordan Watford", ppg: 11.9, fillColor: "#003087", fontColor: "#CC0000"},
-            {region: "East", seed: 15, team: "Queens", player: "Chris Ashby", ppg: 11.7, fillColor: "#003087", fontColor: "#CC0000"},
-            {region: "East", seed: 15, team: "Queens", player: "Avantae Parker", ppg: 11.3, fillColor: "#003087", fontColor: "#CC0000"},
-            {region: "East", seed: 15, team: "Queens", player: "Carson Schwieger", ppg: 10.2, fillColor: "#003087", fontColor: "#CC0000"},
-            {region: "Midwest", seed: 10, team: "Santa Clara", player: "Adama Bal", ppg: 20.5, fillColor: "#B30838", fontColor: "#FFFFFF"},
-            {region: "Midwest", seed: 10, team: "Santa Clara", player: "Johnny O'Neil", ppg: 13.5, fillColor: "#B30838", fontColor: "#FFFFFF"},
-            {region: "Midwest", seed: 10, team: "Santa Clara", player: "Elijah Mahi", ppg: 12.8, fillColor: "#B30838", fontColor: "#FFFFFF"},
-            {region: "Midwest", seed: 10, team: "Santa Clara", player: "Carlos Stewart", ppg: 11.4, fillColor: "#B30838", fontColor: "#FFFFFF"},
-            {region: "Midwest", seed: 10, team: "Santa Clara", player: "Camaron Tongue", ppg: 10.7, fillColor: "#B30838", fontColor: "#FFFFFF"},
-            {region: "Midwest", seed: 10, team: "Santa Clara", player: "Tyeree Bryan", ppg: 9.1, fillColor: "#B30838", fontColor: "#FFFFFF"},
-            {region: "West", seed: 15, team: "Siena", player: "Aidan Carpenter", ppg: 16.4, fillColor: "#046A38", fontColor: "#FFC72C"},
-            {region: "West", seed: 15, team: "Siena", player: "Major Freeman", ppg: 14.7, fillColor: "#046A38", fontColor: "#FFC72C"},
-            {region: "West", seed: 15, team: "Siena", player: "Nick Lebrun", ppg: 8.9, fillColor: "#046A38", fontColor: "#FFC72C"},
-            {region: "West", seed: 15, team: "Siena", player: "Justice Smith", ppg: 8.4, fillColor: "#046A38", fontColor: "#FFC72C"},
-            {region: "West", seed: 15, team: "Siena", player: "Jaiden Carter", ppg: 6.7, fillColor: "#046A38", fontColor: "#FFC72C"},
-            {region: "West", seed: 15, team: "Siena", player: "Peter Carey", ppg: 5.1, fillColor: "#046A38", fontColor: "#FFC72C"},
-            {region: "East", seed: 11, team: "South Florida", player: "Wes Enis", ppg: 16.5, fillColor: "#006747", fontColor: "#CFC493"},
-            {region: "East", seed: 11, team: "South Florida", player: "Izaiyah Nelson", ppg: 15.8, fillColor: "#006747", fontColor: "#CFC493"},
-            {region: "East", seed: 11, team: "South Florida", player: "Joseph Pinion", ppg: 14.2, fillColor: "#006747", fontColor: "#CFC493"},
-            {region: "East", seed: 11, team: "South Florida", player: "Kobe Knox", ppg: 11.1, fillColor: "#006747", fontColor: "#CFC493"},
-            {region: "East", seed: 11, team: "South Florida", player: "Jayden Reid", ppg: 8.3, fillColor: "#006747", fontColor: "#CFC493"},
-            {region: "East", seed: 11, team: "South Florida", player: "Quinton Forrest", ppg: 5.2, fillColor: "#006747", fontColor: "#CFC493"},
-            {region: "East", seed: 5, team: "St. John's", player: "Zuby Ejiofor", ppg: 16.3, fillColor: "#C8102E", fontColor: "#FFFFFF"},
-            {region: "East", seed: 5, team: "St. John's", player: "Bryce Hopkins", ppg: 13.5, fillColor: "#C8102E", fontColor: "#FFFFFF"},
-            {region: "East", seed: 5, team: "St. John's", player: "Oziyah Sellers", ppg: 10.7, fillColor: "#C8102E", fontColor: "#FFFFFF"},
-            {region: "East", seed: 5, team: "St. John's", player: "Ian Jackson", ppg: 9.6, fillColor: "#C8102E", fontColor: "#FFFFFF"},
-            {region: "East", seed: 5, team: "St. John's", player: "Joson Sanon", ppg: 8.3, fillColor: "#C8102E", fontColor: "#FFFFFF"},
-            {region: "East", seed: 5, team: "St. John's", player: "Dillon Mitchell", ppg: 8.2, fillColor: "#C8102E", fontColor: "#FFFFFF"},
-            {region: "Midwest", seed: 9, team: "St. Louis", player: "Robbie Avila", ppg: 21.7, fillColor: "#005DAA", fontColor: "#FFFFFF"},
-            {region: "Midwest", seed: 9, team: "St. Louis", player: "Isaiah Swope", ppg: 19.8, fillColor: "#005DAA", fontColor: "#FFFFFF"},
-            {region: "Midwest", seed: 9, team: "St. Louis", player: "AJ Casey", ppg: 12.1, fillColor: "#005DAA", fontColor: "#FFFFFF"},
-            {region: "Midwest", seed: 9, team: "St. Louis", player: "Josiah Dotzler", ppg: 11.6, fillColor: "#005DAA", fontColor: "#FFFFFF"},
-            {region: "Midwest", seed: 9, team: "St. Louis", player: "Kalu Anya", ppg: 9.8, fillColor: "#005DAA", fontColor: "#FFFFFF"},
-            {region: "Midwest", seed: 9, team: "St. Louis", player: "Kobe Johnson", ppg: 8.3, fillColor: "#005DAA", fontColor: "#FFFFFF"},
-            {region: "South", seed: 7, team: "St. Mary's", player: "Paulius Murauskas", ppg: 18.8, fillColor: "#003DA5", fontColor: "#C41230"},
-            {region: "South", seed: 7, team: "St. Mary's", player: "Mikey Lewis", ppg: 14.2, fillColor: "#003DA5", fontColor: "#C41230"},
-            {region: "South", seed: 7, team: "St. Mary's", player: "Joshua Dent", ppg: 13.0, fillColor: "#003DA5", fontColor: "#C41230"},
-            {region: "South", seed: 7, team: "St. Mary's", player: "Andrew McKeever", ppg: 8.4, fillColor: "#003DA5", fontColor: "#C41230"},
-            {region: "South", seed: 7, team: "St. Mary's", player: "Dillan Shaw", ppg: 7.5, fillColor: "#003DA5", fontColor: "#C41230"},
-            {region: "South", seed: 7, team: "St. Mary's", player: "Harry Wessels", ppg: 4.9, fillColor: "#003DA5", fontColor: "#C41230"},
-            {region: "East", seed: 9, team: "TCU", player: "David Punch", ppg: 14.3, fillColor: "#4D1979", fontColor: "#FFFFFF"},
-            {region: "East", seed: 9, team: "TCU", player: "Xavier Edmonds", ppg: 12.6, fillColor: "#4D1979", fontColor: "#FFFFFF"},
-            {region: "East", seed: 9, team: "TCU", player: "Jayden Pierre", ppg: 10.5, fillColor: "#4D1979", fontColor: "#FFFFFF"},
-            {region: "East", seed: 9, team: "TCU", player: "Micah Robinson", ppg: 10.5, fillColor: "#4D1979", fontColor: "#FFFFFF"},
-            {region: "East", seed: 9, team: "TCU", player: "Tanner Toolson", ppg: 8.0, fillColor: "#4D1979", fontColor: "#FFFFFF"},
-            {region: "East", seed: 9, team: "TCU", player: "Brock Harding", ppg: 8.0, fillColor: "#4D1979", fontColor: "#FFFFFF"},
-            {region: "Midwest", seed: 6, team: "Tennessee", player: "Ja'Kobi Gillespie", ppg: 18.0, fillColor: "#FF8200", fontColor: "#FFFFFF"},
-            {region: "Midwest", seed: 6, team: "Tennessee", player: "Nate Ament", ppg: 17.5, fillColor: "#FF8200", fontColor: "#FFFFFF"},
-            {region: "Midwest", seed: 6, team: "Tennessee", player: "J.P. Estrella", ppg: 10.1, fillColor: "#FF8200", fontColor: "#FFFFFF"},
-            {region: "Midwest", seed: 6, team: "Tennessee", player: "Felix Okpara", ppg: 7.7, fillColor: "#FF8200", fontColor: "#FFFFFF"},
-            {region: "Midwest", seed: 6, team: "Tennessee", player: "Jaylen Carey", ppg: 7.4, fillColor: "#FF8200", fontColor: "#FFFFFF"},
-            {region: "Midwest", seed: 6, team: "Tennessee", player: "Bishop Boswell", ppg: 6.2, fillColor: "#FF8200", fontColor: "#FFFFFF"},
-            {region: "South", seed: 12, team: "Tennessee State", player: "Aaron Nkrumah", ppg: 17.7, fillColor: "#091D58", fontColor: "#3E7DC3"},
-            {region: "South", seed: 12, team: "Tennessee State", player: "Travis Harper II", ppg: 17.3, fillColor: "#091D58", fontColor: "#3E7DC3"},
-            {region: "South", seed: 12, team: "Tennessee State", player: "Dante Harris", ppg: 11.5, fillColor: "#091D58", fontColor: "#3E7DC3"},
-            {region: "South", seed: 12, team: "Tennessee State", player: "Antoine Lorick III", ppg: 9.2, fillColor: "#091D58", fontColor: "#3E7DC3"},
-            {region: "South", seed: 12, team: "Tennessee State", player: "Jalen Pitre", ppg: 6.5, fillColor: "#091D58", fontColor: "#3E7DC3"},
-            {region: "South", seed: 12, team: "Tennessee State", player: "Khalil London", ppg: 6.4, fillColor: "#091D58", fontColor: "#3E7DC3"},
-            {region: "South", seed: 10, team: "Texas A&M", player: "Zhuric Phelps", ppg: 18.8, fillColor: "#500000", fontColor: "#FFFFFF"},
-            {region: "South", seed: 10, team: "Texas A&M", player: "Wade Taylor IV", ppg: 17.4, fillColor: "#500000", fontColor: "#FFFFFF"},
-            {region: "South", seed: 10, team: "Texas A&M", player: "Hayden Hefner", ppg: 13.5, fillColor: "#500000", fontColor: "#FFFFFF"},
-            {region: "South", seed: 10, team: "Texas A&M", player: "Pharrel Payne", ppg: 12.9, fillColor: "#500000", fontColor: "#FFFFFF"},
-            {region: "South", seed: 10, team: "Texas A&M", player: "Jace Carter", ppg: 8.3, fillColor: "#500000", fontColor: "#FFFFFF"},
-            {region: "South", seed: 10, team: "Texas A&M", player: "Manny Obaseki", ppg: 7.1, fillColor: "#500000", fontColor: "#FFFFFF"},
-            {region: "West", seed: 11, team: "Texas/NC State", player: "Dailyn Swain", ppg: 17.8, fillColor: "#BF5700", fontColor: "#CC0000"},
-            {region: "West", seed: 11, team: "Texas/NC State", player: "Matas Vokietaitis", ppg: 15.5, fillColor: "#BF5700", fontColor: "#CC0000"},
-            {region: "West", seed: 11, team: "Texas/NC State", player: "Ven-Allen Lubin", ppg: 13.9, fillColor: "#BF5700", fontColor: "#CC0000"},
-            {region: "West", seed: 11, team: "Texas/NC State", player: "Quadir Copeland", ppg: 13.9, fillColor: "#BF5700", fontColor: "#CC0000"},
-            {region: "West", seed: 11, team: "Texas/NC State", player: "Tramon Mark", ppg: 13.5, fillColor: "#BF5700", fontColor: "#CC0000"},
-            {region: "West", seed: 11, team: "Texas/NC State", player: "Jordan Pope", ppg: 13.3, fillColor: "#BF5700", fontColor: "#CC0000"},
-            {region: "Midwest", seed: 5, team: "Texas Tech", player: "JT Toppin", ppg: 21.8, fillColor: "#CC0000", fontColor: "#000000"},
-            {region: "Midwest", seed: 5, team: "Texas Tech", player: "Christian Anderson", ppg: 18.9, fillColor: "#CC0000", fontColor: "#000000"},
-            {region: "Midwest", seed: 5, team: "Texas Tech", player: "Donovan Atwell", ppg: 13.5, fillColor: "#CC0000", fontColor: "#000000"},
-            {region: "Midwest", seed: 5, team: "Texas Tech", player: "LeJuan Watts", ppg: 11.5, fillColor: "#CC0000", fontColor: "#000000"},
-            {region: "Midwest", seed: 5, team: "Texas Tech", player: "Jaylen Petty", ppg: 9.5, fillColor: "#CC0000", fontColor: "#000000"},
-            {region: "Midwest", seed: 5, team: "Texas Tech", player: "Luke Bamgboye", ppg: 4.7, fillColor: "#CC0000", fontColor: "#000000"},
-            {region: "East", seed: 12, team: "Troy", player: "Victor Valdes", ppg: 15.2, fillColor: "#862633", fontColor: "#B5B5B5"},
-            {region: "East", seed: 12, team: "Troy", player: "Thomas Dowd", ppg: 14.6, fillColor: "#862633", fontColor: "#B5B5B5"},
-            {region: "East", seed: 12, team: "Troy", player: "Theo Seng", ppg: 12.9, fillColor: "#862633", fontColor: "#B5B5B5"},
-            {region: "East", seed: 12, team: "Troy", player: "Cooper Campbell", ppg: 12.7, fillColor: "#862633", fontColor: "#B5B5B5"},
-            {region: "East", seed: 12, team: "Troy", player: "Cobi Campbell", ppg: 9.0, fillColor: "#862633", fontColor: "#B5B5B5"},
-            {region: "East", seed: 12, team: "Troy", player: "Jerrell Bellamy", ppg: 8.2, fillColor: "#862633", fontColor: "#B5B5B5"},
-            {region: "East", seed: 10, team: "UCF", player: "Jordan Ivy-Curry", ppg: 18.8, fillColor: "#000000", fontColor: "#FFC904"},
-            {region: "East", seed: 10, team: "UCF", player: "Moustapha Thiam", ppg: 14.8, fillColor: "#000000", fontColor: "#FFC904"},
-            {region: "East", seed: 10, team: "UCF", player: "Keyshawn Hall", ppg: 13.5, fillColor: "#000000", fontColor: "#FFC904"},
-            {region: "East", seed: 10, team: "UCF", player: "Darius Johnson", ppg: 13.2, fillColor: "#000000", fontColor: "#FFC904"},
-            {region: "East", seed: 10, team: "UCF", player: "Mikey Williams", ppg: 10.5, fillColor: "#000000", fontColor: "#FFC904"},
-            {region: "East", seed: 10, team: "UCF", player: "Marchelus Avery", ppg: 9.7, fillColor: "#000000", fontColor: "#FFC904"},
-            {region: "East", seed: 7, team: "UCLA", player: "Tyler Bilodeau", ppg: 17.6, fillColor: "#2D68C4", fontColor: "#FFD100"},
-            {region: "East", seed: 7, team: "UCLA", player: "Donovan Dent", ppg: 13.5, fillColor: "#2D68C4", fontColor: "#FFD100"},
-            {region: "East", seed: 7, team: "UCLA", player: "Trent Perry", ppg: 12.7, fillColor: "#2D68C4", fontColor: "#FFD100"},
-            {region: "East", seed: 7, team: "UCLA", player: "Skyy Clark", ppg: 11.7, fillColor: "#2D68C4", fontColor: "#FFD100"},
-            {region: "East", seed: 7, team: "UCLA", player: "Eric Dailey Jr.", ppg: 11.3, fillColor: "#2D68C4", fontColor: "#FFD100"},
-            {region: "East", seed: 7, team: "UCLA", player: "Xavier Booker", ppg: 6.9, fillColor: "#2D68C4", fontColor: "#FFD100"},
-            {region: "East", seed: 2, team: "UConn", player: "Solo Ball", ppg: 13.8, fillColor: "#000E2F", fontColor: "#FFFFFF"},
-            {region: "East", seed: 2, team: "UConn", player: "Tarris Reed Jr.", ppg: 13.6, fillColor: "#000E2F", fontColor: "#FFFFFF"},
-            {region: "East", seed: 2, team: "UConn", player: "Alex Karaban", ppg: 12.8, fillColor: "#000E2F", fontColor: "#FFFFFF"},
-            {region: "East", seed: 2, team: "UConn", player: "Braylon Mullins", ppg: 12.2, fillColor: "#000E2F", fontColor: "#FFFFFF"},
-            {region: "East", seed: 2, team: "UConn", player: "Silas Demary Jr.", ppg: 11.0, fillColor: "#000E2F", fontColor: "#FFFFFF"},
-            {region: "East", seed: 2, team: "UConn", player: "Eric Reibe", ppg: 6.8, fillColor: "#000E2F", fontColor: "#FFFFFF"},
-            {region: "Midwest", seed: 16, team: "UMBC/Howard", player: "Cam Gillus", ppg: 17.1, fillColor: "#000000", fontColor: "#FFC82D"},
-            {region: "Midwest", seed: 16, team: "UMBC/Howard", player: "Bryce Harris", ppg: 17.1, fillColor: "#000000", fontColor: "#FFC82D"},
-            {region: "Midwest", seed: 16, team: "UMBC/Howard", player: "Jah'likai King", ppg: 13.9, fillColor: "#000000", fontColor: "#FFC82D"},
-            {region: "Midwest", seed: 16, team: "UMBC/Howard", player: "DJ Armstrong Jr.", ppg: 13.2, fillColor: "#000000", fontColor: "#FFC82D"},
-            {region: "Midwest", seed: 16, team: "UMBC/Howard", player: "Ace Valentine", ppg: 12.0, fillColor: "#000000", fontColor: "#FFC82D"},
-            {region: "Midwest", seed: 16, team: "UMBC/Howard", player: "Caden Diggs", ppg: 9.8, fillColor: "#000000", fontColor: "#FFC82D"},
-            {region: "West", seed: 9, team: "Utah State", player: "Ian Martinez", ppg: 19.7, fillColor: "#003A5D", fontColor: "#9D9795"},
-            {region: "West", seed: 9, team: "Utah State", player: "Mason Falslev", ppg: 15.4, fillColor: "#003A5D", fontColor: "#9D9795"},
-            {region: "West", seed: 9, team: "Utah State", player: "Drake Allen", ppg: 14.3, fillColor: "#003A5D", fontColor: "#9D9795"},
-            {region: "West", seed: 9, team: "Utah State", player: "Dexter Akanno", ppg: 11.8, fillColor: "#003A5D", fontColor: "#9D9795"},
-            {region: "West", seed: 9, team: "Utah State", player: "Karson Templin", ppg: 9.2, fillColor: "#003A5D", fontColor: "#9D9795"},
-            {region: "West", seed: 9, team: "Utah State", player: "Jamal Mashburn Jr.", ppg: 8.7, fillColor: "#003A5D", fontColor: "#9D9795"},
-            {region: "South", seed: 5, team: "Vanderbilt", player: "Tyler Tanner", ppg: 19.2, fillColor: "#000000", fontColor: "#CFAE70"},
-            {region: "South", seed: 5, team: "Vanderbilt", player: "Duke Miles", ppg: 16.4, fillColor: "#000000", fontColor: "#CFAE70"},
-            {region: "South", seed: 5, team: "Vanderbilt", player: "Tyler Nickel", ppg: 13.3, fillColor: "#000000", fontColor: "#CFAE70"},
-            {region: "South", seed: 5, team: "Vanderbilt", player: "AK Okereke", ppg: 9.8, fillColor: "#000000", fontColor: "#CFAE70"},
-            {region: "South", seed: 5, team: "Vanderbilt", player: "Devin McGlockton", ppg: 9.7, fillColor: "#000000", fontColor: "#CFAE70"},
-            {region: "South", seed: 5, team: "Vanderbilt", player: "Jalen Washington", ppg: 9.2, fillColor: "#000000", fontColor: "#CFAE70"},
-            {region: "Midwest", seed: 12, team: "VCU", player: "Max Shulga", ppg: 17.7, fillColor: "#000000", fontColor: "#FFCE00"},
-            {region: "Midwest", seed: 12, team: "VCU", player: "Phillip Russell", ppg: 14.9, fillColor: "#000000", fontColor: "#FFCE00"},
-            {region: "Midwest", seed: 12, team: "VCU", player: "Zeb Jackson", ppg: 13.5, fillColor: "#000000", fontColor: "#FFCE00"},
-            {region: "Midwest", seed: 12, team: "VCU", player: "Joe Bamisile", ppg: 12.8, fillColor: "#000000", fontColor: "#FFCE00"},
-            {region: "Midwest", seed: 12, team: "VCU", player: "Jack Clark", ppg: 11.5, fillColor: "#000000", fontColor: "#FFCE00"},
-            {region: "Midwest", seed: 12, team: "VCU", player: "Jalen DeLoach", ppg: 8.4, fillColor: "#000000", fontColor: "#FFCE00"},
-            {region: "West", seed: 8, team: "Villanova", player: "Tyler Perkins", ppg: 13.7, fillColor: "#003366", fontColor: "#00B4E5"},
-            {region: "West", seed: 8, team: "Villanova", player: "Acaden Lewis", ppg: 12.3, fillColor: "#003366", fontColor: "#00B4E5"},
-            {region: "West", seed: 8, team: "Villanova", player: "Duke Brennan", ppg: 12.3, fillColor: "#003366", fontColor: "#00B4E5"},
-            {region: "West", seed: 8, team: "Villanova", player: "Bryce Lindsay", ppg: 11.9, fillColor: "#003366", fontColor: "#00B4E5"},
-            {region: "West", seed: 8, team: "Villanova", player: "Devin Askew", ppg: 10.0, fillColor: "#003366", fontColor: "#00B4E5"},
-            {region: "West", seed: 8, team: "Villanova", player: "Matt Hodge", ppg: 9.2, fillColor: "#003366", fontColor: "#00B4E5"},
-            {region: "Midwest", seed: 3, team: "Virginia", player: "Sam Lewis", ppg: 10.8, fillColor: "#232D4B", fontColor: "#F84C1E"},
-            {region: "Midwest", seed: 3, team: "Virginia", player: "Chance Mallory", ppg: 9.5, fillColor: "#232D4B", fontColor: "#F84C1E"},
-            {region: "Midwest", seed: 3, team: "Virginia", player: "Taine Murray", ppg: 9.3, fillColor: "#232D4B", fontColor: "#F84C1E"},
-            {region: "Midwest", seed: 3, team: "Virginia", player: "Blake Horvath", ppg: 9.0, fillColor: "#232D4B", fontColor: "#F84C1E"},
-            {region: "Midwest", seed: 3, team: "Virginia", player: "Andrew Rohde", ppg: 8.9, fillColor: "#232D4B", fontColor: "#F84C1E"},
-            {region: "Midwest", seed: 3, team: "Virginia", player: "Jalen Warburton", ppg: 8.6, fillColor: "#232D4B", fontColor: "#F84C1E"},
-            {region: "West", seed: 5, team: "Wisconsin", player: "Nick Boyd", ppg: 20.6, fillColor: "#C5050C", fontColor: "#FFFFFF"},
-            {region: "West", seed: 5, team: "Wisconsin", player: "John Blackwell", ppg: 19.0, fillColor: "#C5050C", fontColor: "#FFFFFF"},
-            {region: "West", seed: 5, team: "Wisconsin", player: "Nolan Winter", ppg: 13.3, fillColor: "#C5050C", fontColor: "#FFFFFF"},
-            {region: "West", seed: 5, team: "Wisconsin", player: "Austin Rapp", ppg: 9.6, fillColor: "#C5050C", fontColor: "#FFFFFF"},
-            {region: "West", seed: 5, team: "Wisconsin", player: "Braeden Carrington", ppg: 8.4, fillColor: "#C5050C", fontColor: "#FFFFFF"},
-            {region: "West", seed: 5, team: "Wisconsin", player: "Andrew Rohde", ppg: 5.7, fillColor: "#C5050C", fontColor: "#FFFFFF"},
-            {region: "Midwest", seed: 11, team: "Wright State", player: "Michael Cooper", ppg: 13.4, fillColor: "#006633", fontColor: "#FFCD00"},
-            {region: "Midwest", seed: 11, team: "Wright State", player: "TJ Burch", ppg: 12.3, fillColor: "#006633", fontColor: "#FFCD00"},
-            {region: "Midwest", seed: 11, team: "Wright State", player: "Solomon Callaghan", ppg: 11.5, fillColor: "#006633", fontColor: "#FFCD00"},
-            {region: "Midwest", seed: 11, team: "Wright State", player: "Dominic Pangonis", ppg: 9.0, fillColor: "#006633", fontColor: "#FFCD00"},
-            {region: "Midwest", seed: 11, team: "Wright State", player: "Kellen Pickett", ppg: 8.7, fillColor: "#006633", fontColor: "#FFCD00"},
-            {region: "Midwest", seed: 11, team: "Wright State", player: "Andrea Holden", ppg: 6.3, fillColor: "#006633", fontColor: "#FFCD00"}
-        ];
+<div class="round-inputs">
+    <div>
+        <label>Round of 64 factor:
+            <input type="number" id="r64-factor" value="1" step="0.1" onchange="recalculate()" />
+        </label>
+    </div>
+    <div>
+        <label>Round of 32 factor:
+            <input type="number" id="r32-factor" value="1.2" step="0.1" onchange="recalculate()" />
+        </label>
+    </div>
+    <div>
+        <label>Sweet 16 factor:
+            <input type="number" id="s16-factor" value="1.4" step="0.1" onchange="recalculate()" />
+        </label>
+    </div>
+    <div>
+        <label>Elite 8 factor:
+            <input type="number" id="e8-factor" value="1.6" step="0.1" onchange="recalculate()" />
+        </label>
+    </div>
+    <div>
+        <label>Final Four factor:
+            <input type="number" id="f4-factor" value="1.8" step="0.1" onchange="recalculate()" />
+        </label>
+    </div>
+    <div>
+        <label>Championship factor:
+            <input type="number" id="champ-factor" value="2.0" step="0.1" onchange="recalculate()" />
+        </label>
+    </div>
+</div>
 
-        function getExpectedGames(player) {
-            if (typeof player.expGames === 'number' && !isNaN(player.expGames)) {
-                return player.expGames;
-            }
-            const base = defaultExpectedGamesBySeed[player.seed] || 1.0;
-            player.expGames = base;
-            return base;
-        }
+<div class="controls">
+    <button onclick="recalculate()">Recalculate Totals</button>
+    <button onclick="resetBracket()">Reset Bracket Outcomes</button>
+    <button onclick="downloadExcel()">Download Excel</button>
+    <div class="search-owner">
+        <label for="owner-filter">Filter by Owner:</label>
+        <select id="owner-filter" onchange="renderTable()">
+            <option value="">All</option>
+            <option value="Sam">Sam</option>
+            <option value="Tom">Tom</option>
+            <option value="Terry">Terry</option>
+            <option value="Brandon">Brandon</option>
+            <option value="Greg">Greg</option>
+            <option value="Jeff">Jeff</option>
+            <option value="Alex">Alex</option>
+        </select>
+    </div>
+</div>
 
-        function getExpectedPoints(player) {
-            const games = getExpectedGames(player);
-            const exp = player.ppg * games;
-            return exp.toFixed(1);
-        }
+<table id="players-table">
+    <thead>
+    <tr>
+        <th class="sortable" onclick="sortTable('region')">Region</th>
+        <th class="sortable" onclick="sortTable('seed')">Seed</th>
+        <th class="sortable" onclick="sortTable('team')">Team</th>
+        <th class="sortable" onclick="sortTable('player')">Player</th>
+        <th class="sortable" onclick="sortTable('ppg')">PPG</th>
+        <th>Expected Games</th>
+        <th>Expected Points</th>
+        <th class="sortable" onclick="sortTable('owner')">Owner</th>
+        <th>R64</th>
+        <th>R32</th>
+        <th>S16</th>
+        <th>E8</th>
+        <th>F4</th>
+        <th>Champ</th>
+        <th class="sortable" onclick="sortTable('total')">Total</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- Filled by JS -->
+    </tbody>
+</table>
 
-        function calculateTotal(player) {
-            return (parseFloat(player.r64) || 0) + 
-                   (parseFloat(player.r32) || 0) + 
-                   (parseFloat(player.s16) || 0) + 
-                   (parseFloat(player.e8) || 0) + 
-                   (parseFloat(player.f4) || 0) + 
-                   (parseFloat(player.champ) || 0);
-        }
+<div class="leaderboard" id="leaderboard">
+    <h2>Owner Leaderboard</h2>
+    <div id="leaderboard-content"></div>
+</div>
 
-        function renderTable() {
-            const tbody = document.getElementById('tableBody');
-            tbody.innerHTML = '';
-            
-            players.forEach((p, index) => {
-                const row = tbody.insertRow();
-                row.innerHTML = `
-                    <td>${p.region}</td>
-                    <td>${p.seed}</td>
-                    <td class="team-cell" style="background-color: ${p.fillColor}; color: ${p.fontColor};">${p.team}</td>
-                    <td>${p.player}</td>
-                    <td>${p.ppg}</td>
-                    <td contenteditable="true" class="editable" data-index="${index}" data-field="expGames">${getExpectedGames(p)}</td>
-                    <td>${getExpectedPoints(p)}</td>
-                    <td contenteditable="true" class="editable" data-index="${index}" data-field="owner">${p.owner || ''}</td>
-                    <td contenteditable="true" class="editable" data-index="${index}" data-field="r64">${p.r64 || ''}</td>
-                    <td contenteditable="true" class="editable" data-index="${index}" data-field="r32">${p.r32 || ''}</td>
-                    <td contenteditable="true" class="editable" data-index="${index}" data-field="s16">${p.s16 || ''}</td>
-                    <td contenteditable="true" class="editable" data-index="${index}" data-field="e8">${p.e8 || ''}</td>
-                    <td contenteditable="true" class="editable" data-index="${index}" data-field="f4">${p.f4 || ''}</td>
-                    <td contenteditable="true" class="editable" data-index="${index}" data-field="champ">${p.champ || ''}</td>
-                    <td class="total-col">${calculateTotal(p)}</td>
-                `;
-            });
-            
-            document.querySelectorAll('.editable').forEach(cell => {
-    cell.addEventListener('blur', function() {
-        const index = parseInt(this.dataset.index, 10);
-        const field = this.dataset.field;
-        const value = this.textContent.trim();
+<script>
+const players = [
+  {region:"East",seed:1,team:"Connecticut",player:"Tristen Newton",ppg:15.1,owner:""},
+  {region:"East",seed:1,team:"Connecticut",player:"Cam Spencer",ppg:14.5,owner:""},
+  {region:"East",seed:1,team:"Connecticut",player:"Donovan Clingan",ppg:13.5,owner:""},
+  {region:"East",seed:1,team:"Connecticut",player:"Alex Karaban",ppg:13.0,owner:""},
+  {region:"East",seed:1,team:"Connecticut",player:"Stephon Castle",ppg:12.0,owner:""},
+  {region:"East",seed:2,team:"Iowa State",player:"Tamin Lipsey",ppg:15.1,owner:""},
+  {region:"East",seed:2,team:"Iowa State",player:"Keshon Gilbert",ppg:13.7,owner:""},
+  {region:"East",seed:2,team:"Iowa State",player:"Tre King",ppg:11.1,owner:""},
+  {region:"East",seed:2,team:"Iowa State",player:"Milan Momcilovic",ppg:10.9,owner:""},
+  {region:"East",seed:2,team:"Iowa State",player:"Curtis Jones",ppg:10.8,owner:""},
 
-        if (field === 'owner') {
-            players[index][field] = value;
-        } else if (field === 'expGames') {
-            const num = parseFloat(value);
-            const safe = isNaN(num)
-                ? defaultExpectedGamesBySeed[players[index].seed] || 1.0
-                : num;
-            players[index][field] = safe;
-            this.textContent = safe.toFixed(1);
-        } else {
-            players[index][field] = parseFloat(value) || 0;
-        }
+  {region:"East",seed:3,team:"Illinois",player:"Terrence Shannon Jr.",ppg:23.0,owner:""},
+  {region:"East",seed:3,team:"Illinois",player:"Marcus Domask",ppg:15.7,owner:""},
+  {region:"East",seed:3,team:"Illinois",player:"Coleman Hawkins",ppg:12.4,owner:""},
+  {region:"East",seed:3,team:"Illinois",player:"Quincy Guerrier",ppg:10.7,owner:""},
+  {region:"East",seed:3,team:"Illinois",player:"Ty Rodgers",ppg:6.2,owner:""},
 
-        recalculate();
-    });
-});
-        }
+  {region:"East",seed:4,team:"Auburn",player:"Johni Broome",ppg:16.2,owner:""},
+  {region:"East",seed:4,team:"Auburn",player:"Jaylin Williams",ppg:12.5,owner:""},
+  {region:"East",seed:4,team:"Auburn",player:"Chad Baker-Mazara",ppg:11.5,owner:""},
+  {region:"East",seed:4,team:"Auburn",player:"Denver Jones",ppg:9.9,owner:""},
+  {region:"East",seed:4,team:"Auburn",player:"Tre Donaldson",ppg:6.8,owner:""},
 
-        function recalculate() {
-            renderTable();
-            updateLeaderboard();
-        }
+  {region:"East",seed:5,team:"San Diego State",player:"Jaedon LeDee",ppg:21.5,owner:""},
+  {region:"East",seed:5,team:"San Diego State",player:"Micah Parrish",ppg:8.5,owner:""},
+  {region:"East",seed:5,team:"San Diego State",player:"Lamont Butler",ppg:9.4,owner:""},
+  {region:"East",seed:5,team:"San Diego State",player:"Reese Waters",ppg:9.9,owner:""},
+  {region:"East",seed:5,team:"San Diego State",player:"Elijah Saunders",ppg:7.5,owner:""},
 
-        function updateLeaderboard() {
-            const ownerTotals = {};
-            players.forEach(p => {
-                if (p.owner) {
-                    ownerTotals[p.owner] = (ownerTotals[p.owner] || 0) + calculateTotal(p);
-                }
-            });
-            
-            const sorted = Object.entries(ownerTotals).sort((a, b) => b[1] - a[1]);
-            const leaderboard = document.getElementById('leaderboard');
-            
-            if (sorted.length === 0) {
-                leaderboard.innerHTML = '<div class="ownerx-card"><div class="owner-rank">Add owners to see standings</div></div>';
-                return;
-            }
-            
-            leaderboard.innerHTML = sorted.map(([owner, points], i) => `
-                <div class="owner-card">
-                    <div class="owner-rank">#${i + 1}</div>
-                    <div class="owner-name">${owner}</div>
-                    <div class="owner-points">${points}</div>
-                </div>
-            `).join('');
-        }
+  {region:"East",seed:6,team:"BYU",player:"Jaxson Robinson",ppg:13.9,owner:""},
+  {region:"East",seed:6,team:"BYU",player:"Spencer Johnson",ppg:10.4,owner:""},
+  {region:"East",seed:6,team:"BYU",player:"Fousseyni Traore",ppg:11.4,owner:""},
+  {region:"East",seed:6,team:"BYU",player:"Dallin Hall",ppg:9.5,owner:""},
+  {region:"East",seed:6,team:"BYU",player:"Trevin Knell",ppg:10.4,owner:""},
 
-        function sortTable(columnIndex) {
-    const table = document.getElementById('fantasyTable');
-    const tbody = table.querySelector('tbody');
-    const rows = Array.from(tbody.querySelectorAll('tr'));
-    
-    rows.sort((a, b) => {
-        let aVal = a.cells[columnIndex].textContent.trim();
-        let bVal = b.cells[columnIndex].textContent.trim();
-        
-        const aNum = parseFloat(aVal);
-        const bNum = parseFloat(bVal);
-        
-        if (columnIndex === 1) {
-            // Seed: ascending
-            if (!isNaN(aNum) && !isNaN(bNum)) {
-                return aNum - bNum;
-            }
-        }
+  {region:"East",seed:7,team:"Washington State",player:"Isaac Jones",ppg:15.4,owner:""},
+  {region:"East",seed:7,team:"Washington State",player:"Jaylen Wells",ppg:12.6,owner:""},
+  {region:"East",seed:7,team:"Washington State",player:"Myles Rice",ppg:14.8,owner:""},
+  {region:"East",seed:7,team:"Washington State",player:"Rueben Chinyelu",ppg:5.0,owner:""},
+  {region:"East",seed:7,team:"Washington State",player:"Oscar Cluff",ppg:7.7,owner:""},
 
-        if (!isNaN(aNum) && !isNaN(bNum)) {
-            // All other numeric columns: descending
-            return bNum - aNum;
-        }
-        
-        return aVal.localeCompare(bVal);
-    });
-    
-    rows.forEach(row => tbody.appendChild(row));
+  {region:"East",seed:8,team:"FAU",player:"Johnell Davis",ppg:18.2,owner:""},
+  {region:"East",seed:8,team:"FAU",player:"Alijah Martin",ppg:13.1,owner:""},
+  {region:"East",seed:8,team:"FAU",player:"Vladislav Goldin",ppg:15.4,owner:""},
+  {region:"East",seed:8,team:"FAU",player:"Nick Boyd",ppg:7.4,owner:""},
+  {region:"East",seed:8,team:"FAU",player:"Bryan Greenlee",ppg:7.3,owner:""},
+
+  {region:"East",seed:9,team:"Northwestern",player:"Boo Buie",ppg:19.2,owner:""},
+  {region:"East",seed:9,team:"Northwestern",player:"Brooks Barnhizer",ppg:14.6,owner:""},
+  {region:"East",seed:9,team:"Northwestern",player:"Ryan Langborg",ppg:12.3,owner:""},
+  {region:"East",seed:9,team:"Northwestern",player:"Nick Martinelli",ppg:9.5,owner:""},
+  {region:"East",seed:9,team:"Northwestern",player:"Luke Hunger",ppg:6.0,owner:""},
+
+  {region:"East",seed:10,team:"Drake",player:"Tucker DeVries",ppg:21.8,owner:""},
+  {region:"East",seed:10,team:"Drake",player:"Darnell Brodie",ppg:11.3,owner:""},
+  {region:"East",seed:10,team:"Drake",player:"Kevin Overton",ppg:11.3,owner:""},
+  {region:"East",seed:10,team:"Drake",player:"Atin Wright",ppg:10.8,owner:""},
+  {region:"East",seed:10,team:"Drake",player:"Conor Enright",ppg:7.0,owner:""},
+
+  {region:"East",seed:11,team:"Duquesne",player:"Dae Dae Grant",ppg:16.7,owner:""},
+  {region:"East",seed:11,team:"Duquesne",player:"Jimmy Clark III",ppg:15.1,owner:""},
+  {region:"East",seed:11,team:"Duquesne",player:"Fousseyni Drame",ppg:7.1,owner:""},
+  {region:"East",seed:11,team:"Duquesne",player:"Jakub Necas",ppg:5.1,owner:""},
+  {region:"East",seed:11,team:"Duquesne",player:"David Dixon",ppg:5.6,owner:""},
+
+  {region:"East",seed:12,team:"UAB",player:"Yaxel Lendenborg",ppg:15.5,owner:""},
+  {region:"East",seed:12,team:"UAB",player:"Efrem Johnson",ppg:13.3,owner:""},
+  {region:"East",seed:12,team:"UAB",player:"Alejandro Vasquez",ppg:12.3,owner:""},
+  {region:"East",seed:12,team:"UAB",player:"Christian Coleman",ppg:9.7,owner:""},
+  {region:"East",seed:12,team:"UAB",player:"Eric Gaines",ppg:9.9,owner:""},
+
+  {region:"East",seed:13,team:"Yale",player:"Danny Wolf",ppg:14.3,owner:""},
+  {region:"East",seed:13,team:"Yale",player:"John Poulakidas",ppg:13.2,owner:""},
+  {region:"East",seed:13,team:"Yale",player:"Bez Mbeng",ppg:11.0,owner:""},
+  {region:"East",seed:13,team:"Yale",player:"Matt Knowling",ppg:8.7,owner:""},
+  {region:"East",seed:13,team:"Yale",player:"August Mahone",ppg:4.3,owner:""},
+
+  {region:"East",seed:14,team:"Morehead State",player:"Riley Minix",ppg:20.8,owner:""},
+  {region:"East",seed:14,team:"Morehead State",player:"Jordan Lathon",ppg:15.0,owner:""},
+  {region:"East",seed:14,team:"Morehead State",player:"Drew Thelwell",ppg:11.0,owner:""},
+  {region:"East",seed:14,team:"Morehead State",player:"Dieonte Miles",ppg:7.7,owner:""},
+  {region:"East",seed:14,team:"Morehead State",player:"James Baker Jr.",ppg:6.5,owner:""},
+
+  {region:"East",seed:15,team:"Stetson",player:"Jalen Blackmon",ppg:21.5,owner:""},
+  {region:"East",seed:15,team:"Stetson",player:"Stephan Swenson",ppg:13.0,owner:""},
+  {region:"East",seed:15,team:"Stetson",player:"Josh Smith",ppg:10.0,owner:""},
+  {region:"East",seed:15,team:"Stetson",player:"Luke Brown",ppg:7.2,owner:""},
+  {region:"East",seed:15,team:"Stetson",player:"Tymell Murphy",ppg:6.8,owner:""},
+
+  {region:"East",seed:16,team:"Longwood",player:"Walyn Napper",ppg:17.6,owner:""},
+  {region:"East",seed:16,team:"Longwood",player:"Michael Christmas",ppg:15.0,owner:""},
+  {region:"East",seed:16,team:"Longwood",player:"Kawaan Taylor",ppg:10.2,owner:""},
+  {region:"East",seed:16,team:"Longwood",player:"Zach Watson",ppg:8.7,owner:""},
+  {region:"East",seed:16,team:"Longwood",player:"DeShaun Wade",ppg:7.4,owner:""},
+
+  {region:"West",seed:1,team:"North Carolina",player:"RJ Davis",ppg:21.4,owner:""},
+  {region:"West",seed:1,team:"North Carolina",player:"Harrison Ingram",ppg:12.2,owner:""},
+  {region:"West",seed:1,team:"North Carolina",player:"Armando Bacot",ppg:14.3,owner:""},
+  {region:"West",seed:1,team:"North Carolina",player:"Cormac Ryan",ppg:11.2,owner:""},
+  {region:"West",seed:1,team:"North Carolina",player:"Elliot Cadeau",ppg:8.1,owner:""},
+
+  {region:"West",seed:2,team:"Arizona",player:"Caleb Love",ppg:18.1,owner:""},
+  {region:"West",seed:2,team:"Arizona",player:"Oumar Ballo",ppg:13.0,owner:""},
+  {region:"West",seed:2,team:"Arizona",player:"Kylan Boswell",ppg:10.2,owner:""},
+  {region:"West",seed:2,team:"Arizona",player:"Pelle Larsson",ppg:12.8,owner:""},
+  {region:"West",seed:2,team:"Arizona",player:"Keshad Johnson",ppg:11.5,owner:""},
+
+  {region:"West",seed:3,team:"Baylor",player:"Ja'Kobe Walter",ppg:14.7,owner:""},
+  {region:"West",seed:3,team:"Baylor",player:"Jalen Bridges",ppg:11.8,owner:""},
+  {region:"West",seed:3,team:"Baylor",player:"RayJ Dennis",ppg:13.3,owner:""},
+  {region:"West",seed:3,team:"Baylor",player:"Yves Missi",ppg:10.7,owner:""},
+  {region:"West",seed:3,team:"Baylor",player:"Langston Love",ppg:9.5,owner:""},
+
+  {region:"West",seed:4,team:"Alabama",player:"Mark Sears",ppg:21.5,owner:""},
+  {region:"West",seed:4,team:"Alabama",player:"Grant Nelson",ppg:13.5,owner:""},
+  {region:"West",seed:4,team:"Alabama",player:"Rylan Griffen",ppg:11.2,owner:""},
+  {region:"West",seed:4,team:"Alabama",player:"Aaron Estrada",ppg:13.3,owner:""},
+  {region:"West",seed:4,team:"Alabama",player:"Nick Pringle",ppg:8.2,owner:""},
+
+  {region:"West",seed:5,team:"Saint Mary's",player:"Aidan Mahaney",ppg:13.9,owner:""},
+  {region:"West",seed:5,team:"Saint Mary's",player:"Mitchell Saxen",ppg:11.9,owner:""},
+  {region:"West",seed:5,team:"Saint Mary's",player:"Alex Ducas",ppg:11.7,owner:""},
+  {region:"West",seed:5,team:"Saint Mary's",player:"Augustas Marciulionis",ppg:11.0,owner:""},
+  {region:"West",seed:5,team:"Saint Mary's",player:"Josh Jefferson",ppg:9.3,owner:""},
+
+  {region:"West",seed:6,team:"Clemson",player:"PJ Hall",ppg:18.4,owner:""},
+  {region:"West",seed:6,team:"Clemson",player:"Joseph Girard III",ppg:15.7,owner:""},
+  {region:"West",seed:6,team:"Clemson",player:"Chase Hunter",ppg:12.8,owner:""},
+  {region:"West",seed:6,team:"Clemson",player:"Ian Schieffelin",ppg:9.8,owner:""},
+  {region:"West",seed:6,team:"Clemson",player:"RJ Godfrey",ppg:7.1,owner:""},
+
+  {region:"West",seed:7,team:"Dayton",player:"DaRon Holmes II",ppg:20.4,owner:""},
+  {region:"West",seed:7,team:"Dayton",player:"Koby Brea",ppg:11.2,owner:""},
+  {region:"West",seed:7,team:"Dayton",player:"Nate Santos",ppg:11.8,owner:""},
+  {region:"West",seed:7,team:"Dayton",player:"Malachi Smith",ppg:8.5,owner:""},
+  {region:"West",seed:7,team:"Dayton",player:"Ethan Conley",ppg:5.0,owner:""},
+
+  {region:"West",seed:8,team:"Mississippi State",player:"Tolu Smith",ppg:16.0,owner:""},
+  {region:"West",seed:8,team:"Mississippi State",player:"Josh Hubbard",ppg:17.1,owner:""},
+  {region:"West",seed:8,team:"Mississippi State",player:"Dashawn Davis",ppg:10.0,owner:""},
+  {region:"West",seed:8,team:"Mississippi State",player:"Cameron Matthews",ppg:9.2,owner:""},
+  {region:"West",seed:8,team:"Mississippi State",player:"Shakeel Moore",ppg:8.1,owner:""},
+
+  {region:"West",seed:9,team:"Michigan State",player:"Tyson Walker",ppg:18.2,owner:""},
+  {region:"West",seed:9,team:"Michigan State",player:"A.J. Hoggard",ppg:11.0,owner:""},
+  {region:"West",seed:9,team:"Michigan State",player:"Jaden Akins",ppg:9.8,owner:""},
+  {region:"West",seed:9,team:"Michigan State",player:"Malik Hall",ppg:11.2,owner:""},
+  {region:"West",seed:9,team:"Michigan State",player:"Coen Carr",ppg:6.7,owner:""},
+
+  {region:"West",seed:10,team:"Nevada",player:"Jarod Lucas",ppg:17.8,owner:""},
+  {region:"West",seed:10,team:"Nevada",player:"Kenan Blackshear",ppg:15.1,owner:""},
+  {region:"West",seed:10,team:"Nevada",player:"Nick Davidson",ppg:12.2,owner:""},
+  {region:"West",seed:10,team:"Nevada",player:"Tre Coleman",ppg:7.3,owner:""},
+  {region:"West",seed:10,team:"Nevada",player:"Tyler Powell",ppg:6.5,owner:""},
+
+  {region:"West",seed:11,team:"New Mexico",player:"Jaelen House",ppg:16.1,owner:""},
+  {region:"West",seed:11,team:"New Mexico",player:"Jamari Mashburn Jr.",ppg:15.7,owner:""},
+  {region:"West",seed:11,team:"New Mexico",player:"JT Toppin",ppg:12.5,owner:""},
+  {region:"West",seed:11,team:"New Mexico",player:"Tristan da Silva",ppg:13.3,owner:""},
+  {region:"West",seed:11,team:"New Mexico",player:"Donovan Dent",ppg:8.9,owner:""},
+
+  {region:"West",seed:12,team:"Grand Canyon",player:"Tyon Grant-Foster",ppg:19.5,owner:""},
+  {region:"West",seed:12,team:"Grand Canyon",player:"Gabe McGlothan",ppg:12.0,owner:""},
+  {region:"West",seed:12,team:"Grand Canyon",player:"Jovan Blacksher Jr.",ppg:11.1,owner:""},
+  {region:"West",seed:12,team:"Grand Canyon",player:"Collin Moore",ppg:9.8,owner:""},
+  {region:"West",seed:12,team:"Grand Canyon",player:"Noah Baumann",ppg:7.9,owner:""},
+
+  {region:"West",seed:13,team:"Colgate",player:"Tucker Richardson",ppg:16.5,owner:""},
+  {region:"West",seed:13,team:"Colgate",player:"Keegan Records",ppg:13.2,owner:""},
+  {region:"West",seed:13,team:"Colgate",player:"Ryan Moffatt",ppg:10.3,owner:""},
+  {region:"West",seed:13,team:"Colgate",player:"Oliver Lynch-Daniels",ppg:9.1,owner:""},
+  {region:"West",seed:13,team:"Colgate",player:"Braeden Smith",ppg:8.4,owner:""},
+
+  {region:"West",seed:14,team:"Akron",player:"Ali Ali",ppg:15.3,owner:""},
+  {region:"West",seed:14,team:"Akron",player:"Enrique Freeman",ppg:18.5,owner:""},
+  {region:"West",seed:14,team:"Akron",player:"Xavier Castaneda",ppg:13.7,owner:""},
+  {region:"West",seed:14,team:"Akron",player:"Mikal Dawson",ppg:9.4,owner:""},
+  {region:"West",seed:14,team:"Akron",player:"Sammy Hunter",ppg:7.6,owner:""},
+
+  {region:"West",seed:15,team:"Samford",player:"Ques Glover",ppg:15.8,owner:""},
+  {region:"West",seed:15,team:"Samford",player:"Logan Dye",ppg:13.2,owner:""},
+  {region:"West",seed:15,team:"Samford",player:"Jeremiah Nyarko",ppg:9.9,owner:""},
+  {region:"West",seed:15,team:"Samford",player:"Jaden Campbell",ppg:8.7,owner:""},
+  {region:"West",seed:15,team:"Samford",player:"A.J. Staton-McCray",ppg:7.4,owner:""},
+
+  {region:"West",seed:16,team:"Howard",player:"Elijah Hawkins",ppg:13.0,owner:""},
+  {region:"West",seed:16,team:"Howard",player:"Shy Odom",ppg:14.3,owner:""},
+  {region:"West",seed:16,team:"Howard",player:"Jordan Wood",ppg:9.3,owner:""},
+  {region:"West",seed:16,team:"Howard",player:"Steve Settle III",ppg:8.2,owner:""},
+  {region:"West",seed:16,team:"Howard",player:"Bryce Harris",ppg:7.8,owner:""},
+
+  {region:"South",seed:1,team:"Houston",player:"Jamal Shead",ppg:13.1,owner:""},
+  {region:"South",seed:1,team:"Houston",player:"LJ Cryer",ppg:15.5,owner:""},
+  {region:"South",seed:1,team:"Houston",player:"J’Wan Roberts",ppg:10.2,owner:""},
+  {region:"South",seed:1,team:"Houston",player:"Emanuel Sharp",ppg:12.5,owner:""},
+  {region:"South",seed:1,team:"Houston",player:"Terrance Arceneaux",ppg:7.0,owner:""},
+
+  {region:"South",seed:2,team:"Marquette",player:"Tyler Kolek",ppg:15.0,owner:""},
+  {region:"South",seed:2,team:"Marquette",player:"Kam Jones",ppg:16.8,owner:""},
+  {region:"South",seed:2,team:"Marquette",player:"Oso Ighodaro",ppg:13.0,owner:""},
+  {region:"South",seed:2,team:"Marquette",player:"David Joplin",ppg:10.3,owner:""},
+  {region:"South",seed:2,team:"Marquette",player:"Stevie Mitchell",ppg:7.5,owner:""},
+
+  {region:"South",seed:3,team:"Kentucky",player:"Antonio Reeves",ppg:20.2,owner:""},
+  {region:"South",seed:3,team:"Kentucky",player:"Rob Dillingham",ppg:15.5,owner:""},
+  {region:"South",seed:3,team:"Kentucky",player:"Reed Sheppard",ppg:12.8,owner:""},
+  {region:"South",seed:3,team:"Kentucky",player:"Justin Edwards",ppg:8.8,owner:""},
+  {region:"South",seed:3,team:"Kentucky",player:"Tre Mitchell",ppg:11.3,owner:""},
+
+  {region:"South",seed:4,team:"Duke",player:"Kyle Filipowski",ppg:17.1,owner:""},
+  {region:"South",seed:4,team:"Duke",player:"Jeremy Roach",ppg:14.3,owner:""},
+  {region:"South",seed:4,team:"Duke",player:"Tyrese Proctor",ppg:11.2,owner:""},
+  {region:"South",seed:4,team:"Duke",player:"Mark Mitchell",ppg:11.4,owner:""},
+  {region:"South",seed:4,team:"Duke",player:"Jared McCain",ppg:12.3,owner:""},
+
+  {region:"South",seed:5,team:"Wisconsin",player:"AJ Storr",ppg:17.1,owner:""},
+  {region:"South",seed:5,team:"Wisconsin",player:"Steven Crowl",ppg:11.3,owner:""},
+  {region:"South",seed:5,team:"Wisconsin",player:"Chucky Hepburn",ppg:9.2,owner:""},
+  {region:"South",seed:5,team:"Wisconsin",player:"Tyler Wahl",ppg:10.4,owner:""},
+  {region:"South",seed:5,team:"Wisconsin",player:"Max Klesmit",ppg:9.8,owner:""},
+
+  {region:"South",seed:6,team:"Texas Tech",player:"Pop Isaacs",ppg:16.2,owner:""},
+  {region:"South",seed:6,team:"Texas Tech",player:"Joe Toussaint",ppg:12.3,owner:""},
+  {region:"South",seed:6,team:"Texas Tech",player:"Darrion Williams",ppg:11.1,owner:""},
+  {region:"South",seed:6,team:"Texas Tech",player:"Kerwin Walton",ppg:8.2,owner:""},
+  {region:"South",seed:6,team:"Texas Tech",player:"Warren Washington",ppg:9.7,owner:""},
+
+  {region:"South",seed:7,team:"Florida",player:"Walter Clayton Jr.",ppg:17.3,owner:""},
+  {region:"South",seed:7,team:"Florida",player:"Zyon Pullin",ppg:15.5,owner:""},
+  {region:"South",seed:7,team:"Florida",player:"Tyrese Samuel",ppg:13.0,owner:""},
+  {region:"South",seed:7,team:"Florida",player:"Alex Condon",ppg:9.0,owner:""},
+  {region:"South",seed:7,team:"Florida",player:"Micah Handlogten",ppg:7.2,owner:""},
+
+  {region:"South",seed:8,team:"Nebraska",player:"Keisei Tominaga",ppg:14.6,owner:""},
+  {region:"South",seed:8,team:"Nebraska",player:"Brice Williams",ppg:12.7,owner:""},
+  {region:"South",seed:8,team:"Nebraska",player:"Rienk Mast",ppg:13.8,owner:""},
+  {region:"South",seed:8,team:"Nebraska",player:"Juwan Gary",ppg:10.6,owner:""},
+  {region:"South",seed:8,team:"Nebraska",player:"C.J. Wilcher",ppg:9.1,owner:""},
+
+  {region:"South",seed:9,team:"Texas A&M",player:"Wade Taylor IV",ppg:18.9,owner:""},
+  {region:"South",seed:9,team:"Texas A&M",player:"Tyrece Radford",ppg:14.3,owner:""},
+  {region:"South",seed:9,team:"Texas A&M",player:"Henry Coleman III",ppg:11.8,owner:""},
+  {region:"South",seed:9,team:"Texas A&M",player:"Andersson Garcia",ppg:8.3,owner:""},
+  {region:"South",seed:9,team:"Texas A&M",player:"Solomon Washington",ppg:6.9,owner:""},
+
+  {region:"South",seed:10,team:"Boise State",player:"Max Rice",ppg:12.2,owner:""},
+  {region:"South",seed:10,team:"Boise State",player:"Tyson Degenhart",ppg:16.5,owner:""},
+  {region:"South",seed:10,team:"Boise State",player:"Chibuzo Agbo",ppg:11.5,owner:""},
+  {region:"South",seed:10,team:"Boise State",player:"Roddie Anderson III",ppg:9.3,owner:""},
+  {region:"South",seed:10,team:"Boise State",player:"O'Mar Stanley",ppg:8.4,owner:""},
+
+  {region:"South",seed:11,team:"NC State",player:"DJ Horne",ppg:16.8,owner:""},
+  {region:"South",seed:11,team:"NC State",player:"DJ Burns Jr.",ppg:12.5,owner:""},
+  {region:"South",seed:11,team:"NC State",player:"Mohamed Diarra",ppg:8.9,owner:""},
+  {region:"South",seed:11,team:"NC State",player:"Casey Morsell",ppg:10.4,owner:""},
+  {region:"South",seed:11,team:"NC State",player:"Michael O'Connell",ppg:6.7,owner:""},
+
+  {region:"South",seed:12,team:"James Madison",player:"Terrence Edwards Jr.",ppg:17.4,owner:""},
+  {region:"South",seed:12,team:"James Madison",player:"T.J. Bickerstaff",ppg:13.7,owner:""},
+  {region:"South",seed:12,team:"James Madison",player:"Noah Freidel",ppg:11.6,owner:""},
+  {region:"South",seed:12,team:"James Madison",player:"Vado Morse",ppg:10.9,owner:""},
+  {region:"South",seed:12,team:"James Madison",player:"Julien Wooden",ppg:9.2,owner:""},
+
+  {region:"South",seed:13,team:"Vermont",player:"Finn Sullivan",ppg:15.5,owner:""},
+  {region:"South",seed:13,team:"Vermont",player:"Robin Duncan",ppg:13.0,owner:""},
+  {region:"South",seed:13,team:"Vermont",player:"Matt Veretto",ppg:11.1,owner:""},
+  {region:"South",seed:13,team:"Vermont",player:"Aaron Deloney",ppg:10.2,owner:""},
+  {region:"South",seed:13,team:"Vermont",player:"George Tinsley",ppg:7.8,owner:""},
+
+  {region:"South",seed:14,team:"Colgate",player:"Tucker Richardson",ppg:16.5,owner:""},
+  {region:"South",seed:14,team:"Colgate",player:"Keegan Records",ppg:13.2,owner:""},
+  {region:"South",seed:14,team:"Colgate",player:"Ryan Moffatt",ppg:10.3,owner:""},
+  {region:"South",seed:14,team:"Colgate",player:"Oliver Lynch-Daniels",ppg:9.1,owner:""},
+  {region:"South",seed:14,team:"Colgate",player:"Braeden Smith",ppg:8.4,owner:""},
+
+  {region:"South",seed:15,team:"Western Kentucky",player:"Dayvion McKnight",ppg:16.2,owner:""},
+  {region:"South",seed:15,team:"Western Kentucky",player:"Luke Frampton",ppg:11.5,owner:""},
+  {region:"South",seed:15,team:"Western Kentucky",player:"Jamarion Sharp",ppg:7.4,owner:""},
+  {region:"South",seed:15,team:"Western Kentucky",player:"Jordan Rawls",ppg:9.8,owner:""},
+  {region:"South",seed:15,team:"Western Kentucky",player:"Josh Anderson",ppg:8.1,owner:""},
+
+  {region:"South",seed:16,team:"Longwood",player:"Leslie Nkereuwem",ppg:12.5,owner:""},
+  {region:"South",seed:16,team:"Longwood",player:"Justin Hill",ppg:11.0,owner:""},
+  {region:"South",seed:16,team:"Longwood",player:"Jesus Carralero",ppg:9.5,owner:""},
+  {region:"South",seed:16,team:"Longwood",player:"Zach Watson",ppg:8.7,owner:""},
+  {region:"South",seed:16,team:"Longwood",player:"DeShaun Wade",ppg:7.4,owner:""},
+
+  {region:"Midwest",seed:1,team:"Purdue",player:"Zach Edey",ppg:24.5,owner:""},
+  {region:"Midwest",seed:1,team:"Purdue",player:"Braden Smith",ppg:12.0,owner:""},
+  {region:"Midwest",seed:1,team:"Purdue",player:"Fletcher Loyer",ppg:10.3,owner:""},
+  {region:"Midwest",seed:1,team:"Purdue",player:"Mason Gillis",ppg:8.4,owner:""},
+  {region:"Midwest",seed:1,team:"Purdue",player:"Lance Jones",ppg:9.7,owner:""},
+
+  {region:"Midwest",seed:2,team:"Tennessee",player:"Dalton Knecht",ppg:21.2,owner:""},
+  {region:"Midwest",seed:2,team:"Tennessee",player:"Jonas Aidoo",ppg:12.1,owner:""},
+  {region:"Midwest",seed:2,team:"Tennessee",player:"Zakai Zeigler",ppg:11.3,owner:""},
+  {region:"Midwest",seed:2,team:"Tennessee",player:"Josiah-Jordan James",ppg:9.5,owner:""},
+  {region:"Midwest",seed:2,team:"Tennessee",player:"Santiago Vescovi",ppg:10.0,owner:""},
+
+  {region:"Midwest",seed:3,team:"Creighton",player:"Baylor Scheierman",ppg:18.5,owner:""},
+  {region:"Midwest",seed:3,team:"Creighton",player:"Ryan Kalkbrenner",ppg:17.2,owner:""},
+  {region:"Midwest",seed:3,team:"Creighton",player:"Trey Alexander",ppg:17.0,owner:""},
+  {region:"Midwest",seed:3,team:"Creighton",player:"Steven Ashworth",ppg:10.1,owner:""},
+  {region:"Midwest",seed:3,team:"Creighton",player:"Mason Miller",ppg:6.3,owner:""},
+
+  {region:"Midwest",seed:4,team:"Kansas",player:"Hunter Dickinson",ppg:18.0,owner:""},
+  {region:"Midwest",seed:4,team:"Kansas",player:"Kevin McCullar Jr.",ppg:19.2,owner:""},
+  {region:"Midwest",seed:4,team:"Kansas",player:"KJ Adams Jr.",ppg:12.4,owner:""},
+  {region:"Midwest",seed:4,team:"Kansas",player:"Dajuan Harris Jr.",ppg:8.6,owner:""},
+  {region:"Midwest",seed:4,team:"Kansas",player:"Johnny Furphy",ppg:9.0,owner:""},
+
+  {region:"Midwest",seed:5,team:"Gonzaga",player:"Anton Watson",ppg:14.5,owner:""},
+  {region:"Midwest",seed:5,team:"Gonzaga",player:"Ryan Nembhard",ppg:12.7,owner:""},
+  {region:"Midwest",seed:5,team:"Gonzaga",player:"Graham Ike",ppg:16.2,owner:""},
+  {region:"Midwest",seed:5,team:"Gonzaga",player:"Nolan Hickman",ppg:11.1,owner:""},
+  {region:"Midwest",seed:5,team:"Gonzaga",player:"Ben Gregg",ppg:7.4,owner:""},
+
+  {region:"Midwest",seed:6,team:"South Carolina",player:"Meechie Johnson",ppg:14.1,owner:""},
+  {region:"Midwest",seed:6,team:"South Carolina",player:"B.J. Mack",ppg:13.8,owner:""},
+  {region:"Midwest",seed:6,team:"South Carolina",player:"Ta'Lon Cooper",ppg:9.8,owner:""},
+  {region:"Midwest",seed:6,team:"South Carolina",player:"Josh Gray",ppg:7.2,owner:""},
+  {region:"Midwest",seed:6,team:"South Carolina",player:"Zachary Davis",ppg:6.4,owner:""},
+
+  {region:"Midwest",seed:7,team:"Texas",player:"Max Abmas",ppg:16.8,owner:""},
+  {region:"Midwest",seed:7,team:"Texas",player:"Dylan Disu",ppg:15.9,owner:""},
+  {region:"Midwest",seed:7,team:"Texas",player:"Tyrese Hunter",ppg:10.3,owner:""},
+  {region:"Midwest",seed:7,team:"Texas",player:"Kadin Shedrick",ppg:9.2,owner:""},
+  {region:"Midwest",seed:7,team:"Texas",player:"Brock Cunningham",ppg:5.4,owner:""},
+
+  {region:"Midwest",seed:8,team:"Utah State",player:"Great Osobor",ppg:18.0,owner:""},
+  {region:"Midwest",seed:8,team:"Utah State",player:"Darius Brown II",ppg:12.1,owner:""},
+  {region:"Midwest",seed:8,team:"Utah State",player:"Ian Martinez",ppg:13.3,owner:""},
+  {region:"Midwest",seed:8,team:"Utah State",player:"Max Agbonkpolo",ppg:7.7,owner:""},
+  {region:"Midwest",seed:8,team:"Utah State",player:"Szymon Zapala",ppg:7.0,owner:""},
+
+  {region:"Midwest",seed:9,team:"TCU",player:"Mike Miles Jr.",ppg:17.9,owner:""},
+  {region:"Midwest",seed:9,team:"TCU",player:"Emanuel Miller",ppg:15.0,owner:""},
+  {region:"Midwest",seed:9,team:"TCU",player:"Damion Baugh",ppg:12.6,owner:""},
+  {region:"Midwest",seed:9,team:"TCU",player:"Shahada Wells",ppg:11.0,owner:""},
+  {region:"Midwest",seed:9,team:"TCU",player:"Xavier Cork",ppg:7.3,owner:""},
+
+  {region:"Midwest",seed:10,team:"Drake",player:"Tucker DeVries",ppg:21.8,owner:""},
+  {region:"Midwest",seed:10,team:"Drake",player:"Darnell Brodie",ppg:11.3,owner:""},
+  {region:"Midwest",seed:10,team:"Drake",player:"Kevin Overton",ppg:11.3,owner:""},
+  {region:"Midwest",seed:10,team:"Drake",player:"Atin Wright",ppg:10.8,owner:""},
+  {region:"Midwest",seed:10,team:"Drake",player:"Conor Enright",ppg:7.0,owner:""},
+
+  {region:"Midwest",seed:11,team:"VCU",player:"Ace Baldwin Jr.",ppg:12.7,owner:""},
+  {region:"Midwest",seed:11,team:"VCU",player:"Jamir Watkins",ppg:10.6,owner:""},
+  {region:"Midwest",seed:11,team:"VCU",player:"Jayden Nunn",ppg:9.3,owner:""},
+  {region:"Midwest",seed:11,team:"VCU",player:"Brandon Johns Jr.",ppg:8.0,owner:""},
+  {region:"Midwest",seed:11,team:"VCU",player:"Jalen DeLoach",ppg:7.4,owner:""},
+
+  {region:"Midwest",seed:12,team:"McNeese State",player:"Shahada Wells",ppg:17.8,owner:""},
+  {region:"Midwest",seed:12,team:"McNeese State",player:"Christian Shumate",ppg:12.3,owner:""},
+  {region:"Midwest",seed:12,team:"McNeese State",player:"CJ Felder",ppg:10.7,owner:""},
+  {region:"Midwest",seed:12,team:"McNeese State",player:"Zach Scott",ppg:9.5,owner:""},
+  {region:"Midwest",seed:12,team:"McNeese State",player:"DeMarcus Sharp",ppg:8.9,owner:""},
+
+  {region:"Midwest",seed:13,team:"Samford",player:"Ques Glover",ppg:15.8,owner:""},
+  {region:"Midwest",seed:13,team:"Samford",player:"Logan Dye",ppg:13.2,owner:""},
+  {region:"Midwest",seed:13,team:"Samford",player:"Jeremiah Nyarko",ppg:9.9,owner:""},
+  {region:"Midwest",seed:13,team:"Samford",player:"Jaden Campbell",ppg:8.7,owner:""},
+  {region:"Midwest",seed:13,team:"Samford",player:"A.J. Staton-McCray",ppg:7.4,owner:""},
+
+  {region:"Midwest",seed:14,team:"Oakland",player:"Jack Gohlke",ppg:17.2,owner:""},
+  {region:"Midwest",seed:14,team:"Oakland",player:"Trey Townsend",ppg:16.8,owner:""},
+  {region:"Midwest",seed:14,team:"Oakland",player:"Blake Lampman",ppg:11.4,owner:""},
+  {region:"Midwest",seed:14,team:"Oakland",player:"Rocket Watts",ppg:9.7,owner:""},
+  {region:"Midwest",seed:14,team:"Oakland",player:"Jalen Moore",ppg:8.5,owner:""},
+
+  {region:"Midwest",seed:15,team:"South Dakota State",player:"Zeke Mayo",ppg:18.3,owner:""},
+  {region:"Midwest",seed:15,team:"South Dakota State",player:"Luke Appel",ppg:12.1,owner:""},
+  {region:"Midwest",seed:15,team:"South Dakota State",player:"Matt Dentlinger",ppg:10.4,owner:""},
+  {region:"Midwest",seed:15,team:"South Dakota State",player:"Charlie Easley",ppg:9.2,owner:""},
+  {region:"Midwest",seed:15,team:"South Dakota State",player:"Alex Arians",ppg:8.0,owner:""},
+
+  {region:"Midwest",seed:16,team:"Grambling State",player:"Cameron Christon",ppg:15.1,owner:""},
+  {region:"Midwest",seed:16,team:"Grambling State",player:"Jourdan Smith",ppg:12.4,owner:""},
+  {region:"Midwest",seed:16,team:"Grambling State",player:"Shadarius Cowart",ppg:10.8,owner:""},
+  {region:"Midwest",seed:16,team:"Grambling State",player:"Eric Parrish",ppg:9.3,owner:""},
+  {region:"Midwest",seed:16,team:"Grambling State",player:"Prince Moss",ppg:8.1,owner:""}
+];
+
+let defaultExpectedGamesBySeed = {
+    1: 4.0,
+    2: 3.5,
+    3: 3.0,
+    4: 2.7,
+    5: 2.5,
+    6: 2.3,
+    7: 2.1,
+    8: 2.0,
+    9: 1.8,
+    10: 1.7,
+    11: 1.6,
+    12: 1.5,
+    13: 1.4,
+    14: 1.3,
+    15: 1.2,
+    16: 1.1
+};
+
+function updateDefaultExpectedGames() {
+    const input = document.getElementById('default-exp-games').value.trim();
+    if (!input) return;
+
+    const parts = input.split(',').map(p => parseFloat(p.trim())).filter(p => !isNaN(p));
+    if (parts.length !== 16) {
+        alert("Please enter exactly 16 numeric values for seeds 1-16.");
+        return;
+    }
+    const newMap = {};
+    for (let i = 0; i < 16; i++) {
+        newMap[i + 1] = parts[i];
+    }
+    defaultExpectedGamesBySeed = newMap;
+    recalculate();
 }
 
+function getExpectedGames(player) {
+    if (player.expGames != null && !isNaN(player.expGames)) {
+        return parseFloat(player.expGames);
+    }
+    return defaultExpectedGamesBySeed[player.seed] || 1.0;
+}
 
-        renderTable();
-        updateLeaderboard();
-    </script>
+function getExpectedPoints(player) {
+    return player.ppg * getExpectedGames(player);
+}
+
+function calculateTotal(player) {
+    let r64 = parseFloat(player.r64 || 0);
+    let r32 = parseFloat(player.r32 || 0);
+    let s16 = parseFloat(player.s16 || 0);
+    let e8 = parseFloat(player.e8 || 0);
+    let f4 = parseFloat(player.f4 || 0);
+    let champ = parseFloat(player.champ || 0);
+
+    const r64Factor = parseFloat(document.getElementById('r64-factor').value) || 1;
+    const r32Factor = parseFloat(document.getElementById('r32-factor').value) || 1.2;
+    const s16Factor = parseFloat(document.getElementById('s16-factor').value) || 1.4;
+    const e8Factor = parseFloat(document.getElementById('e8-factor').value) || 1.6;
+    const f4Factor = parseFloat(document.getElementById('f4-factor').value) || 1.8;
+    const champFactor = parseFloat(document.getElementById('champ-factor').value) || 2.0;
+
+    return (r64 * r64Factor) +
+           (r32 * r32Factor) +
+           (s16 * s16Factor) +
+           (e8 * e8Factor) +
+           (f4 * f4Factor) +
+           (champ * champFactor);
+}
+
+function renderTable() {
+    const tbody = document.querySelector("#players-table tbody");
+    tbody.innerHTML = "";
+
+    const ownerFilter = document.getElementById('owner-filter').value;
+
+    players.forEach((player, index) => {
+        if (ownerFilter && player.owner !== ownerFilter) {
+            return;
+        }
+
+        const tr = document.createElement("tr");
+
+        const regionTd = document.createElement("td");
+        regionTd.textContent = player.region;
+        tr.appendChild(regionTd);
+
+        const seedTd = document.createElement("td");
+        seedTd.textContent = player.seed;
+        tr.appendChild(seedTd);
+
+        const teamTd = document.createElement("td");
+        teamTd.textContent = player.team;
+        tr.appendChild(teamTd);
+
+        const playerTd = document.createElement("td");
+        playerTd.textContent = player.player;
+        tr.appendChild(playerTd);
+
+        const ppgTd = document.createElement("td");
+        ppgTd.textContent = player.ppg.toFixed(1);
+        tr.appendChild(ppgTd);
+
+        const expGamesTd = document.createElement("td");
+        expGamesTd.textContent = getExpectedGames(player).toFixed(2);
+        tr.appendChild(expGamesTd);
+
+        const expPtsTd = document.createElement("td");
+        expPtsTd.textContent = getExpectedPoints(player).toFixed(1);
+        tr.appendChild(expPtsTd);
+
+        const ownerTd = document.createElement("td");
+        ownerTd.textContent = player.owner;
+        tr.appendChild(ownerTd);
+
+        ["r64","r32","s16","e8","f4","champ"].forEach(round => {
+            const td = document.createElement("td");
+            const input = document.createElement("input");
+            input.type = "number";
+            input.step = "0.1";
+            input.value = player[round] != null ? player[round] : "";
+            input.onchange = () => {
+                player[round] = parseFloat(input.value) || 0;
+                totalTd.textContent = calculateTotal(player).toFixed(1);
+                updateLeaderboard();
+            };
+            td.appendChild(input);
+            tr.appendChild(td);
+        });
+
+        const totalTd = document.createElement("td");
+        totalTd.textContent = calculateTotal(player).toFixed(1);
+        tr.appendChild(totalTd);
+
+        tbody.appendChild(tr);
+    });
+
+    updateLeaderboard();
+}
+
+function updateLeaderboard() {
+    const ownerTotals = {};
+    players.forEach(p => {
+        const total = calculateTotal(p);
+        if (!ownerTotals[p.owner]) {
+            ownerTotals[p.owner] = 0;
+        }
+        ownerTotals[p.owner] += total;
+    });
+
+    const sortedOwners = Object.entries(ownerTotals).sort((a, b) => b[1] - a[1]);
+    const leaderboardDiv = document.getElementById("leaderboard-content");
+    leaderboardDiv.innerHTML = "";
+
+    const table = document.createElement("table");
+    table.style.width = "100%";
+    const thead = document.createElement("thead");
+    const headRow = document.createElement("tr");
+    ["Owner", "Total Points"].forEach(text => {
+        const th = document.createElement("th");
+        th.textContent = text;
+        headRow.appendChild(th);
+    });
+    thead.appendChild(headRow);
+    table.appendChild(thead);
+
+    const tbody = document.createElement("tbody");
+    sortedOwners.forEach(([owner, total]) => {
+        const tr = document.createElement("tr");
+        const ownerTd = document.createElement("td");
+        ownerTd.textContent = owner;
+        const totalTd = document.createElement("td");
+        totalTd.textContent = total.toFixed(1);
+        totalTd.classList.add("right");
+        tr.appendChild(ownerTd);
+        tr.appendChild(totalTd);
+        tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+
+    leaderboardDiv.appendChild(table);
+}
+
+let currentSort = { key: null, asc: true };
+
+function sortTable(key) {
+    if (currentSort.key === key) {
+        currentSort.asc = !currentSort.asc;
+    } else {
+        currentSort.key = key;
+        currentSort.asc = true;
+    }
+
+    players.sort((a, b) => {
+        let valA, valB;
+        if (key === 'total') {
+            valA = calculateTotal(a);
+            valB = calculateTotal(b);
+        } else if (key === 'ppg') {
+            valA = a.ppg;
+            valB = b.ppg;
+        } else if (key === 'seed') {
+            valA = a.seed;
+            valB = b.seed;
+        } else if (key === 'region' || key === 'team' || key === 'player' || key === 'owner') {
+            valA = a[key];
+            valB = b[key];
+            if (valA < valB) return currentSort.asc ? -1 : 1;
+            if (valA > valB) return currentSort.asc ? 1 : -1;
+            return 0;
+        } else {
+            valA = a[key];
+            valB = b[key];
+        }
+
+        return currentSort.asc ? valA - valB : valB - valA;
+    });
+
+    renderTable();
+}
+
+function resetBracket() {
+    players.forEach(p => {
+        p.r64 = 0;
+        p.r32 = 0;
+        p.s16 = 0;
+        p.e8 = 0;
+        p.f4 = 0;
+        p.champ = 0;
+    });
+    renderTable();
+}
+
+/* NEW: Excel download using full players table */
+function downloadExcel() {
+    const excelData = players.map(p => ({
+        Region: p.region,
+        Seed: p.seed,
+        Team: p.team,
+        Player: p.player,
+        PPG: p.ppg,
+        "Expected Games": getExpectedGames(p).toFixed(2),
+        "Expected Points": getExpectedPoints(p).toFixed(1),
+        Owner: p.owner || '',
+        R64: p.r64 || 0,
+        R32: p.r32 || 0,
+        S16: p.s16 || 0,
+        E8: p.e8 || 0,
+        F4: p.f4 || 0,
+        Champ: p.champ || 0,
+        Total: calculateTotal(p).toFixed(1)
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(excelData);
+
+    ws["!cols"] = [
+        { wch: 10 }, // Region
+        { wch: 6 },  // Seed
+        { wch: 22 }, // Team
+        { wch: 22 }, // Player
+        { wch: 8 },  // PPG
+        { wch: 12 }, // Expected Games
+        { wch: 14 }, // Expected Points
+        { wch: 12 }, // Owner
+        { wch: 6 },  // R64
+        { wch: 6 },  // R32
+        { wch: 6 },  // S16
+        { wch: 6 },  // E8
+        { wch: 6 },  // F4
+        { wch: 8 },  // Champ
+        { wch: 10 }  // Total
+    ];
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Fantasy Tracker 2026");
+    XLSX.writeFile(wb, "NCAA_Fantasy_Tracker_2026.xlsx");
+}
+
+/* Initial render */
+renderTable();
+</script>
+
 </body>
 </html>
+
