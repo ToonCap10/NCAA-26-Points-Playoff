@@ -380,8 +380,64 @@ const rawPlayersText = `[
       "E8": 0,
       "F4": 0,
       "Champ": 0,
+      "Total": 0 },
+  { player: "Thomas Ndong", team: "Cal Baptist", ppg: 5.1, fillColor: "#004990", fontColor: "#FDB927","R64": 0,
+      "R32": 0,
+      "S16": 0,
+      "E8": 0,
+      "F4": 0,
+      "Champ": 0,
+      "Total": 0 },
+  { player: "Bradey Henige", team: "Cal Baptist", ppg: 4.9, fillColor: "#004990", fontColor: "#FDB927","R64": 0,
+      "R32": 0,
+      "S16": 0,
+      "E8": 0,
+      "F4": 0,
+      "Champ": 0,
+      "Total": 0 },
+  { player: "RJ Godfrey", team: "Clemson", ppg: 11.9, fillColor: "#F66733", fontColor: "#522D80","R64": 0,
+      "R32": 0,
+      "S16": 0,
+      "E8": 0,
+      "F4": 0,
+      "Champ": 0,
+      "Total": 0 },
+  { player: "Jestin Porter", team: "Clemson", ppg: 9.7, fillColor: "#F66733", fontColor: "#522D80","R64": 0,
+      "R32": 0,
+      "S16": 0,
+      "E8": 0,
+      "F4": 0,
+      "Champ": 0,
+      "Total": 0 },
+  { player: "Nick Davidson", team: "Clemson", ppg: 8.9, fillColor: "#F66733", fontColor: "#522D80","R64": 0,
+      "R32": 0,
+      "S16": 0,
+      "E8": 0,
+      "F4": 0,
+      "Champ": 0,
+      "Total": 0 },
+  { player: "Patrick Ngongba (INJ?)", team: "Duke", ppg: 10.7, fillColor: "#003087", fontColor: "#FFFFFF","R64": 0,
+      "R32": 0,
+      "S16": 0,
+      "E8": 0,
+      "F4": 0,
+      "Champ": 0,
+      "Total": 0 },
+  { player: "Caleb Foster (INJ?)", team: "Duke", ppg: 8.5, fillColor: "#003087", fontColor: "#FFFFFF","R64": 0,
+      "R32": 0,
+      "S16": 0,
+      "E8": 0,
+      "F4": 0,
+      "Champ": 0,
+      "Total": 0 },
+  { player: "Cayden Boozer", team: "Duke", ppg: 6.5, fillColor: "#003087", fontColor: "#FFFFFF","R64": 0,
+      "R32": 0,
+      "S16": 0,
+      "E8": 0,
+      "F4": 0,
+      "Champ": 0,
       "Total": 0 }
-`;
+]`;
 
 // Attempt to parse the raw players text into the normalized `players` array.
 let players = [];
@@ -507,14 +563,23 @@ function tryAutoFix(txt) {
     let out = txt;
     // normalize smart quotes
     out = out.replace(/[‘’]/g, "'").replace(/[“”]/g, '"');
+    // normalize fullwidth digits (０-９) to ASCII
+    out = out.replace(/[０-９]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0xFF10 + 48));
+    // normalize common subscript digits (₀-₉)
+    out = out.replace(/[₀-₉]/g, ch => '0123456789'['₀₁₂₃₄₅₆₇₈₉'.indexOf(ch)] || ch);
     // replace lone trailing commas before } or ]
     out = out.replace(/,\s*([}\]])/g, '$1');
     // ensure property names are quoted (simple heuristic)
     out = out.replace(/([\{,\s])(\w+)\s*:/g, '$1"$2":');
     // convert single-quoted strings to double-quoted
     out = out.replace(/'([^']*)'/g, '"$1"');
+    // insert missing commas between object literals in arrays (heuristic): replace "}\s*{" with "},\n{"
+    out = out.replace(/}\s*\{/g, '},\n{');
+    // remove non-printable control chars that often break eval
+    out = out.replace(/[\u0000-\u001F\u007F]/g, '');
     return out;
 }
+
 
 function applyImportedPlayers(arr) {
     // normalize to new schema
