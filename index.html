@@ -246,8 +246,7 @@
         15: 1.1,
         16: 1.05
     };
-// Your original players list (pasted raw). The loader will attempt to parse this
-// into the new `players` schema (with per-player `rounds` objects).
+
 const rawPlayersText = `[
   { player: "Tavari Johnson", team: "AKRON", ppg: 20.2, fillColor: "#041E42", fontColor: "#A89968","R64": 0,
       "R32": 0,
@@ -416,7 +415,132 @@ try {
     }
 } catch (e) {
     console.error('Failed to parse rawPlayersText — please check formatting.', e);
+    // keep a small sample so the UI remains visible, but show importer to restore data
     players = [{ player: 'Tavari Johnson', team: 'AKRON', ppg: 20.2, fillColor: '#041E42', fontColor: '#A89968', region: '', seed: 0, rounds: { R64:0,R32:0,S16:0,E8:0,F4:0,Champ:0 }, owner: '', expGames: undefined, key: 'tavari_johnson_0' }];
+    // show importer overlay so user can paste/repair original data
+    window.addEventListener('DOMContentLoaded', () => {
+        showPlayerImporter(rawPlayersText, e && e.message);
+    });
+}
+
+// Importer UI + auto-fix helpers
+function showPlayerImporter(raw, errorMsg) {
+    if (document.getElementById('player-importer')) return;
+    const div = document.createElement('div');
+    div.id = 'player-importer';
+    div.style.position = 'fixed';
+    div.style.right = '16px';
+    div.style.top = '16px';
+    div.style.width = '520px';
+    div.style.maxHeight = '80vh';
+    div.style.overflow = 'auto';
+    div.style.background = 'white';
+    div.style.border = '1px solid rgba(0,0,0,0.12)';
+    div.style.padding = '12px';
+    div.style.zIndex = 9999;
+    div.style.boxShadow = '0 6px 24px rgba(0,0,0,0.12)';
+
+    div.innerHTML = `
+        <div style="font-weight:600;margin-bottom:8px">Player Importer</div>
+        <div style="color:#b00;margin-bottom:8px">Parse error: ${errorMsg || 'unknown'}</div>
+        <textarea id="player-importer-text" style="width:100%;height:260px;font-family:monospace;">${raw}</textarea>
+        <div style="display:flex;gap:8px;margin-top:8px">
+            <button id="player-import-load">Load as JS/JSON</button>
+            <button id="player-import-autofix">Auto-fix & Load</button>
+            <button id="player-import-sample">Use Sample</button>
+            <button id="player-import-close">Close</button>
+        </div>
+        <div style="font-size:12px;color:#666;margin-top:8px">Tip: paste cleaned JSON array or try Auto-fix.</div>
+    `;
+
+    document.body.appendChild(div);
+
+    document.getElementById('player-import-load').addEventListener('click', () => {
+        const txt = document.getElementById('player-importer-text').value;
+        try {
+            const parsed = JSON.parse(txt);
+            if (Array.isArray(parsed)) applyImportedPlayers(parsed);
+            else alert('Not an array.');
+        } catch (err) {
+            // try evaluating as JS
+            try {
+                const parsed = Function('return ' + txt)();
+                if (Array.isArray(parsed)) applyImportedPlayers(parsed);
+                else alert('Parsed value is not an array.');
+            } catch (err2) {
+                alert('Failed to parse input:\n' + err2.message);
+                console.error(err2);
+            }
+        }
+    });
+
+    document.getElementById('player-import-autofix').addEventListener('click', () => {
+        const txt = document.getElementById('player-importer-text').value;
+        const fixed = tryAutoFix(txt);
+        document.getElementById('player-importer-text').value = fixed;
+        // attempt load
+        try {
+            const parsed = JSON.parse(fixed);
+            if (Array.isArray(parsed)) applyImportedPlayers(parsed);
+            else alert('Auto-fixed text did not produce an array.');
+        } catch (err) {
+            try {
+                const parsed = Function('return ' + fixed)();
+                if (Array.isArray(parsed)) applyImportedPlayers(parsed);
+                else alert('Auto-fixed text did not produce an array.');
+            } catch (err2) {
+                alert('Auto-fix failed to produce valid JS/JSON. See console.');
+                console.error(err2);
+            }
+        }
+    });
+
+    document.getElementById('player-import-sample').addEventListener('click', () => {
+        // remove importer and keep existing sample
+        div.remove();
+    });
+
+    document.getElementById('player-import-close').addEventListener('click', () => div.remove());
+}
+
+function tryAutoFix(txt) {
+    let out = txt;
+    // normalize smart quotes
+    out = out.replace(/[‘’]/g, "'").replace(/[“”]/g, '"');
+    // replace lone trailing commas before } or ]
+    out = out.replace(/,\s*([}\]])/g, '$1');
+    // ensure property names are quoted (simple heuristic)
+    out = out.replace(/([\{,\s])(\w+)\s*:/g, '$1"$2":');
+    // convert single-quoted strings to double-quoted
+    out = out.replace(/'([^']*)'/g, '"$1"');
+    return out;
+}
+
+function applyImportedPlayers(arr) {
+    // normalize to new schema
+    players = arr.map((p, i) => {
+        const roundsObj = {};
+        rounds.forEach(r => roundsObj[r] = parseFloat(p[r] || p[r.toLowerCase()]) || 0);
+        const keyBase = slugify((p.team || '') + '_' + (p.player || '')) || ('player_' + i);
+        return {
+            player: p.player || '',
+            team: p.team || '',
+            ppg: parseFloat(p.ppg) || 0,
+            fillColor: p.fillColor || '#ffffff',
+            fontColor: p.fontColor || '#000000',
+            region: p.region || '',
+            seed: p.seed || 0,
+            rounds: roundsObj,
+            owner: p.owner || '',
+            expGames: ('expGames' in p) ? p.expGames : undefined,
+            key: p.key || (keyBase + (p.seed ? '_' + p.seed : ''))
+        };
+    });
+    // remove importer if present
+    const el = document.getElementById('player-importer'); if (el) el.remove();
+    renderTable();
+    updateLeaderboard();
+    saveToStorage();
 }
 
 // Validator / sanitizer to ensure required keys exist and numeric fields are numbers.
