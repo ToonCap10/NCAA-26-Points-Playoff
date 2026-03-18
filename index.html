@@ -1,3 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NCAA 2026 Fantasy Tracker</title>
+    <style>
+        :root {
+            --color-background: #fcfcf9;
+            --color-surface: #fffffd;
+            --color-text: #13343b;
+            --color-border: rgba(94, 82, 64, 0.2);
+            --color-primary: #21808d;
+        }
+        
+        * { box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: var(--color-background);
+            color: var(--color-text);
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            font-size: 32px;
+            font-weight: 600;
+            margin: 0 0 8px 0;
+        }
+        
+        .subtitle {
+            color: #626c71;
+            margin-bottom: 24px;
+        }
+        
+        .leaderboard {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+        
+        .leaderboard h2 {
+            font-size: 20px;
+            font-weight: 600;
+            margin: 0 0 16px 0;
+        }
+        
+        .leaderboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+        }
+        
+        .owner-card {
+            padding: 12px;
+            background: rgba(33, 128, 141, 0.08);
+            border: 1px solid rgba(33, 128, 141, 0.2);
+            border-radius: 8px;
+        }
+        
+        .owner-name {
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .owner-points {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--color-primary);
+            margin: 4px 0;
+        }
+        
+        .owner-rank {
+            font-size: 12px;
+            color: #626c71;
+        }
+        
+        .controls {
+            margin-bottom: 16px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 8px 16px;
+            background: var(--color-primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        
+        button:hover {
+            opacity: 0.85;
+        }
+        
+        .table-container {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        
+        thead {
+            background: rgba(94, 82, 64, 0.06);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        th {
+            padding: 12px 8px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 1px solid var(--color-border);
+            cursor: pointer;
+            user-select: none;
+            white-space: nowrap;
+        }
+        
+        th:hover {
+            background: rgba(94, 82, 64, 0.1);
+        }
+        
+        td {
+            padding: 10px 8px;
+            border-bottom: 1px solid rgba(94, 82, 64, 0.1);
+        }
+        
+        tr:hover {
+            background: rgba(33, 128, 141, 0.04);
+        }
+        
+        .team-cell {
+            font-weight: 500;
+            padding: 8px;
+            border-radius: 4px;
+        }
+        
+        .editable {
+            background: rgba(33, 128, 141, 0.08);
+            border: 1px solid transparent;
+            padding: 6px;
+            border-radius: 4px;
+            min-width: 60px;
+            text-align: center;
+        }
+        
+        .editable:focus {
+            outline: 2px solid var(--color-primary);
+            background: white;
+        }
+        
+        .total-col {
+            font-weight: 600;
+            color: var(--color-primary);
+            font-size: 14px;
+        }
+        
+        .sort-indicator {
+            margin-left: 4px;
+            font-size: 10px;
+        }
+    </style>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>🏀 NCAA 2026 Fantasy Tournament Tracker</h1>
+        <p class="subtitle">
+            Click column headers to sort • Click cells to edit owner names, round points, or expected games
+        </p>
+        
+        <div class="leaderboard">
+            <h2>Owner Leaderboard</h2>
+            <div class="leaderboard-grid" id="leaderboard">
+                <div class="owner-card">
+                    <div class="owner-rank">Add owners to see standings</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button onclick="recalculate()">Recalculate Totals</button>
+            <button onclick="sortTable(0)">Sort by Region</button>
+            <button onclick="sortTable(1)">Sort by Seed</button>
+            <button onclick="sortTable(6)">Sort by Exp Pts</button>
+            <button onclick="sortTable(7)">Sort by Owner</button>
+            <button onclick="sortTable(14)">Sort by Total Points</button>
+            <button onclick="downloadExcel()">Download Excel</button>
+            <button onclick="addRound()">Add Round</button>
+            <button onclick="removeLastRound()">Remove Last Round</button>
+        </div>
+        
+        <div class="table-container">
+            <table id="fantasyTable">
+                <thead id="tableHead"></thead>
+                <tbody id="tableBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <script>
+    // Dynamic rounds and persistence
+    const defaultRounds = ["R64","R32","S16","E8","F4","Champ"];
+    let rounds = defaultRounds.slice();
+
+    function slugify(s) {
+        return (s || '').toString().trim().toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
+    }
+    // Seed-based baseline expectations (owners can override per player via Exp Games).
+    const defaultExpectedGamesBySeed = {
+        1: 4.2,
+        2: 3.5,
+        3: 3.0,
+        4: 2.6,
+        5: 2.2,
+        6: 2.0,
+        7: 1.8,
+        8: 1.6,
+        9: 1.5,
+        10: 1.5,
+        11: 1.4,
+        12: 1.3,
+        13: 1.2,
+        14: 1.15,
+        15: 1.1,
+        16: 1.05
+    };
+
 const players = [
   { player: "Dominique Daniels Jr", team: "Cal Baptist", ppg: 22.6, fillColor: "#004990", fontColor: "#FDB927", region: "", seed: 0, R64: 0, R32: 0, S16: 0, E8: 0, F4: 0, Champ: 0, Total: 0 },
   { player: "Martel Williams", team: "Cal Baptist", ppg: 13.1, fillColor: "#004990", fontColor: "#FDB927", region: "", seed: 0, R64: 0, R32: 0, S16: 0, E8: 0, F4: 0, Champ: 0, Total: 0 },
@@ -524,3 +773,365 @@ const players = [
   { player: "Logan Woods", team: "Wright State", ppg: 5.4, fillColor: "#006747", fontColor: "#FFB81C", region: "", seed: 0, R64: 0, R32: 0, S16: 0, E8: 0, F4: 0, Champ: 0, Total: 0 },
   { player: "Alex Bruskotter", team: "Wright State", ppg: 4.9, fillColor: "#006747", fontColor: "#FFB81C", region: "", seed: 0, R64: 0, R32: 0, S16: 0, E8: 0, F4: 0, Champ: 0, Total: 0 }
 ];
+
+
+
+
+// Validator / sanitizer to ensure required keys exist and numeric fields are numbers.
+(function validateAndSanitizePlayers() {
+    const requiredZeros = ["R64","R32","S16","E8","F4","Champ","Total"];
+    const numericKeys = ["ppg", ...requiredZeros];
+    const requiredStringKeys = ["player","team","fillColor","fontColor"];
+    const errors = [];
+
+    players.forEach((p, i) => {
+        // ensure object
+        if (!p || typeof p !== "object") {
+            errors.push({ index: i, reason: "not-an-object", value: p });
+            players[i] = {};
+        }
+
+        // ensure string keys
+        requiredStringKeys.forEach(k => {
+            if (!(k in players[i])) players[i][k] = "";
+        });
+
+        // ensure region/seed exist (used elsewhere)
+        if (!("region" in players[i])) players[i].region = "";
+        if (!("seed" in players[i])) players[i].seed = 0;
+
+        // ensure numeric keys
+        numericKeys.forEach(k => {
+            const val = players[i][k];
+            players[i][k] = (typeof val === "number") ? val : (parseFloat(val) || 0);
+        });
+
+        // ensure R64..Total present
+        requiredZeros.forEach(k => {
+            if (!(k in players[i])) players[i][k] = 0;
+        });
+
+        // compute Total if missing or wrong
+        players[i].Total = players[i].Total || 0;
+        const totalCalc = requiredZeros.reduce((sum, k) => sum + (parseFloat(players[i][k]) || 0), 0);
+        if (players[i].Total !== totalCalc) {
+            // flag mismatch but keep computed total
+            players[i].Total = totalCalc;
+        }
+
+        // basic content sanity checks
+        if (!players[i].player || players[i].player.length < 1) {
+            errors.push({ index: i, reason: "missing-player-name", obj: players[i] });
+        }
+
+        // ensure stable key
+        if (!players[i].key) {
+            // try slug from team+player, fallback to index
+            const base = slugify((players[i].team || '') + '_' + (players[i].player || '')) || 'player';
+            let candidate = base;
+            let suffix = 1;
+            while (players.some((q, qi) => qi !== i && q.key === candidate)) {
+                candidate = base + '_' + (suffix++);
+            }
+            players[i].key = candidate + (players[i].seed ? ('_' + players[i].seed) : '');
+        }
+    });
+
+    if (errors.length) {
+        console.warn("players array validation issues:", errors);
+    } else {
+        console.log("players array passed basic validation");
+    }
+})();
+const STORAGE_KEY = "fantasy2026_players";
+
+function loadFromStorage() {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (!saved) return;
+    try {
+        const stored = JSON.parse(saved);
+        // restore rounds list first (new format uses stored.players)
+        if (stored.__rounds && Array.isArray(stored.__rounds)) {
+            rounds = stored.__rounds.slice();
+        }
+
+        const storedPlayers = (stored.players && typeof stored.players === 'object') ? stored.players : stored;
+        players.forEach(p => {
+            const data = storedPlayers[p.key];
+            if (!data) return;
+            p.owner = data.owner ?? p.owner;
+            p.expGames = ('expGames' in data) ? data.expGames : p.expGames;
+            // restore rounds object values
+            if (data.rounds && typeof data.rounds === 'object') {
+                Object.keys(data.rounds).forEach(r => {
+                    p.rounds[r] = parseFloat(data.rounds[r]) || 0;
+                });
+            }
+        });
+    } catch (e) {
+        console.error("Bad storage data", e);
+    }
+}
+
+function saveToStorage() {
+    const byKey = {};
+    players.forEach(p => {
+        byKey[p.key] = {
+            owner: p.owner || "",
+            expGames: ('expGames' in p) ? p.expGames : undefined,
+            rounds: p.rounds || {}
+        };
+    });
+    // store rounds ordering
+    const payload = { __rounds: rounds, players: byKey };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+}
+
+function downloadExcel() {
+    const excelData = players.map(p => {
+        const base = {
+            Region: p.region,
+            Seed: p.seed,
+            Team: p.team,
+            Player: p.player,
+            PPG: p.ppg,
+            "Expected Games": getExpectedGames(p).toFixed(2),
+            "Expected Points": getExpectedPoints(p).toFixed(1),
+            Owner: p.owner || ''
+        };
+
+        rounds.forEach(r => {
+            base[r] = p.rounds[r] || 0;
+        });
+        base.Total = calculateTotal(p).toFixed(1);
+        return base;
+    });
+
+    const ws = XLSX.utils.json_to_sheet(excelData);
+
+    // approximate column widths: build dynamically
+    ws["!cols"] = [
+        { wch: 10 }, // Region
+        { wch: 6 },  // Seed
+        { wch: 22 }, // Team
+        { wch: 22 }, // Player
+        { wch: 8 },  // PPG
+        { wch: 12 }, // Expected Games
+        { wch: 14 }, // Expected Points
+        { wch: 12 }  // Owner
+    ];
+    rounds.forEach(() => ws["!cols"].push({ wch: 8 }));
+    ws["!cols"].push({ wch: 10 }); // Total
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Fantasy Tracker 2026");
+    XLSX.writeFile(wb, "NCAA_Fantasy_Tracker_2026.xlsx");
+}
+
+function getExpectedGames(player) {
+    if (typeof player.expGames === 'number' && !isNaN(player.expGames)) {
+        return player.expGames;
+    }
+    const base = defaultExpectedGamesBySeed[player.seed] || 1.0;
+    player.expGames = base;
+    return base;
+}
+
+function getExpectedPoints(player) {
+    const games = getExpectedGames(player);
+    const exp = player.ppg * games;
+    return exp.toFixed(1);
+}
+
+// all round factors are effectively 1 here
+function calculateTotal(player) {
+    // sum all known rounds for the player
+    let sum = 0;
+    if (player.rounds && typeof player.rounds === 'object') {
+        Object.keys(player.rounds).forEach(k => {
+            sum += parseFloat(player.rounds[k]) || 0;
+        });
+    }
+    return sum;
+}
+
+function renderTable() {
+    // build header dynamically based on rounds
+    const thead = document.getElementById('tableHead');
+    const headerCols = ['Region','Seed','Team','Player','PPG','Exp Games','Exp Pts','Owner', ...rounds, 'Total'];
+    const headerHtml = '<tr>' + headerCols.map((c,i) => `<th onclick="sortTable(${i})">${c}</th>`).join('') + '</tr>';
+    thead.innerHTML = headerHtml;
+
+    const tbody = document.getElementById('tableBody');
+    tbody.innerHTML = '';
+
+    players.forEach((p, index) => {
+        const row = tbody.insertRow();
+        const cells = [];
+        cells.push(`<td>${p.region}</td>`);
+        cells.push(`<td>${p.seed}</td>`);
+        cells.push(`<td class="team-cell" style="background-color: ${p.fillColor}; color: ${p.fontColor};">${p.team}</td>`);
+        cells.push(`<td>${p.player}</td>`);
+        cells.push(`<td>${p.ppg}</td>`);
+        cells.push(`<td contenteditable="true" class="editable" data-index="${index}" data-field="expGames">${getExpectedGames(p)}</td>`);
+        cells.push(`<td>${getExpectedPoints(p)}</td>`);
+        cells.push(`<td contenteditable="true" class="editable" data-index="${index}" data-field="owner">${p.owner || ''}</td>`);
+
+        rounds.forEach(r => {
+            const val = (p.rounds && (r in p.rounds)) ? p.rounds[r] : '';
+            cells.push(`<td contenteditable="true" class="editable" data-index="${index}" data-field="round" data-round="${r}">${val}</td>`);
+        });
+
+        cells.push(`<td class="total-col">${calculateTotal(p)}</td>`);
+        row.innerHTML = cells.join('');
+    });
+
+    document.querySelectorAll('.editable').forEach(cell => {
+        cell.addEventListener('blur', function() {
+            const index = parseInt(this.dataset.index, 10);
+            const field = this.dataset.field;
+            const value = this.textContent.trim();
+
+            if (field === 'owner') {
+                players[index][field] = value;
+            } else if (field === 'expGames') {
+                const num = parseFloat(value);
+                const safe = isNaN(num)
+                    ? defaultExpectedGamesBySeed[players[index].seed] || 1.0
+                    : num;
+                players[index][field] = safe;
+                this.textContent = safe.toFixed(1);
+            } else if (field === 'round') {
+                const roundName = this.dataset.round;
+                const num = parseFloat(value) || 0;
+                if (!players[index].rounds) players[index].rounds = {};
+                players[index].rounds[roundName] = num;
+            }
+
+            // update total cell in-place
+            const row = this.parentElement;
+            const totalCell = row.querySelector('.total-col');
+            if (totalCell) {
+                totalCell.textContent = calculateTotal(players[index]);
+            }
+
+            saveToStorage();
+            updateLeaderboard();
+        });
+    });
+}
+
+function recalculate() {
+    // recalc totals in-place without rebuilding table
+    const tbody = document.getElementById('tableBody');
+    Array.from(tbody.rows).forEach((row, index) => {
+        const totalCell = row.querySelector('.total-col');
+        if (totalCell) {
+            totalCell.textContent = calculateTotal(players[index]);
+        }
+    });
+    updateLeaderboard();
+}
+
+function addRound() {
+    const name = prompt('New round name (e.g. "QF-1" or "Round 7"):');
+    if (!name) return;
+    const clean = name.trim();
+    if (!clean) return;
+    // avoid duplicate
+    if (rounds.includes(clean)) {
+        alert('Round already exists.');
+        return;
+    }
+    rounds.push(clean);
+    // ensure every player has the round key
+    players.forEach(p => {
+        if (!p.rounds) p.rounds = {};
+        p.rounds[clean] = 0;
+    });
+    saveToStorage();
+    renderTable();
+}
+
+function removeLastRound() {
+    if (rounds.length === 0) return;
+    const last = rounds[rounds.length - 1];
+    if (!confirm(`Remove last round "${last}"? This will delete its values.`)) return;
+    rounds.pop();
+    players.forEach(p => {
+        if (p.rounds && last in p.rounds) delete p.rounds[last];
+    });
+    saveToStorage();
+    renderTable();
+}
+
+function updateLeaderboard() {
+    const ownerTotals = {};
+    players.forEach(p => {
+        if (p.owner) {
+            ownerTotals[p.owner] = (ownerTotals[p.owner] || 0) + calculateTotal(p);
+        }
+    });
+
+    const sorted = Object.entries(ownerTotals).sort((a, b) => b[1] - a[1]);
+    const leaderboard = document.getElementById('leaderboard');
+
+    if (sorted.length === 0) {
+        leaderboard.innerHTML = '<div class="ownerx-card"><div class="owner-rank">Add owners to see standings</div></div>';
+        return;
+    }
+
+    leaderboard.innerHTML = sorted.map(([owner, points], i) => `
+        <div class="owner-card">
+            <div class="owner-rank">#${i + 1}</div>
+            <div class="owner-name">${owner}</div>
+            <div class="owner-points">${points}</div>
+        </div>
+    `).join('');
+}
+
+function sortTable(columnIndex) {
+    const table = document.getElementById('fantasyTable');
+    const tbody = table.querySelector('tbody');
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+
+    rows.sort((a, b) => {
+        let aVal = a.cells[columnIndex].textContent.trim();
+        let bVal = b.cells[columnIndex].textContent.trim();
+
+        const aNum = parseFloat(aVal);
+        const bNum = parseFloat(bVal);
+
+        if (columnIndex === 1) {
+            // Seed: ascending
+            if (!isNaN(aNum) && !isNaN(bNum)) {
+                return aNum - bNum;
+            }
+        }
+
+        if (!isNaN(aNum) && !isNaN(bNum)) {
+            // All other numeric columns: descending
+            return bNum - aNum;
+        }
+
+        return aVal.localeCompare(bVal);
+    });
+
+    rows.forEach(row => tbody.appendChild(row));
+}
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadFromStorage();
+        // if storage had rounds ordering, ensure players contain those keys
+        players.forEach((p) => {
+            if (!p.rounds) p.rounds = {};
+            rounds.forEach(r => {
+                if (!(r in p.rounds)) p.rounds[r] = 0;
+            });
+        });
+        renderTable();
+        updateLeaderboard();
+    });
+    </script>
+</body>
+</html>
