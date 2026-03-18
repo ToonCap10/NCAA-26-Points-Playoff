@@ -910,10 +910,13 @@ function sortTable(columnIndex) {
     rows.forEach(row => tbody.appendChild(row));
 }
 
-// initial load
-loadFromStorage();
-renderTable();
-updateLeaderboard();
+// initial load after DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    loadFromStorage();
+    renderTable();
+    updateLeaderboard();
+});
+
 
     <button onclick="downloadExcel()">Download Excel</button>
 
