@@ -842,6 +842,7 @@ const players = [
         console.log("players array passed basic validation");
     }
 })();
+
 const STORAGE_KEY = "fantasy2026_players";
 
 function loadFromStorage() {
@@ -862,6 +863,7 @@ function loadFromStorage() {
             p.expGames = ('expGames' in data) ? data.expGames : p.expGames;
             // restore rounds object values
             if (data.rounds && typeof data.rounds === 'object') {
+                if (!p.rounds) p.rounds = {};
                 Object.keys(data.rounds).forEach(r => {
                     p.rounds[r] = parseFloat(data.rounds[r]) || 0;
                 });
@@ -871,6 +873,25 @@ function loadFromStorage() {
         console.error("Bad storage data", e);
     }
 }
+
+// Seed rounds["R64"] from legacy R64 field ONLY if there is no stored data yet
+(function seedRoundsFromLegacyR64() {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) return; // skip if user already has saved data
+
+    // Ensure there is at least an R64 column
+    if (!rounds.includes("R64")) {
+        rounds.push("R64");
+    }
+    players.forEach(p => {
+        if (!p.rounds) p.rounds = {};
+        // Only seed if this round is currently 0/undefined and a legacy R64 exists
+        const existing = parseFloat(p.rounds["R64"] || 0);
+        if (!existing && typeof p.R64 === "number" && p.R64 > 0) {
+            p.rounds["R64"] = p.R64;
+        }
+    });
+})();
 
 function saveToStorage() {
     const byKey = {};
@@ -1119,17 +1140,19 @@ function sortTable(columnIndex) {
     rows.forEach(row => tbody.appendChild(row));
 }
 
-    document.addEventListener('DOMContentLoaded', () => {
-        loadFromStorage();
-        // if storage had rounds ordering, ensure players contain those keys
-        players.forEach((p) => {
-            if (!p.rounds) p.rounds = {};
-            rounds.forEach(r => {
-                if (!(r in p.rounds)) p.rounds[r] = 0;
-            });
+document.addEventListener('DOMContentLoaded', () => {
+    loadFromStorage();
+    // if storage had rounds ordering, ensure players contain those keys
+    players.forEach((p) => {
+        if (!p.rounds) p.rounds = {};
+        rounds.forEach(r => {
+            if (!(r in p.rounds)) p.rounds[r] = 0;
         });
-        renderTable();
-        updateLeaderboard();
+    });
+    renderTable();
+    updateLeaderboard();
+});
+
     });
     </script>
 </body>
