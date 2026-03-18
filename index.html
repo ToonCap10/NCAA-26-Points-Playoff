@@ -810,13 +810,12 @@ const players = [
             if (!(k in players[i])) players[i][k] = 0;
         });
 
-        // compute Total if missing or wrong
-        players[i].Total = players[i].Total || 0;
-        const totalCalc = requiredZeros.reduce((sum, k) => sum + (parseFloat(players[i][k]) || 0), 0);
-        if (players[i].Total !== totalCalc) {
-            // flag mismatch but keep computed total
-            players[i].Total = totalCalc;
-        }
+        // compute Total from round fields
+        const totalCalc = ["R64","R32","S16","E8","F4","Champ"].reduce(
+            (sum, k) => sum + (parseFloat(players[i][k]) || 0),
+            0
+        );
+        players[i].Total = totalCalc;
 
         // basic content sanity checks
         if (!players[i].player || players[i].player.length < 1) {
@@ -850,7 +849,7 @@ function loadFromStorage() {
     if (!saved) return;
     try {
         const stored = JSON.parse(saved);
-        // restore rounds list first (new format uses stored.players)
+        // restore rounds list first (kept only for custom user rounds, not scoring)
         if (stored.__rounds && Array.isArray(stored.__rounds)) {
             rounds = stored.__rounds.slice();
         }
@@ -861,7 +860,7 @@ function loadFromStorage() {
             if (!data) return;
             p.owner = data.owner ?? p.owner;
             p.expGames = ('expGames' in data) ? data.expGames : p.expGames;
-            // restore rounds object values
+            // restore custom rounds object values (if you still use them)
             if (data.rounds && typeof data.rounds === 'object') {
                 if (!p.rounds) p.rounds = {};
                 Object.keys(data.rounds).forEach(r => {
@@ -874,25 +873,6 @@ function loadFromStorage() {
     }
 }
 
-// Seed rounds["R64"] from legacy R64 field ONLY if there is no stored data yet
-(function seedRoundsFromLegacyR64() {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) return; // skip if user already has saved data
-
-    // Ensure there is at least an R64 column
-    if (!rounds.includes("R64")) {
-        rounds.push("R64");
-    }
-    players.forEach(p => {
-        if (!p.rounds) p.rounds = {};
-        // Only seed if this round is currently 0/undefined and a legacy R64 exists
-        const existing = parseFloat(p.rounds["R64"] || 0);
-        if (!existing && typeof p.R64 === "number" && p.R64 > 0) {
-            p.rounds["R64"] = p.R64;
-        }
-    });
-})();
-
 function saveToStorage() {
     const byKey = {};
     players.forEach(p => {
@@ -902,7 +882,7 @@ function saveToStorage() {
             rounds: p.rounds || {}
         };
     });
-    // store rounds ordering
+    // store rounds ordering (for any custom non‑scoring columns you add later)
     const payload = { __rounds: rounds, players: byKey };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
 }
@@ -920,8 +900,9 @@ function downloadExcel() {
             Owner: p.owner || ''
         };
 
-        rounds.forEach(r => {
-            base[r] = p.rounds[r] || 0;
+        // fixed round columns from player block
+        ["R64","R32","S16","E8","F4","Champ"].forEach(r => {
+            base[r] = (r in p) ? (parseFloat(p[r]) || 0) : 0;
         });
         base.Total = calculateTotal(p).toFixed(1);
         return base;
@@ -938,10 +919,15 @@ function downloadExcel() {
         { wch: 8 },  // PPG
         { wch: 12 }, // Expected Games
         { wch: 14 }, // Expected Points
-        { wch: 12 }  // Owner
+        { wch: 12 }, // Owner
+        { wch: 8 },  // R64
+        { wch: 8 },  // R32
+        { wch: 8 },  // S16
+        { wch: 8 },  // E8
+        { wch: 8 },  // F4
+        { wch: 8 },  // Champ
+        { wch: 10 }  // Total
     ];
-    rounds.forEach(() => ws["!cols"].push({ wch: 8 }));
-    ws["!cols"].push({ wch: 10 }); // Total
 
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Fantasy Tracker 2026");
@@ -963,22 +949,25 @@ function getExpectedPoints(player) {
     return exp.toFixed(1);
 }
 
-// all round factors are effectively 1 here
+// Total from round fields on the player
 function calculateTotal(player) {
-    // sum all known rounds for the player
     let sum = 0;
-    if (player.rounds && typeof player.rounds === 'object') {
-        Object.keys(player.rounds).forEach(k => {
-            sum += parseFloat(player.rounds[k]) || 0;
-        });
-    }
+    ["R64","R32","S16","E8","F4","Champ"].forEach(k => {
+        if (k in player) {
+            sum += parseFloat(player[k]) || 0;
+        }
+    });
     return sum;
 }
 
 function renderTable() {
-    // build header dynamically based on rounds
+    // fixed scoring columns from player block
     const thead = document.getElementById('tableHead');
-    const headerCols = ['Region','Seed','Team','Player','PPG','Exp Games','Exp Pts','Owner', ...rounds, 'Total'];
+    const headerCols = [
+        'Region','Seed','Team','Player','PPG',
+        'Exp Games','Exp Pts','Owner',
+        'R64','R32','S16','E8','F4','Champ','Total'
+    ];
     const headerHtml = '<tr>' + headerCols.map((c,i) => `<th onclick="sortTable(${i})">${c}</th>`).join('') + '</tr>';
     thead.innerHTML = headerHtml;
 
@@ -997,15 +986,26 @@ function renderTable() {
         cells.push(`<td>${getExpectedPoints(p)}</td>`);
         cells.push(`<td contenteditable="true" class="editable" data-index="${index}" data-field="owner">${p.owner || ''}</td>`);
 
-        rounds.forEach(r => {
-            const val = (p.rounds && (r in p.rounds)) ? p.rounds[r] : '';
-            cells.push(`<td contenteditable="true" class="editable" data-index="${index}" data-field="round" data-round="${r}">${val}</td>`);
-        });
+        // non‑editable round columns from player block
+        const r64 = (typeof p.R64 === 'number') ? p.R64 : (parseFloat(p.R64) || 0);
+        const r32 = (typeof p.R32 === 'number') ? p.R32 : (parseFloat(p.R32) || 0);
+        const s16 = (typeof p.S16 === 'number') ? p.S16 : (parseFloat(p.S16) || 0);
+        const e8  = (typeof p.E8  === 'number') ? p.E8  : (parseFloat(p.E8)  || 0);
+        const f4  = (typeof p.F4  === 'number') ? p.F4  : (parseFloat(p.F4)  || 0);
+        const ch  = (typeof p.Champ === 'number') ? p.Champ : (parseFloat(p.Champ) || 0);
+
+        cells.push(`<td>${r64}</td>`);
+        cells.push(`<td>${r32}</td>`);
+        cells.push(`<td>${s16}</td>`);
+        cells.push(`<td>${e8}</td>`);
+        cells.push(`<td>${f4}</td>`);
+        cells.push(`<td>${ch}</td>`);
 
         cells.push(`<td class="total-col">${calculateTotal(p)}</td>`);
         row.innerHTML = cells.join('');
     });
 
+    // editable only for owner and expGames now
     document.querySelectorAll('.editable').forEach(cell => {
         cell.addEventListener('blur', function() {
             const index = parseInt(this.dataset.index, 10);
@@ -1021,14 +1021,9 @@ function renderTable() {
                     : num;
                 players[index][field] = safe;
                 this.textContent = safe.toFixed(1);
-            } else if (field === 'round') {
-                const roundName = this.dataset.round;
-                const num = parseFloat(value) || 0;
-                if (!players[index].rounds) players[index].rounds = {};
-                players[index].rounds[roundName] = num;
             }
 
-            // update total cell in-place
+            // update total cell in-place (in case future logic uses expGames)
             const row = this.parentElement;
             const totalCell = row.querySelector('.total-col');
             if (totalCell) {
@@ -1064,7 +1059,7 @@ function addRound() {
         return;
     }
     rounds.push(clean);
-    // ensure every player has the round key
+    // ensure every player has the round key (custom, non‑scoring)
     players.forEach(p => {
         if (!p.rounds) p.rounds = {};
         p.rounds[clean] = 0;
@@ -1142,7 +1137,7 @@ function sortTable(columnIndex) {
 
 document.addEventListener('DOMContentLoaded', () => {
     loadFromStorage();
-    // if storage had rounds ordering, ensure players contain those keys
+    // ensure players have rounds object for any custom columns
     players.forEach((p) => {
         if (!p.rounds) p.rounds = {};
         rounds.forEach(r => {
@@ -1152,6 +1147,7 @@ document.addEventListener('DOMContentLoaded', () => {
     renderTable();
     updateLeaderboard();
 });
+
 </script>
 </body>
 </html>
