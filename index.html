@@ -198,73 +198,7 @@
             </div>
         </div>
         
-        <div class="controls">
-            <button onclick="recalculate()">Recalculate Totals</button>
-            <button onclick="sortTable(0)">Sort by Region</button>
-            <button onclick="sortTable(1)">Sort by Seed</button>
-            <button onclick="sortTable(6)">Sort by Exp Pts</button>
-            <button onclick="sortTable(7)">Sort by Owner</button>
-            <button onclick="sortTable(14)">Sort by Total Points</button>
-        </div>
         
-        <div class="table-container">
-            <table id="fantasyTable">
-                <thead>
-                    <tr>
-                        <th onclick="sortTable(0)">Region</th>
-                        <th onclick="sortTable(1)">Seed</th>
-                        <th onclick="sortTable(2)">Team</th>
-                        <th onclick="sortTable(3)">Player</th>
-                        <th onclick="sortTable(4)">PPG</th>
-                        <th onclick="sortTable(5)">Exp Games</th>
-                        <th onclick="sortTable(6)">Exp Pts</th>
-                        <th onclick="sortTable(7)">Owner</th>
-                        <th onclick="sortTable(8)">R64</th>
-                        <th onclick="sortTable(9)">R32</th>
-                        <th onclick="sortTable(10)">S16</th>
-                        <th onclick="sortTable(11)">E8</th>
-                        <th onclick="sortTable(12)">F4</th>
-                        <th onclick="sortTable(13)">Champ</th>
-                        <th onclick="sortTable(14)">Total</th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody">
-                </tbody>
-            </table>
-        </div>
-    </div>
-    
-    <script>
-        <div class="controls">
-  <button onclick="downloadExcel()">Download Excel</button>
-</div>
-
-<table id="tableBody">
-  <thead>
-    <tr>
-      <th onclick="sortTable(0)">Region</th>
-      <th onclick="sortTable(1)">Seed</th>
-      <th onclick="sortTable(2)">Team</th>
-      <th onclick="sortTable(3)">Player</th>
-      <th onclick="sortTable(4)">PPG</th>
-      <th onclick="sortTable(5)">Exp Games</th>
-      <th onclick="sortTable(6)">Exp Points</th>
-      <th onclick="sortTable(7)">Owner</th>
-      <th onclick="sortTable(8)">R64</th>
-      <th onclick="sortTable(9)">R32</th>
-      <th onclick="sortTable(10)">S16</th>
-      <th onclick="sortTable(11)">E8</th>
-      <th onclick="sortTable(12)">F4</th>
-      <th onclick="sortTable(13)">Champ</th>
-      <th onclick="sortTable(14)">Total</th>
-    </tr>
-  </thead>
-  <tbody id="tableBody">
-    <!-- rows injected by renderTable() -->
-  </tbody>
-</table>
-
-<div id="leaderboard"></div>
 
         // Seed-based baseline expectations (owners can override per player via Exp Games).
         // These reflect historical advancement patterns by seed. [web:523][web:524][web:540]
