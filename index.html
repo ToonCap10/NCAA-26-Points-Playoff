@@ -405,7 +405,7 @@ const players = [
             if (!(k in players[i])) players[i][k] = 0;
         });
 
-        // compute Total from round fields
+        // compute Total from round fields on the player
         const totalCalc = ["R64","R32","S16","E8","F4","Champ"].reduce(
             (sum, k) => sum + (parseFloat(players[i][k]) || 0),
             0
@@ -453,7 +453,7 @@ function loadFromStorage() {
         players.forEach(p => {
             const data = storedPlayers[p.key];
             if (!data) return;
-            p.owner = data.owner ?? p.owner;
+            // do NOT overwrite owner; it comes from the player block
             p.expGames = ('expGames' in data) ? data.expGames : p.expGames;
             // restore custom rounds object values (if you still use them)
             if (data.rounds && typeof data.rounds === 'object') {
@@ -579,7 +579,9 @@ function renderTable() {
         cells.push(`<td>${p.ppg}</td>`);
         cells.push(`<td contenteditable="true" class="editable" data-index="${index}" data-field="expGames">${getExpectedGames(p)}</td>`);
         cells.push(`<td>${getExpectedPoints(p)}</td>`);
-        cells.push(`<td contenteditable="true" class="editable" data-index="${index}" data-field="owner">${p.owner || ''}</td>`);
+
+        // NON‑editable owner from player block
+        cells.push(`<td>${p.owner || ''}</td>`);
 
         // non‑editable round columns from player block
         const r64 = (typeof p.R64 === 'number') ? p.R64 : (parseFloat(p.R64) || 0);
@@ -600,16 +602,14 @@ function renderTable() {
         row.innerHTML = cells.join('');
     });
 
-    // editable only for owner and expGames now
+    // editable only for expGames now
     document.querySelectorAll('.editable').forEach(cell => {
         cell.addEventListener('blur', function() {
             const index = parseInt(this.dataset.index, 10);
             const field = this.dataset.field;
             const value = this.textContent.trim();
 
-            if (field === 'owner') {
-                players[index][field] = value;
-            } else if (field === 'expGames') {
+            if (field === 'expGames') {
                 const num = parseFloat(value);
                 const safe = isNaN(num)
                     ? defaultExpectedGamesBySeed[players[index].seed] || 1.0
@@ -742,6 +742,7 @@ document.addEventListener('DOMContentLoaded', () => {
     renderTable();
     updateLeaderboard();
 });
+
 
 </script>
 </body>
